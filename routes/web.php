@@ -25,5 +25,5 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/users', 'UserController@index');
-Route::post('/users', 'UserController@insert');
+include('backend.php');
+include('frontend.php');
