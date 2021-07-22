@@ -18,6 +18,21 @@ class UserController extends Controller
 
     public function insert(Request $request)
     {
-        dd($request->all());
+        try {
+            $validator = \Validator::make($request->all(), [
+                'name' => 'required|string',
+                'email' => 'required|string|unique:users',
+                'password' => 'required|string|min:5',
+            ]);
+    
+            if ($validator->fails()) {
+                return $validator->errors();
+            }
+
+            dd($request->all());
+
+        } catch (\Exception $e) {
+            dd($e);
+        }
     } 
 }
