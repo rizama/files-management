@@ -17,6 +17,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/token', function () {
+    return json_encode(csrf_token()); 
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/users', 'UserController@index');
+Route::post('/users', 'UserController@insert');
