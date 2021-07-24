@@ -13,7 +13,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        return User::all();
+        return view('users', ['users' => User::all()]);
     }
 
     public function insert(Request $request)
