@@ -1,73 +1,144 @@
-@extends('layouts.app')
+<!doctype html>
+<html lang="en">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>OneUI - Bootstrap 4 Admin Template &amp; UI Framework</title>
 
-                        <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+    <meta name="description"
+        content="OneUI - Bootstrap 4 Admin Template &amp; UI Framework created by pixelcave and published on Themeforest">
+    <meta name="author" content="pixelcave">
+    <meta name="robots" content="noindex, nofollow">
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+    <!-- Icons -->
+    <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
+    <link rel="shortcut icon" href="{{ asset('oneui/src/assets/media/favicons/favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192"
+        href="{{ asset('oneui/src/assets/media/favicons/favicon-192x192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="{{ asset('oneui/src/assets/media/favicons/apple-touch-icon-180x180.png') }}">
+    <!-- END Icons -->
 
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    <!-- Stylesheets -->
+    <!-- Fonts and OneUI framework -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" id="css-main" href="{{ asset('oneui/src/assets/css/oneui.min.css') }}">
 
-                        <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+    <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
+    <!-- END Stylesheets -->
+</head>
 
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+<body>
 
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    <div id="page-container">
 
-                        <div class="form-group row">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+        <!-- Main Container -->
+        <main id="main-container">
+            <!-- Page Content -->
+            <div class="hero-static d-flex align-items-center">
+                <div class="w-100">
+                    <!-- Sign In Section -->
+                    <div class="bg-white">
+                        <div class="content content-full">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8 col-lg-6 col-xl-4 py-4">
+                                    <!-- Header -->
+                                    <div class="text-center">
+                                        <p class="mb-2">
+                                            <i class="fa fa-2x fa-circle-notch text-primary"></i>
+                                        </p>
+                                        <h1 class="h4 mb-1">
+                                            Sign In
+                                        </h1>
+                                        <h2 class="h6 font-w400 text-muted mb-3">
+                                            A perfect match for your project
+                                        </h2>
+                                    </div>
+                                    <!-- END Header -->
 
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
+                                    <form method="POST" action="{{ route('login') }}">
+                                        @csrf
+                                        <div class="py-3">
+                                            <div class="form-group">
+                                                <input type="email"
+                                                    class="form-control form-control-lg form-control-alt @error('email') is-invalid @enderror"
+                                                    id="email" name="email" placeholder="e-mail"
+                                                    value="{{ old('email') }}" required autocomplete="email"
+                                                    autofocus>
+                                                @error('email')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password"
+                                                    class="form-control form-control-lg form-control-alt  @error('password') is-invalid @enderror"
+                                                    id="password" name="password" placeholder="Password">
+                                                @error('password')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="d-md-flex align-items-md-center justify-content-md-between">
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            name="remember" id="remember"
+                                                            {{ old('remember') ? 'checked' : '' }}">
+                                                        <label class="custom-control-label font-w400"
+                                                            for="remember">Remember Me</label>
+                                                    </div>
+                                                    @if (Route::has('password.request'))
+                                                        <div class="py-2">
+                                                            <a class="font-size-sm font-w500"
+                                                                href="{{ route('password.request') }}">Forgot
+                                                                Password?</a>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row justify-content-center mb-0">
+                                            <div class="col-md-6 col-xl-5">
+                                                <button type="submit" class="btn btn-block btn-primary">
+                                                    <i class="fa fa-fw fa-sign-in-alt mr-1"></i> Login
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <!-- END Sign In Form -->
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <!-- END Sign In Section -->
 
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
+                    <!-- Footer -->
+                    <div class="font-size-sm text-center text-muted py-3">
+                        <strong>OneUI 4.7</strong> &copy; <span data-toggle="year-copy"></span>
+                    </div>
+                    <!-- END Footer -->
                 </div>
             </div>
-        </div>
+            <!-- END Page Content -->
+        </main>
+        <!-- END Main Container -->
     </div>
-</div>
-@endsection
+    <!-- END Page Container -->
+    <script src="{{ asset('oneui/src/assets/js/oneui.core.min.js') }}"></script>
+    <script src="{{ asset('oneui/src/assets/js/oneui.app.min.js') }}"></script>
+
+    <!-- Page JS Plugins -->
+    <script src="{{ asset('oneui/src/assets/js/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+
+    <!-- Page JS Code -->
+    <script src="{{ asset('oneui/src/assets/js/pages/op_auth_signin.min.js') }}"></script>
+</body>
+
+</html>
