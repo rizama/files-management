@@ -13,15 +13,31 @@ use Auth;
 class UserController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            if ($this->user->role_id != 1) {
+                abort(404);
+            }
+            return $next($request);
+        });
+    }
+
     public function index(Request $request)
     {
-        $users = User::all();
+        $users = User::with('role')->get();
         $ret['users'] = $users;
 
         return view('users', $ret);
     }
 
-    public function insert(Request $request)
+    public function create()
+    {
+        //
+    }
+
+    public function store(Request $request)
     {
         try {
             $validator = \Validator::make($request->all(), [
@@ -48,6 +64,18 @@ class UserController extends Controller
             dd($e);
             return abort(500);
         }
+    }
+
+    public function show(User $user)
+    {
+        // $ret['user'] = $user;
+        // return view('', $ret);
+    }
+
+    public function edit(User $user)
+    {
+        // $ret['user'] = $user;
+        // return view('', $ret);
     }
 
     public function update(Request $request, $user_id)
