@@ -46,6 +46,7 @@ class TaskController extends Controller
                 'name' => 'required|string',
                 'description' => 'required|string',
                 'is_history_active' => 'required',
+                'assign_to' => 'nullable',
                 'default_file' => 'nullable|mimes:pdf,xlx,csv,doc,docx,ppt,pptx,rtf,txt'
             ]);
     
@@ -53,11 +54,15 @@ class TaskController extends Controller
                 return $validator->errors();
             }
 
+            $STATUS_APPROVAL = 1;
+
             $task = new Task;
             $task->created_by = Auth::id();
             $task->name = $request->name;
             $task->description = $request->description;
             $task->is_history_file_active = (int)$request->is_history_active;
+            $task->assign_to = $request->assign_to;
+            $task->status_approve = $STATUS_APPROVAL;
             $task->save();
 
             if ($request->hasFile('default_file')) {
@@ -236,12 +241,13 @@ class TaskController extends Controller
         $path = Storage::disk('public')->put('files', $file);
         $new_name = basename($path);
 
-        $WITHOUT_APPROVAL = 3;
+        $STATUS_APPROVAL = 0;
         $DEFAULT_FILE = 1;
+        $TYPE_FILE = 'internal';
 
         $file_upload = new File;
         $file_upload->task_id = $task->id;
-        $file_upload->status_approve = $WITHOUT_APPROVAL;
+        $file_upload->status_approve = $STATUS_APPROVAL;
         $file_upload->created_by = Auth::id();
         $file_upload->original_name = $original_name;
         $file_upload->description = 'Default File';
@@ -249,6 +255,7 @@ class TaskController extends Controller
         $file_upload->new_name = $new_name;
         $file_upload->path = $path;
         $file_upload->is_default = $DEFAULT_FILE;
+        $file_upload->type = $TYPE_FILE;
         $file_upload->save();
     }
 
@@ -263,12 +270,13 @@ class TaskController extends Controller
         $path = Storage::disk('s3')->put('files', $file);
         $new_name = basename($path);
 
-        $WITHOUT_APPROVAL = 3;
+        $STATUS_APPROVAL = 0;
         $DEFAULT_FILE = 1;
+        $TYPE_FILE = 'internal';
 
         $file_upload = new File;
         $file_upload->task_id = $task->id;
-        $file_upload->status_approve = $WITHOUT_APPROVAL;
+        $file_upload->status_approve = $STATUS_APPROVAL;
         $file_upload->created_by = Auth::id();
         $file_upload->original_name = $original_name;
         $file_upload->description = 'Default File';
@@ -276,6 +284,7 @@ class TaskController extends Controller
         $file_upload->new_name = $new_name;
         $file_upload->path = $path;
         $file_upload->is_default = $DEFAULT_FILE;
+        $file_upload->type = $TYPE_FILE;
         $file_upload->save();
     }
 }
