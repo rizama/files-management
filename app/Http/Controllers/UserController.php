@@ -8,16 +8,19 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 use App\User;
-use Auth;
+use App\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
 
     public function __construct()
     {
+        $this->middleware('auth');
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
-            if ($this->user->role_id != 1) {
+
+            if ($this->user->role->code != 'superadmin') {
                 abort(404);
             }
             return $next($request);
@@ -29,18 +32,21 @@ class UserController extends Controller
         $users = User::with('role')->get();
         $ret['users'] = $users;
 
-        return view('users', $ret);
+        return view('users.index', $ret);
     }
 
     public function create()
     {
-        //
+        $roles = Role::all();
+        $ret['roles'] = $roles;
+
+        return view('users.create', $ret);
     }
 
     public function store(Request $request)
     {
         try {
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
                 'email' => 'required|string|unique:users',
                 'password' => 'required|string|min:5',
@@ -48,7 +54,7 @@ class UserController extends Controller
             ]);
     
             if ($validator->fails()) {
-                return $validator->errors();
+                return redirect()->back()->withErrors($validator->errors());
             }
 
             $user = new User;
@@ -58,10 +64,10 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
             $user->save();
 
-            dd(encrypt($user->id));
+            $request->session()->flash('user.created', 'Pengguna telah dibuat!');
+            return redirect()->route('users.index');
 
         } catch (\Exception $e) {
-            dd($e);
             return abort(500);
         }
     }
@@ -90,7 +96,7 @@ class UserController extends Controller
                 throw new \Exception($e->getMessage());
             }
 
-            $validator = \Validator::make($data, [
+            $validator = Validator::make($data, [
                 'name' => 'required|string',
                 'email' => [
                     'required',
