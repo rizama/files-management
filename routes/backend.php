@@ -1,12 +1,14 @@
 <?php
 
-// User Module
+use Illuminate\Support\Facades\Route;
+
 Route::group(
     [
         'middleware' => 'auth'
     ],
     function () {
-        Route::post('/users', 'UserController@store');
+        // User Module
+        Route::post('/users', 'UserController@store')->name('users.store');
         Route::put('/users/{user_id}', 'UserController@update');
         Route::delete('/users/{user_id}', 'UserController@destroy');
 

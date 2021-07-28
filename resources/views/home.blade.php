@@ -1,15 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-
-    {{-- @if (session('status')) --}}
+    @if (session()->has('flash_notification.success'))
         <div class="alert alert-success alert-dismissable" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <p class="mb-0">You are logged in</p>
+            <p class="mb-0">{{session('flash_notification.success')}}</p>
         </div>
-    {{-- @endif --}}
+    @endif
 
     <div class="block block-rounded">
         <div class="block-header block-header-default">

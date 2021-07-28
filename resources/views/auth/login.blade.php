@@ -7,10 +7,10 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>OneUI - Bootstrap 4 Admin Template &amp; UI Framework</title>
+    <title>Sistem Management Tugas Perencanaan dan Pelaporan</title>
 
     <meta name="description"
-        content="OneUI - Bootstrap 4 Admin Template &amp; UI Framework created by pixelcave and published on Themeforest">
+        content="Sistem Management Tugas Perencanaan dan Pelaporan">
     <meta name="author" content="pixelcave">
     <meta name="robots" content="noindex, nofollow">
 
@@ -52,10 +52,10 @@
                                             <i class="fa fa-2x fa-circle-notch text-primary"></i>
                                         </p>
                                         <h1 class="h4 mb-1">
-                                            Sign In
+                                            Masuk
                                         </h1>
                                         <h2 class="h6 font-w400 text-muted mb-3">
-                                            A perfect match for your project
+                                            Sistem Management Tugas Perencanaan dan Pelaporan
                                         </h2>
                                     </div>
                                     <!-- END Header -->
@@ -85,7 +85,7 @@
                                                     </span>
                                                 @enderror
                                             </div>
-                                            <div class="form-group">
+                                            {{-- <div class="form-group">
                                                 <div class="d-md-flex align-items-md-center justify-content-md-between">
                                                     <div class="custom-control custom-switch">
                                                         <input type="checkbox" class="custom-control-input"
@@ -102,12 +102,12 @@
                                                         </div>
                                                     @endif
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="form-group row justify-content-center mb-0">
                                             <div class="col-md-6 col-xl-5">
                                                 <button type="submit" class="btn btn-block btn-primary">
-                                                    <i class="fa fa-fw fa-sign-in-alt mr-1"></i> Login
+                                                    <i class="fa fa-fw fa-sign-in-alt mr-1"></i> Masuk
                                                 </button>
                                             </div>
                                         </div>
@@ -121,7 +121,7 @@
 
                     <!-- Footer -->
                     <div class="font-size-sm text-center text-muted py-3">
-                        <strong>OneUI 4.7</strong> &copy; <span data-toggle="year-copy"></span>
+                        <strong>Dinas Perkebunan - Perencanaan</strong> &copy; <span data-toggle="year-copy"></span>
                     </div>
                     <!-- END Footer -->
                 </div>

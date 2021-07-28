@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use \Illuminate\Support\Facades\Validator;
 
 use App\Models\Task;
 use App\Models\File;
-use DB;
 use Auth;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -42,7 +43,7 @@ class TaskController extends Controller
     {
         try {
             DB::beginTransaction();
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
                 'description' => 'required|string',
                 'is_history_active' => 'required',
@@ -121,7 +122,7 @@ class TaskController extends Controller
                 throw new \Exception($e->getMessage());
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
                 'description' => 'required|string',
                 'is_history_active' => 'required',
@@ -227,7 +228,7 @@ class TaskController extends Controller
         }
     }
 
-    public function upload_to_local($file)
+    public function upload_to_local($task, $file)
     {
         $filename = $file->getClientOriginalName();
         $original_name = pathinfo($filename, PATHINFO_FILENAME);
