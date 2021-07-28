@@ -8,8 +8,9 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
+    <title>
+        @yield('title', config('app.name', 'SIMANTAP'))
+    </title>
     <!-- Icons -->
     <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
     <link rel="shortcut icon" href="{{ asset('oneui/src/assets/media/favicons/favicon.png') }}">
@@ -38,12 +39,12 @@
             <!-- Side Header -->
             <div class="content-header bg-white-5">
                 <!-- Logo -->
-                <a class="font-w600 text-dual" href="index.html">
+                <a class="font-w600 text-dual" href="#">
                     <span class="smini-visible">
                         <i class="fa fa-circle-notch text-primary"></i>
                     </span>
                     <span class="smini-hide font-size-h5 tracking-wider">
-                        One<span class="font-w400">UI</span>
+                        <span class="font-w900">{{ env('APP_NAME') }}</span> 
                     </span>
                 </a>
                 <!-- END Logo -->
@@ -55,18 +56,27 @@
                 <!-- Side Navigation -->
                 <div class="content-side">
                     <ul class="nav-main">
-                        <li class="nav-main-item">
-                            <a class="nav-main-link {{ Request::is('home') ? 'active' : '' }}" href="{{ url('/home') }}">
-                                <i class="nav-main-link-icon si si-speedometer"></i>
-                                <span class="nav-main-link-name">Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link {{ Request::is('users') ? 'active' : '' }}" href="{{ url('/users') }}">
-                                <i class="nav-main-link-icon si si-speedometer"></i>
-                                <span class="nav-main-link-name">Users</span>
-                            </a>
-                        </li>
+                        @if (Auth::user()->role->code == 'superadmin')
+                            <li class="nav-main-item">
+                                <a class="nav-main-link {{ Request::is('users*') ? 'active' : '' }}" href="{{ url('/users') }}">
+                                    <i class="nav-main-link-icon si si-users"></i>
+                                    <span class="nav-main-link-name">Users</span>
+                                </a>
+                            </li>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link {{ Request::is('roles') ? 'active' : '' }}" href="{{ url('/users') }}">
+                                    <i class="nav-main-link-icon fa fa-code-branch"></i>
+                                    <span class="nav-main-link-name">Roles</span>
+                                </a>
+                            </li>
+                        @else
+                            <li class="nav-main-item">
+                                <a class="nav-main-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('/dashboard') }}">
+                                    <i class="nav-main-link-icon si si-speedometer"></i>
+                                    <span class="nav-main-link-name">Dashboard</span>
+                                </a>
+                            </li>
+                        @endif
                         {{-- <li class="nav-main-item">
                             <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
                                 <i class="nav-main-link-icon si si-layers"></i>
@@ -116,7 +126,7 @@
                     </button>
                     <!-- END Toggle Mini Sidebar -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        File Management
+                        Sistem Manajemen Tugas Perencaan dan Pelaporan
                     </a>
                 </div>
                 <!-- Right Section -->
@@ -165,7 +175,7 @@
                         {{-- Crafted with <i class="fa fa-heart text-danger"></i> by <a class="font-w600" href="https://1.envato.market/ydb" target="_blank">pixelcave</a> --}}
                     </div>
                     <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-left">
-                        <a class="font-w600"  target="_blank">File Management v0</a> &copy; <span data-toggle="year-copy"></span>
+                        <a class="font-w600"  target="_blank">SIMANTAP</a> &copy; <span data-toggle="year-copy"></span>
                     </div>
                 </div>
             </div>
