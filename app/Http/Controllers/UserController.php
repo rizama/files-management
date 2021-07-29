@@ -78,10 +78,18 @@ class UserController extends Controller
         // return view('', $ret);
     }
 
-    public function edit(User $user)
+    public function edit($user_id)
     {
-        // $ret['user'] = $user;
-        // return view('', $ret);
+        try {
+            $decrypted_id = decrypt($user_id);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        $user = User::with('role')->where('id', $decrypted_id)->firstOrFail();
+        $roles = Role::all();
+        $ret['roles'] = $roles;
+        $ret['user'] = $user;
+        return view('users.edit', $ret);
     }
 
     public function update(Request $request, $user_id)

@@ -12,12 +12,12 @@
 
 @section('content')
     @if (session()->has('flash_notification.success'))
-    <div class="alert alert-success alert-dismissable" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <p class="mb-0">{{session('flash_notification.success')}}</p>
-    </div>
+        <div class="alert alert-success alert-dismissable" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p class="mb-0">{{ session('flash_notification.success') }}</p>
+        </div>
     @endif
 
     @if (session()->has('user.created'))
@@ -25,7 +25,7 @@
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <p class="mb-0">{{session('user.created')}}</p>
+            <p class="mb-0">{{ session('user.created') }}</p>
         </div>
     @endif
 
@@ -33,7 +33,8 @@
     <!-- Dynamic Table Full -->
     <div class="block block-rounded">
         <div class="block-header">
-            <h3 class="block-title">Daftar Pengguna</h3>
+            <h2 class="block-title">Daftar Pengguna</h2>
+            <a class="btn btn-primary pull-right btn-sm" href="{{ url('/users/create') }}">Tambah Pengguna</a>
         </div>
         <div class="block-content block-content-full">
             <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
@@ -49,7 +50,7 @@
                 <tbody>
                     @foreach ($users as $user)
                         <tr>
-                            <td class="text-center font-size-sm">{{ $user->id }}</td>
+                            <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td>
                             <td class="font-w600 font-size-sm">
                                 {{ $user->name }}
                             </td>
@@ -59,7 +60,22 @@
                             <td>
                                 {{ $user->role->name }}
                             </td>
-                            <td></td>
+                            <td>
+                                <div class="btn-group">
+                                    <a class="btn btn-sm btn-light js-tooltip-enabled"
+                                        href="{{ url('/users/edit/').'/'.encrypt($user->id) }}"
+                                        data-toggle="tooltip" title="" data-original-title="Ubah Pengguna">
+                                        <i class="fa fa-fw fa-pencil-alt"></i>
+                                    </a>
+                                    @if($user->role->code !== 'superadmin')
+                                        <a class="btn btn-sm btn-light js-tooltip-enabled"
+                                            href="{{ url('/users/edit/').'/'.encrypt($user->id) }}"
+                                            data-toggle="tooltip" title="" data-original-title="Hapus Pengguna">
+                                            <i class="fa fa-fw fa-times"></i>
+                                        </a>
+                                    @endif
+                                </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
