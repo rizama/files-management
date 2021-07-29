@@ -27,14 +27,14 @@
     <link href="{{ asset('css/oneui.min.css') }}" rel="stylesheet">
 
     <!-- Custom Styles -->
-    {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     @yield('css')
 
     @yield('js_before')
 </head>
 
 <body>
-    <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed main-content-narrow">
+    <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed main-content-narrow page-header-dark">
         <nav id="sidebar" aria-label="Main Navigation">
             <!-- Side Header -->
             <div class="content-header bg-white-5">
@@ -64,7 +64,7 @@
                                 </a>
                             </li>
                             <li class="nav-main-item">
-                                <a class="nav-main-link {{ Request::is('roles') ? 'active' : '' }}" href="{{ url('/users') }}">
+                                <a class="nav-main-link {{ Request::is('roles*') ? 'active' : '' }}" href="{{ url('/roles') }}">
                                     <i class="nav-main-link-icon fa fa-code-branch"></i>
                                     <span class="nav-main-link-name">Roles</span>
                                 </a>
@@ -125,7 +125,7 @@
                         <i class="fa fa-fw fa-ellipsis-v"></i>
                     </button>
                     <!-- END Toggle Mini Sidebar -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
+                    <a class="navbar-brand text-light font-weight-bold" href="{{ url('/') }}">
                         Sistem Manajemen Tugas Perencaan dan Pelaporan
                     </a>
                 </div>
@@ -162,7 +162,7 @@
 
         <!-- Main Container -->
         <main id="main-container">
-            <div class="content">
+            <div class="content" style="padding-top: 1rem;">
                 @yield('content')
             </div>
         </main>

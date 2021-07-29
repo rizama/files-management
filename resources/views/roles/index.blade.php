@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    User Manajemen - SIMANTAP
+    Role Manajemen - SIMANTAP
 @endsection
 
 @section('css')
@@ -20,12 +20,12 @@
         </div>
     @endif
 
-    @if (session()->has('user.created'))
+    @if (session()->has('role.created'))
         <div class="alert alert-success alert-dismissable" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <p class="mb-0">{{ session('user.created') }}</p>
+            <p class="mb-0">{{ session('role.created') }}</p>
         </div>
     @endif
 
@@ -33,8 +33,7 @@
     <!-- Dynamic Table Full -->
     <div class="block block-rounded">
         <div class="block-header">
-            <h2 class="block-title">Daftar Pengguna</h2>
-            <a class="btn btn-primary pull-right btn-sm" href="{{ url('/users/create') }}">Tambah Pengguna</a>
+            <h2 class="block-title">Daftar Role</h2>
         </div>
         <div class="block-content block-content-full">
             <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
@@ -42,38 +41,31 @@
                     <tr>
                         <th class="text-center" style="width: 80px;">No</th>
                         <th>Nama</th>
-                        <th>Email</th>
-                        <th>Role</th>
+                        <th>Kode</th>
+                        <th>Deskripsi</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($users as $user)
+                    @foreach ($roles as $role)
                         <tr>
                             <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td>
                             <td class="font-w600 font-size-sm">
-                                {{ $user->name }}
+                                {{ $role->name }}
                             </td>
                             <td class="d-none d-sm-table-cell font-size-sm">
-                                {{ $user->email }}
+                                {{ $role->code }}
                             </td>
                             <td>
-                                {{ $user->role->name }}
+                                {{ $role->description }}
                             </td>
                             <td>
                                 <div class="btn-group">
                                     <a class="btn btn-sm btn-light js-tooltip-enabled"
-                                        href="{{ url('/users/edit/').'/'.encrypt($user->id) }}"
-                                        data-toggle="tooltip" title="" data-original-title="Ubah Pengguna">
+                                        href="{{ url('/roles/edit/').'/'.encrypt($role->id) }}"
+                                        data-toggle="tooltip" title="" data-original-title="Ubah Role">
                                         <i class="fa fa-fw fa-pencil-alt"></i>
                                     </a>
-                                    @if($user->role->code !== 'superadmin')
-                                        <a class="btn btn-sm btn-light js-tooltip-enabled"
-                                            href="{{ url('/users/edit/').'/'.encrypt($user->id) }}"
-                                            data-toggle="tooltip" title="" data-original-title="Hapus Pengguna">
-                                            <i class="fa fa-fw fa-times"></i>
-                                        </a>
-                                    @endif
                                 </div>
                             </td>
                         </tr>
