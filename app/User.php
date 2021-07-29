@@ -58,4 +58,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Models\Task::class, 'created_by', 'id');
     }
+
+    /**
+     * Get all of the files for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function files()
+    {
+        return $this->hasMany(Models\File::class, 'created_by', 'id');
+    }
+
+    /**
+     * Get all of the files for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function file_public()
+    {
+        return $this->hasMany(Models\File::class, 'created_by', 'id');
+    }
 }
