@@ -29,6 +29,24 @@
         </div>
     @endif
 
+    @if (session()->has('user.updated'))
+        <div class="alert alert-success alert-dismissable" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p class="mb-0">{{ session('user.updated') }}</p>
+        </div>
+    @endif
+
+    @if (session()->has('user.deleted'))
+        <div class="alert alert-success alert-dismissable" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p class="mb-0">{{ session('user.deleted') }}</p>
+        </div>
+    @endif
+
 
     <!-- Dynamic Table Full -->
     <div class="block block-rounded">
@@ -68,8 +86,8 @@
                                         <i class="fa fa-fw fa-pencil-alt"></i>
                                     </a>
                                     @if($user->role->code !== 'superadmin')
-                                        <a class="btn btn-sm btn-light js-tooltip-enabled"
-                                            href="{{ url('/users/edit/').'/'.encrypt($user->id) }}"
+                                        <a class="btn btn-sm btn-light js-tooltip-enabled js-swal-confirm"
+                                            href="{{ route('users.destroy', encrypt($user->id)) }}"
                                             data-toggle="tooltip" title="" data-original-title="Hapus Pengguna">
                                             <i class="fa fa-fw fa-times"></i>
                                         </a>
