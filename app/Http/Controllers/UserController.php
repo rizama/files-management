@@ -120,12 +120,18 @@ class UserController extends Controller
 
             $user = User::findOrFail($decrypted_id);
 
-            $user->update($data);
+            $user->name = $data['name'];
+            $user->email = $data['email'];
+            if ($data['password']) {
+                $user->password = Hash::make($data['password']);
+            }
+            $user->role_id = $data['role_id'];
+            $user->save();
 
-            dd($user);
+            $request->session()->flash('user.updated', 'Pengguna telah diubah!');
+            return redirect()->route('users.index');
 
         } catch (\Exception $e) {
-            dd($e);
             if ("The payload is invalid." == $e->getMessage()) {
                 return abort(404);
             }
@@ -144,10 +150,11 @@ class UserController extends Controller
 
             $user = User::findOrFail($decrypted_id);
             $user->delete();
-            dd($user);
+            
+            $request->session()->flash('user.deleted', 'Pengguna telah dihapus!');
+            return redirect()->route('users.index');
             
         } catch (\Exception $e) {
-            dd($e);
             if ("The payload is invalid." == $e->getMessage()) {
                 return abort(404);
             }
