@@ -10,20 +10,21 @@ User Manajemen - SIMANTAP
         <h3 class="block-title">Ubah Pengguna</h3>
     </div>
     <div class="block-content block-content-full">
-        <form action="{{ route('users.store') }}" method="POST">
+        <form action="{{ route('users.update', encrypt($user->id)) }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="row push">
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="name">Nama <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukan Nama" required value={{ $user->name }}>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukan Nama" required value="{{ $user->name }}">
                         @error('name')
                             <span style="color: red">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="form-group">
                         <label for="password">Kata Sandi <span class="text-danger">*</span></label></label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Masukan Kata Sandi" required>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Masukan Kata Sandi">
                         @error('password')
                             <span style="color: red">{{ $message }}</span>
                         @enderror
@@ -32,7 +33,7 @@ User Manajemen - SIMANTAP
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="email">Email <span class="text-danger">*</span></label></label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Masukan Emai" required value={{ $user->email }}>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Masukan Emai" required value="{{ $user->email }}">
                         @error('email')
                             <span style="color: red">{{ $message }}</span>
                         @enderror

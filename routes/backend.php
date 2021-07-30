@@ -9,8 +9,8 @@ Route::group(
     function () {
         // User Module
         Route::post('/users', 'UserController@store')->name('users.store');
-        Route::put('/users/{user_id}', 'UserController@update');
-        Route::delete('/users/{user_id}', 'UserController@destroy');
+        Route::put('/users/{user_id}', 'UserController@update')->name('users.update');
+        Route::get('/users/{user_id}', 'UserController@destroy')->name('users.destroy');
 
         Route::post('/tasks', 'TaskController@store');
         Route::put('/tasks/{task_id}', 'TaskController@update');
