@@ -11,6 +11,7 @@ use App\Models\File;
 use App\Models\TaskUser;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use App\User;
 
 class TaskController extends Controller
 {
@@ -20,9 +21,6 @@ class TaskController extends Controller
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
 
-            if ($this->user->role->code == 'superadmin') {
-                abort(404);
-            }
             return $next($request);
         });
     }
@@ -35,7 +33,10 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with('responsible_person')->get();
-        dd($tasks);
+        $ret['tasks'] = $tasks;
+        $ret['user'] = Auth::user();
+
+        return view('tasks.index', $ret);
     }
 
     /**
@@ -45,7 +46,13 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        try {
+            $users = User::all();
+            $ret['users'] = $users;
+            return view('tasks.create', $ret);
+        } catch (\Exception $e) {
+            return abort(500);
+        }
     }
 
     /**
@@ -60,11 +67,11 @@ class TaskController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
-                'description' => 'required|string',
+                'description' => 'nullable|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable',
-                'default_file' => 'nullable|mimes:pdf,xlx,csv,doc,docx,ppt,pptx,rtf,txt',
-                'responsible_person' => 'nullable|string',
+                'default_file' => 'nullable|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx',
+                'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
             ]);
     
@@ -75,12 +82,12 @@ class TaskController extends Controller
             $task = new Task;
             $task->created_by = Auth::id();
             $task->name = $request->name;
-            $task->description = $request->description;
+            $task->description = $request->description ?? '';
             $task->is_history_file_active = (int)$request->is_history_active;
-            $task->assign_to = $request->responsible_person;
+            $task->assign_to = json_encode($request->responsible_person);
             $task->save();
 
-            $responsible_ids = json_decode($request->responsible_person);
+            $responsible_ids = $request->responsible_person;
             $task->responsible_person()->attach($responsible_ids);
 
             if ($request->hasFile('default_file')) {
@@ -89,7 +96,7 @@ class TaskController extends Controller
 
             DB::commit();
 
-            return encrypt($task->id);
+            return redirect()->route('tasks.create');
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -117,7 +124,16 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        //
+        try {
+            $decrypted_id = decrypt($id);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        $task = Task::where('id', $decrypted_id)->firstOrFail();
+        $users = User::all();
+        $ret['users'] = $users;
+        $ret['task'] = $task;
+        return view('tasks.edit', $ret);
     }
 
     /**
@@ -127,14 +143,14 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $task_id)
+    public function update(Request $request, $id)
     {
         try {
             DB::beginTransaction();
             $data = $request->except('_method','_token','submit');
 
             try {
-                $decrypted_id = decrypt($task_id);
+                $decrypted_id = decrypt($id);
             } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
             }
@@ -145,7 +161,7 @@ class TaskController extends Controller
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable|string',
                 'default_file' => 'nullable|mimes:pdf,xlx,csv,doc,docx,ppt,pptx,rtf,txt',
-                'responsible_person' => 'nullable|string',
+                'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
             ]);
 
@@ -183,13 +199,12 @@ class TaskController extends Controller
             $task->name = $request->name;
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
-            $task->assign_to = $request->responsible_person;
+            $task->assign_to = json_encode($request->responsible_person) ?? [];
             $task->save();
 
             $responsible_person = TaskUser::where('task_id', $task->id)->get();
             
-            $responsible_ids = json_decode($request->responsible_person);
-            
+            $responsible_ids = $request->responsible_person ?? [];
             $existing_responsibles = [];
             foreach ($responsible_person as $index => $person) {
                 $existing_responsibles[] = $person['user_id'];
@@ -208,7 +223,8 @@ class TaskController extends Controller
 
             DB::commit();
 
-            return encrypt($task->id);
+            return redirect()->route('tasks.index');
+
         } catch (\Exception $e) {
             dd($e);
             DB::rollback();
@@ -254,7 +270,7 @@ class TaskController extends Controller
             
             DB::commit();
 
-            return encrypt($task->id);
+            return redirect()->route('tasks.index');
         } catch (\Exception $e) {
             DB::rollback();
             dd($e);

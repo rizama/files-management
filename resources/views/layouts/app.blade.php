@@ -23,11 +23,11 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
+    @yield('css')
+
     <!-- Theme Styles -->
     <link href="{{ asset('css/oneui.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('js/plugins/sweetalert2/sweetalert2.min.css') }}">
-
-    @yield('css')
 
     <!-- Custom Styles -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
@@ -76,6 +76,12 @@
                                 <a class="nav-main-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('/dashboard') }}">
                                     <i class="nav-main-link-icon si si-speedometer"></i>
                                     <span class="nav-main-link-name">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link {{ Request::is('tasks*') ? 'active' : '' }}" href="{{ url('/tasks') }}">
+                                    <i class="nav-main-link-icon si si-speedometer"></i>
+                                    <span class="nav-main-link-name">Tugas</span>
                                 </a>
                             </li>
                         @endif
