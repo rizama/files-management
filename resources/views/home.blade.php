@@ -14,6 +14,9 @@
 </div>
 @endif
 
+@section('page-title')
+    Beranda
+@endsection
 <div class="row">
     <div class="col-6 col-lg-3">
         <a class="block block-rounded block-link-shadow text-center" href="be_pages_ecom_orders.html">
@@ -89,7 +92,7 @@
                     </td>
                     <td class="font-w600 font-size-sm">
                         <div class="py-1">
-                            <a href="be_pages_generic_profile.html">Brian Cruz</a>
+                            Brian Cruz
                         </div>
                     </td>
                     <td>
@@ -123,7 +126,7 @@
                     </td>
                     <td class="font-w600 font-size-sm">
                         <div class="py-1">
-                            <a href="be_pages_generic_profile.html">Sam Cruz</a>
+                            Sam Cruz
                         </div>
                     </td>
                     <td>
