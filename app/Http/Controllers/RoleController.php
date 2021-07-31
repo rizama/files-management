@@ -32,7 +32,6 @@ class RoleController extends Controller
 
     public function edit($role_id)
     {
-        // $user->load('role');
         try {
             $decrypted_id = decrypt($role_id);
         } catch (\Exception $e) {
