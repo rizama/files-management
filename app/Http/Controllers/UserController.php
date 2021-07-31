@@ -115,7 +115,7 @@ class UserController extends Controller
             ]);
     
             if ($validator->fails()) {
-                return $validator->errors();
+                return redirect()->back()->withErrors($validator->errors());
             }
 
             $user = User::findOrFail($decrypted_id);
