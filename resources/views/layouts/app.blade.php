@@ -13,9 +13,9 @@
     </title>
     <!-- Icons -->
     <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
-    <link rel="shortcut icon" href="{{ asset('oneui/src/assets/media/favicons/favicon.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('oneui/src/assets/media/favicons/favicon-192x192.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('oneui/src/assets/media/favicons/apple-touch-icon-180x180.png') }}">
+    <link rel="shortcut icon" href="{{ asset('media/favicons/favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('media/favicons/favicon-192x192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('media/favicons/apple-touch-icon-180x180.png') }}">
     <!-- END Icons -->
 
 
@@ -142,13 +142,13 @@
                     <!-- User Dropdown -->
                     <div class="dropdown d-inline-block ml-2">
                         <button type="button" class="btn btn-sm btn-dual d-flex align-items-center" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle" src="{{ asset('oneui/src/assets/media/avatars/avatar10.jpg') }}" alt="Header Avatar" style="width: 21px;">
+                            <img class="rounded-circle" src="{{ asset('media/avatars/avatar10.jpg') }}" alt="Header Avatar" style="width: 21px;">
                             <span class="d-none d-sm-inline-block ml-2">{{ Auth::user()->email }}</span>
                             <i class="fa fa-fw fa-angle-down d-none d-sm-inline-block ml-1 mt-1"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-md dropdown-menu-right p-0 border-0" aria-labelledby="page-header-user-dropdown">
                             <div class="p-3 text-center bg-primary-dark rounded-top">
-                                <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('oneui/src/assets/media/avatars/avatar10.jpg') }}" alt="">
+                                <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('media/avatars/avatar10.jpg') }}" alt="">
                                 <p class="mt-2 mb-0 text-white font-w500">{{ Auth::user()->name }}</p>
                                 {{-- <p class="mb-0 text-white-50 font-size-sm">Web Developer</p> --}}
                             </div>
