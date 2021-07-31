@@ -12,6 +12,7 @@ Route::group(
         Route::put('/users/{user_id}', 'UserController@update')->name('users.update');
         Route::get('/users/{user_id}', 'UserController@destroy')->name('users.destroy');
 
+        Route::get('/tasks', 'TaskController@index');
         Route::post('/tasks', 'TaskController@store');
         Route::put('/tasks/{task_id}', 'TaskController@update');
         Route::delete('/tasks/{task_id}', 'TaskController@destroy');

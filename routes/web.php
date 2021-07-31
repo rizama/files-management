@@ -30,5 +30,5 @@ Auth::routes();
 
 Route::get('/dashboard', 'HomeController@index')->name('dashboard');
 
-include('backend.php');
 include('frontend.php');
+include('backend.php');
