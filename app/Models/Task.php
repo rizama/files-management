@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
@@ -15,5 +16,15 @@ class Task extends Model
     public function files()
     {
         return $this->hasMany(File::class, 'task_id', 'id');
+    }
+
+    /**
+     * The responsible_person that belong to the Task
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function responsible_person()
+    {
+        return $this->belongsToMany(User::class, 'task_user', 'task_id', 'user_id');
     }
 }
