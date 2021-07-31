@@ -269,6 +269,19 @@ class TaskController extends Controller
         }
     }
 
+    public function send_file_task(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'task_id' => 'required|string',
+                'file' => 'required|string'
+            ]);
+
+        } catch (\Exception $e) {
+            dd($e);
+        }
+    }
+
     public function upload_to_local($task, $file, $custom_name)
     {
         $filename = $file->getClientOriginalName();
