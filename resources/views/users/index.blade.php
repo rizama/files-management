@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables/buttons-bs4/buttons.bootstrap4.min.css') }}">
 @endsection
 
+@section('page-title')
+    Manajemen Pengguna
+@endsection
 
 @section('content')
     @if (session()->has('flash_notification.success'))
@@ -80,13 +83,16 @@
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <a class="btn btn-sm btn-light js-tooltip-enabled"
+                                    <a class="btn btn-sm btn-warning"
                                         href="{{ url('/users/edit/').'/'.encrypt($user->id) }}"
-                                        data-toggle="tooltip" title="" data-original-title="Ubah Pengguna">
+                                        data-animation="true" data-toggle="tooltip"
+                                        title="Ubah Pengguna" data-original-title="Ubah Pengguna"
+                                        style="margin-right: 3px"
+                                    >
                                         <i class="fa fa-fw fa-pencil-alt"></i>
                                     </a>
                                     @if($user->role->code !== 'superadmin')
-                                        <a class="btn btn-sm btn-light js-tooltip-enabled js-swal-confirm"
+                                        <a class="btn btn-sm btn-danger js-swal-confirm"
                                             href="{{ route('users.destroy', encrypt($user->id)) }}"
                                             data-toggle="tooltip" title="" data-original-title="Hapus Pengguna">
                                             <i class="fa fa-fw fa-times"></i>

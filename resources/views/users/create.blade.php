@@ -4,6 +4,14 @@
 User Manajemen - SIMANTAP
 @endsection
 
+@section('page-title')
+    Manajemen Pengguna
+@endsection
+
+@section('child-breadcrumb')
+    Buat Pengguna
+@endsection
+
 @section('content')
 <div class="block block-rounded">
     <div class="block-header">

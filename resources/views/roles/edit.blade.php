@@ -4,6 +4,14 @@
     Role Manajemen - SIMANTAP
 @endsection
 
+@section('page-title')
+    Manajemen Role
+@endsection
+
+@section('child-breadcrumb')
+    Ubah Role
+@endsection
+
 @section('content')
     <div class="block block-rounded">
         <div class="block-header">
