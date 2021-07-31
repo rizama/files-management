@@ -4,6 +4,10 @@
     Role Manajemen - SIMANTAP
 @endsection
 
+@section('page-title')
+    Manajemen Role
+@endsection
+
 @section('css')
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables/dataTables.bootstrap4.css') }}">
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables/buttons-bs4/buttons.bootstrap4.min.css') }}">
@@ -70,7 +74,7 @@
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <a class="btn btn-sm btn-light js-tooltip-enabled"
+                                    <a class="btn btn-sm btn-warning"
                                         href="{{ url('/roles/edit/').'/'.encrypt($role->id) }}"
                                         data-toggle="tooltip" title="" data-original-title="Ubah Role">
                                         <i class="fa fa-fw fa-pencil-alt"></i>

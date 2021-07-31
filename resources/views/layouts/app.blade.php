@@ -25,10 +25,12 @@
 
     <!-- Theme Styles -->
     <link href="{{ asset('css/oneui.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('js/plugins/sweetalert2/sweetalert2.min.css') }}">
+
+    @yield('css')
 
     <!-- Custom Styles -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-    @yield('css')
 
     @yield('js_before')
 </head>
@@ -162,6 +164,33 @@
 
         <!-- Main Container -->
         <main id="main-container">
+            <div class="bg-body-light">
+                <div class="content content-full">
+                    <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
+                        <h1 class="flex-sm-fill h3 my-2">
+                            @hasSection('child-breadcrumb')
+                                @yield('child-breadcrumb')
+                            @endif
+                            @sectionMissing('child-breadcrumb')
+                                @yield('page-title', 'Halaman') 
+                            @endif
+                            @hasSection('info-page-title')
+                                <small class="d-block d-sm-inline-block mt-2 mt-sm-0 font-size-base font-w400 text-muted">@yield('info-title')</small>
+                            @endif
+                        </h1>
+                        @hasSection('child-breadcrumb')
+                            <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
+                                <ol class="breadcrumb breadcrumb-alt">
+                                    <li class="breadcrumb-item" aria-current="page">
+                                        <a class="link-fx" href="{{ url()->previous() }}">@yield('page-title')</a>
+                                    </li>
+                                    <li class="breadcrumb-item">@yield('child-breadcrumb')</li>
+                                </ol>
+                            </nav>
+                        @endif
+                    </div>
+                </div>
+            </div>
             <div class="content" style="padding-top: 1rem;">
                 @yield('content')
             </div>
@@ -189,6 +218,8 @@
 
     <!-- Scripts -->
     {{-- <script src="{{ asset('js/app.js') }}" defer></script> --}}
+    <script src="{{ asset('js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+    <script src="{{ asset('js/swal2.js') }}"></script>
     @yield('js_after')
 </body>
 
