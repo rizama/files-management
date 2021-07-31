@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Task;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -77,5 +78,15 @@ class User extends Authenticatable
     public function file_public()
     {
         return $this->hasMany(Models\File::class, 'created_by', 'id');
+    }
+
+    /**
+     * The responsible_tasks that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function responsible_tasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user', 'user_id', 'task_id');
     }
 }
