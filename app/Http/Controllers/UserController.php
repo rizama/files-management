@@ -37,10 +37,13 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles = Role::all();
-        $ret['roles'] = $roles;
-
-        return view('users.create', $ret);
+        try {
+            $roles = Role::all();
+            $ret['roles'] = $roles;
+            return view('users.create', $ret);
+        } catch (\Exception $e) {
+            return abort(500);
+        }
     }
 
     public function store(Request $request)
