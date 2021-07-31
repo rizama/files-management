@@ -21,4 +21,6 @@ Route::group(
         Route::get('/files/get-s3', 'FileController@get_s3_file');
 
         Route::put('/roles/{role_id}', 'RoleController@update')->name('roles.update');
+
+        Route::get('/search', 'SearchController@search')->name('do.search');
 });
