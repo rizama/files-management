@@ -10,9 +10,9 @@
             <h3 class="block-title">Ubah Role</h3>
         </div>
         <div class="block-content block-content-full">
-            <form action="{{ route('users.store') }}" method="POST">
+            <form action="{{ route('roles.update', encrypt($role->id)) }}" method="POST">
                 @csrf
-                <input type="text" id="code" name="code" required value={{ $role->code }} hidden>
+                @method('PUT')
                 <div class="row push">
                     <div class="col-lg-12">
                         <div class="form-group">

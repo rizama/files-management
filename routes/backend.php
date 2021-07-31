@@ -18,4 +18,6 @@ Route::group(
 
         Route::get('/files/get-local', 'FileController@get_local_file');
         Route::get('/files/get-s3', 'FileController@get_s3_file');
+
+        Route::put('/roles/{role_id}', 'RoleController@update')->name('roles.update');
 });
