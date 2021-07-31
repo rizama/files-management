@@ -8,11 +8,25 @@ use \Illuminate\Support\Facades\Validator;
 
 use App\Models\Task;
 use App\Models\File;
+use App\Models\TaskUser;
 use Auth;
 use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+
+            if ($this->user->role->code == 'superadmin') {
+                abort(404);
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +34,8 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
+        $tasks = Task::with('responsible_person')->get();
+        dd($tasks);
     }
 
     /**
@@ -48,30 +63,32 @@ class TaskController extends Controller
                 'description' => 'required|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable',
-                'default_file' => 'nullable|mimes:pdf,xlx,csv,doc,docx,ppt,pptx,rtf,txt'
+                'default_file' => 'nullable|mimes:pdf,xlx,csv,doc,docx,ppt,pptx,rtf,txt',
+                'responsible_person' => 'nullable|string',
+                'custom_name' => 'nullable|string'
             ]);
     
             if ($validator->fails()) {
                 return $validator->errors();
             }
 
-            $STATUS_APPROVAL = 1;
-
             $task = new Task;
             $task->created_by = Auth::id();
             $task->name = $request->name;
             $task->description = $request->description;
             $task->is_history_file_active = (int)$request->is_history_active;
-            $task->assign_to = $request->assign_to;
-            $task->status_approve = $STATUS_APPROVAL;
+            $task->assign_to = $request->responsible_person;
             $task->save();
 
+            $responsible_ids = json_decode($request->responsible_person);
+            $task->responsible_person()->attach($responsible_ids);
+
             if ($request->hasFile('default_file')) {
-                $this->upload_to_s3($task, $request->file('default_file'));
+                $this->upload_to_s3($task, $request->file('default_file'), $request->custom_name);
             }
 
             DB::commit();
-            
+
             return encrypt($task->id);
 
         } catch (\Exception $e) {
@@ -126,7 +143,10 @@ class TaskController extends Controller
                 'name' => 'required|string',
                 'description' => 'required|string',
                 'is_history_active' => 'required',
-                'default_file' => 'nullable|mimes:pdf,xlx,csv,doc,docx,ppt,pptx,rtf,txt'
+                'assign_to' => 'nullable|string',
+                'default_file' => 'nullable|mimes:pdf,xlx,csv,doc,docx,ppt,pptx,rtf,txt',
+                'responsible_person' => 'nullable|string',
+                'custom_name' => 'nullable|string'
             ]);
 
             if ($validator->fails()) {
@@ -149,13 +169,13 @@ class TaskController extends Controller
 
                     // Upload new File
                     if ($request->hasFile('default_file')) {
-                        $this->upload_to_s3($task, $request->file('default_file'));
+                        $this->upload_to_s3($task, $request->file('default_file'), $request->custom_name);
                     }
 
                 } else {
                     // Upload new File
                     if ($request->hasFile('default_file')) {
-                        $this->upload_to_s3($task, $request->file('default_file'));
+                        $this->upload_to_s3($task, $request->file('default_file'), $request->custom_name);
                     }
                 }
             }
@@ -163,8 +183,29 @@ class TaskController extends Controller
             $task->name = $request->name;
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
+            $task->assign_to = $request->responsible_person;
             $task->save();
+
+            $responsible_person = TaskUser::where('task_id', $task->id)->get();
             
+            $responsible_ids = json_decode($request->responsible_person);
+            
+            $existing_responsibles = [];
+            foreach ($responsible_person as $index => $person) {
+                $existing_responsibles[] = $person['user_id'];
+            }
+
+            $responsible_diff = array_diff($existing_responsibles, $responsible_ids);
+
+            if (count($responsible_diff)) {
+                # delete old
+                $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
+                $responsible_person_will_delete->delete();
+
+                # save new
+                $task->responsible_person()->attach($responsible_ids);
+            }
+
             DB::commit();
 
             return encrypt($task->id);
@@ -228,10 +269,14 @@ class TaskController extends Controller
         }
     }
 
-    public function upload_to_local($task, $file)
+    public function upload_to_local($task, $file, $custom_name)
     {
         $filename = $file->getClientOriginalName();
-        $original_name = pathinfo($filename, PATHINFO_FILENAME);
+        if ($custom_name) {
+            $original_name = $custom_name;
+        } else {
+            $original_name = pathinfo($filename, PATHINFO_FILENAME);
+        }
         
         $mime_type = $file->getMimeType();
         $extension = $file->getClientOriginalExtension();
@@ -260,10 +305,14 @@ class TaskController extends Controller
         $file_upload->save();
     }
 
-    public function upload_to_s3($task, $file)
+    public function upload_to_s3($task, $file, $custom_name)
     {
         $filename = $file->getClientOriginalName();
-        $original_name = pathinfo($filename, PATHINFO_FILENAME);
+        if ($custom_name) {
+            $original_name = $custom_name;
+        } else {
+            $original_name = pathinfo($filename, PATHINFO_FILENAME);
+        }
 
         $mime_type = $file->getMimeType();
         $extension = $file->getClientOriginalExtension();
