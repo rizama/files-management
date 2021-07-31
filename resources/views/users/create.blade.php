@@ -24,14 +24,14 @@ User Manajemen - SIMANTAP
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="name">Nama <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Masukan Nama" required>
+                        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Masukan Nama" required value="{{ old('name') }}">
                         @error('name')
                             <span style="color: red">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="form-group">
                         <label for="email">Email <span class="text-danger">*</span></label></label>
-                        <input type="email" class="form-control @error('password') is-invalid @enderror" id="email" name="email" placeholder="Masukan Emai" required autocomplete="off">
+                        <input type="email" class="form-control @error('password') is-invalid @enderror" id="email" name="email" placeholder="Masukan Emai" required autocomplete="off" value="{{ old('email') }}">
                         @error('email')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>

@@ -25,7 +25,7 @@ User Manajemen - SIMANTAP
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="name">Nama <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukan Nama" required value="{{ $user->name }}">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukan Nama" required value="{{ old('name', $user->name) }}">
                         @error('name')
                             <span style="color: red">{{ $message }}</span>
                         @enderror
@@ -41,7 +41,7 @@ User Manajemen - SIMANTAP
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="email">Email <span class="text-danger">*</span></label></label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Masukan Emai" required value="{{ $user->email }}">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Masukan Emai" required value="{{ old('email', $user->email) }}">
                         @error('email')
                             <span style="color: red">{{ $message }}</span>
                         @enderror

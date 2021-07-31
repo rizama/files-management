@@ -26,7 +26,7 @@
                         <div class="form-group">
                             <label for="name">Nama <span class="text-danger">*</span></label></label>
                             <input type="name" class="form-control" id="name" name="name" placeholder="Masukan Nama"
-                                required value={{ $role->name }}>
+                                required value="{{ old('name', $role->name) }}">
                             @error('name')
                                 <span style="color: red">{{ $message }}</span>
                             @enderror
@@ -34,7 +34,7 @@
                         <div class="form-group">
                             <label for="description">Deskripsi <span class="text-danger">*</span></label></label>
                             <textarea type="description" class="form-control" id="description" name="description"
-                                placeholder="Masukan Emai" required value=>{{ $role->description }}</textarea>
+                                placeholder="Masukan Emai" required value>{{ old('description', $role->description) }}</textarea>
                             @error('description')
                                 <span style="color: red">{{ $message }}</span>
                             @enderror
