@@ -16,17 +16,17 @@
 
     <!-- Icons -->
     <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
-    <link rel="shortcut icon" href="{{ asset('oneui/src/assets/media/favicons/favicon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('media/favicons/favicon.png') }}">
     <link rel="icon" type="image/png" sizes="192x192"
-        href="{{ asset('oneui/src/assets/media/favicons/favicon-192x192.png') }}">
+        href="{{ asset('media/favicons/favicon-192x192.png') }}">
     <link rel="apple-touch-icon" sizes="180x180"
-        href="{{ asset('oneui/src/assets/media/favicons/apple-touch-icon-180x180.png') }}">
+        href="{{ asset('media/favicons/apple-touch-icon-180x180.png') }}">
     <!-- END Icons -->
 
     <!-- Stylesheets -->
     <!-- Fonts and OneUI framework -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" id="css-main" href="{{ asset('oneui/src/assets/css/oneui.min.css') }}">
+    <link rel="stylesheet" id="css-main" href="{{ asset('css/oneui.min.css') }}">
 
     <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
     <!-- END Stylesheets -->
@@ -131,14 +131,14 @@
         <!-- END Main Container -->
     </div>
     <!-- END Page Container -->
-    <script src="{{ asset('oneui/src/assets/js/oneui.core.min.js') }}"></script>
-    <script src="{{ asset('oneui/src/assets/js/oneui.app.min.js') }}"></script>
+    <script src="{{ asset('js/oneui.core.min.js') }}"></script>
+    <script src="{{ asset('js/oneui.app.js') }}"></script>
 
     <!-- Page JS Plugins -->
-    <script src="{{ asset('oneui/src/assets/js/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
 
     <!-- Page JS Code -->
-    <script src="{{ asset('oneui/src/assets/js/pages/op_auth_signin.min.js') }}"></script>
+    {{-- <script src="{{ asset('js/pages/op_auth_signin.min.js') }}"></script> --}}
 </body>
 
 </html>
