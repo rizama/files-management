@@ -34,11 +34,15 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with('responsible_person','files')->get();
-        $ret['tasks'] = $tasks;
-        $ret['user'] = Auth::user();
-
-        return view('tasks.index', $ret);
+        try {
+            $tasks = Task::with('responsible_person','files')->orderBy('updated_at', 'desc')->get();
+            $ret['tasks'] = $tasks;
+            $ret['user'] = Auth::user();
+    
+            return view('tasks.index', $ret);
+        } catch (\Exception $e) {
+            return abort(500);
+        }
     }
 
     /**
@@ -49,7 +53,10 @@ class TaskController extends Controller
     public function create()
     {
         try {
-            $users = User::all();
+            $users = User::with(['role'])->whereHas('role', function($q){
+                $q->where('code', '!=', 'superadmin');
+            })->get();
+
             $ret['users'] = $users;
             return view('tasks.create', $ret);
         } catch (\Exception $e) {
@@ -86,7 +93,7 @@ class TaskController extends Controller
             $task->name = $request->name;
             $task->description = $request->description ?? '';
             $task->is_history_file_active = (int)$request->is_history_active;
-            $task->assign_to = json_encode($request->responsible_person);
+            $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
             $task->save();
 
             $responsible_ids = $request->responsible_person;
@@ -98,7 +105,8 @@ class TaskController extends Controller
 
             DB::commit();
 
-            return redirect()->route('tasks.create');
+            $request->session()->flash('task.created', 'Tugas telah dibuat!');
+            return redirect()->route('tasks.index');
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -141,7 +149,10 @@ class TaskController extends Controller
             throw new \Exception($e->getMessage());
         }
         $task = Task::where('id', $decrypted_id)->firstOrFail();
-        $users = User::all();
+        $users = User::with(['role'])->whereHas('role', function($q){
+            $q->where('code', '!=', 'superadmin');
+        })->get();
+
         $ret['users'] = $users;
         $ret['task'] = $task;
         return view('tasks.edit', $ret);
@@ -210,7 +221,7 @@ class TaskController extends Controller
             $task->name = $request->name;
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
-            $task->assign_to = json_encode($request->responsible_person) ?? [];
+            $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
             $task->save();
 
             $responsible_person = TaskUser::where('task_id', $task->id)->get();
@@ -234,6 +245,7 @@ class TaskController extends Controller
 
             DB::commit();
 
+            $request->session()->flash('task.updated', 'Tugas telah diubah!');
             return redirect()->route('tasks.index');
 
         } catch (\Exception $e) {
