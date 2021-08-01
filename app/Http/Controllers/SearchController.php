@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
+    public function index()
+    {
+        return view('searches.index');
+    }
+
     public function search(Request $request)
     {
         $keyword = $request->q;

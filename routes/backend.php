@@ -22,5 +22,7 @@ Route::group(
 
         Route::put('/roles/{role_id}', 'RoleController@update')->name('roles.update');
 
+        Route::get('/searches', 'SearchController@index');
+
         Route::get('/search', 'SearchController@search')->name('do.search');
 });
