@@ -80,8 +80,14 @@
                             </li>
                             <li class="nav-main-item">
                                 <a class="nav-main-link {{ Request::is('tasks*') ? 'active' : '' }}" href="{{ url('/tasks') }}">
-                                    <i class="nav-main-link-icon si si-speedometer"></i>
+                                    <i class="nav-main-link-icon si si-briefcase"></i>
                                     <span class="nav-main-link-name">Tugas</span>
+                                </a>
+                            </li>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link {{ Request::is('searches*') ? 'active' : '' }}" href="{{ url('/searches') }}">
+                                    <i class="nav-main-link-icon si si-magnifier"></i>
+                                    <span class="nav-main-link-name">Pencarian</span>
                                 </a>
                             </li>
                         @endif
@@ -181,7 +187,7 @@
                                 @yield('page-title', 'Halaman') 
                             @endif
                             @hasSection('info-page-title')
-                                <small class="d-block d-sm-inline-block mt-2 mt-sm-0 font-size-base font-w400 text-muted">@yield('info-title')</small>
+                                <small class="d-block d-sm-inline-block mt-2 mt-sm-0 font-size-base font-w400 text-muted">@yield('info-page-title')</small>
                             @endif
                         </h1>
                         @hasSection('child-breadcrumb')

@@ -111,11 +111,11 @@
             </tbody>
             <tbody class="font-size-sm">
                 <tr>
-                    <td class="text-center"></td>
+                    <td class="text-center"><span class="badge badge-warning">Dikerjakan</span></td>
                     <td colspan="5" class="font-w600 font-size-sm">Tugas Menggambar</td>
                 </tr>
                 <tr>
-                    <td class="text-center"></td>
+                    <td class="text-center"><span class="badge badge-success">Selesai</span></td>
                     <td colspan="5" class="font-w600 font-size-sm">Tugas Menulis</td>
                 </tr>
             </tbody>
