@@ -19,4 +19,8 @@ Route::group(
         Route::get('/tasks', 'TaskController@index')->name('tasks.index');
         Route::get('/tasks/create', 'TaskController@create')->name('tasks.create');
         Route::get('/tasks/edit/{id}', 'TaskController@edit')->name('tasks.edit');
+        Route::get('/tasks/show/{id}', 'TaskController@show')->name('tasks.show');
+
+        //Searches
+        Route::get('/searches', 'SearchController@index')->name('searches.index');
 });

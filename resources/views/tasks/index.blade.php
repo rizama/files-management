@@ -65,7 +65,8 @@
                         <th>Nama</th>
                         <th>Deskripsi</th>
                         <th>Riwayat File</th>
-                        <th>Aksi</th>
+                        <th>Ditugaskan Ke</th>
+                        <th class="disable-sorting">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,8 +83,19 @@
                                 
                                 <span class="badge {{ $task->is_history_file_active === 1 ? 'badge-success' : 'badge-danger' }}">{{ $task->is_history_file_active === 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
                             </td>
+                            <td class="font-w600 font-size-sm">
+                                @foreach ($task->responsible_person as $responsible_person){{ $responsible_person->name }}{{ $loop->last ? '' : ', ' }}@endforeach
+                            </td>
                             <td>
                                 <div class="btn-group">
+                                    <a class="btn btn-sm btn-primary"
+                                        href="{{ url('/tasks/show/').'/'.encrypt($task->id) }}"
+                                        data-animation="true" data-toggle="tooltip"
+                                        title="Ubah Tugas" data-original-title="Lihat Detail Tugas"
+                                        style="margin-right: 3px"
+                                    >
+                                        <i class="fa fa-fw fa-eye"></i>
+                                    </a>
                                     <a class="btn btn-sm btn-warning"
                                         href="{{ url('/tasks/edit/').'/'.encrypt($task->id) }}"
                                         data-animation="true" data-toggle="tooltip"
