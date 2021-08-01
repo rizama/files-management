@@ -5,3 +5,17 @@
 .custom-file-label::after {
   content: 'Pilih File';
 }
+
+.block-file, .block-assign {
+  position: sticky;
+  height: auto;
+  display: block;
+}
+
+.block-file {
+  top: 70px;
+}
+
+.block-assign {
+  top: 220px;
+}

@@ -34,7 +34,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with('responsible_person')->get();
+        $tasks = Task::with('responsible_person','files')->get();
         $ret['tasks'] = $tasks;
         $ret['user'] = Auth::user();
 
@@ -114,8 +114,17 @@ class TaskController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
+    { 
+        try {
+            $decrypted_id = decrypt($id);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        $task = Task::with('responsible_person','files')->where('id', $decrypted_id)->firstOrFail();
+        $ret['task'] = $task;
+
+        return view('tasks.show', $ret);
+        
     }
 
     /**
