@@ -39,9 +39,9 @@
                     <div class="form-group">
                         <label for="name"></label>
                         <div class="custom-control custom-switch mb-1">
-                            <input type="hidden" name="is_history_active" value="{{old('is_history_active', $task->is_history_file_active)}}">
-                            <input type="checkbox" class="custom-control-input" id="is_history_active" name="is_history_active" {{ $task->is_history_file_active == 1 ? 'checked' : '' }}>
-                            <label class="custom-control-label" for="is_history_active">Aktifkan Riwayat File</label>
+                            <input type="checkbox" class="custom-control-input" id="checkbox_history_active" {{ $task->is_history_file_active == 1 ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="checkbox_history_active">Aktifkan Riwayat File</label>
+                            <input type="hidden" name="is_history_active" id="is_history_active" value="{{old('is_history_active', $task->is_history_file_active)}}">
                         </div>
                     </div>
                 </div>
@@ -105,8 +105,8 @@
         $('#default_file').change(function() {
             if($(this)[0]) $('#custom_name').prop('disabled', false);
         });
-        $('#is_history_active').click(function() {
-            $(this).val(this.checked ? 1 : 0);
+        $('#checkbox_history_active').click(function() {
+            $('#is_history_active').val(this.checked ? 1 : 0);
         });
     </script>
 @endsection
