@@ -14,7 +14,7 @@ class AddStatusApproveToTasksTable extends Migration
     public function up()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->integer('status_approve')->nullable();
+            $table->integer('status')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddStatusApproveToTasksTable extends Migration
     public function down()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->dropColumn('status_approve');
+            $table->dropColumn('status');
         });
     }
 }
