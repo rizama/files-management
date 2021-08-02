@@ -56,6 +56,7 @@ Route::group(
         Route::get('/tasks/edit/{id}', 'TaskController@edit')->name('tasks.edit');
         Route::put('/tasks/{id}', 'TaskController@update')->name('tasks.update');
         Route::get('/tasks/{id}', 'TaskController@destroy')->name('tasks.destroy');
+        Route::post('/tasks/{id}/send_file', 'TaskController@send_file_task')->name('tasks.send_file');
 
         // Files Route
         Route::get('/files/get-local', 'FileController@get_local_file');
