@@ -12,7 +12,7 @@ class File extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function status_approve()
+    public function status()
     {
         return $this->hasOne(StatusApprove::class, 'id', 'status_approve');
     }
