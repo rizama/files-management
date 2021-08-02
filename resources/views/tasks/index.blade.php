@@ -66,6 +66,7 @@
                         <th>Deskripsi</th>
                         <th>Riwayat File</th>
                         <th>Ditugaskan Ke</th>
+                        <th>Tanggal dibuat</th>
                         <th class="disable-sorting">Aksi</th>
                     </tr>
                 </thead>
@@ -80,18 +81,22 @@
                                 {{ $task->description }}
                             </td>
                             <td>
-                                
                                 <span class="badge {{ $task->is_history_file_active === 1 ? 'badge-success' : 'badge-danger' }}">{{ $task->is_history_file_active === 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
                             </td>
                             <td class="font-w600 font-size-sm">
-                                @foreach ($task->responsible_person as $responsible_person){{ $responsible_person->name }}{{ $loop->last ? '' : ', ' }}@endforeach
+                                @forelse ($task->responsible_person as $responsible_person)
+                                    {{ $responsible_person->name }}{{ $loop->last ? '' : ', ' }}
+                                @empty
+                                    Semua Staf
+                                @endforelse
                             </td>
+                            <td>{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y') }}</td>
                             <td>
                                 <div class="btn-group">
                                     <a class="btn btn-sm btn-primary"
                                         href="{{ url('/tasks/show/').'/'.encrypt($task->id) }}"
                                         data-animation="true" data-toggle="tooltip"
-                                        title="Ubah Tugas" data-original-title="Lihat Detail Tugas"
+                                        title="Lihat Detail Tugas" data-original-title="Lihat Detail Tugas"
                                         style="margin-right: 3px"
                                     >
                                         <i class="fa fa-fw fa-eye"></i>

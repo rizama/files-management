@@ -22,7 +22,7 @@
         <h3 class="block-title">Ubah Tugas</h3>
     </div>
     <div class="block-content block-content-full">
-        <form action="{{ route('tasks.update', encrypt($task->id)) }}" method="POST">
+        <form action="{{ route('tasks.update', encrypt($task->id)) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="row push">

@@ -57,7 +57,7 @@
     <div class="col-6 col-lg-3">
         <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
             <div class="block-content block-content-full">
-                <div class="font-size-h2 text-dark">5</div>
+                <div class="font-size-h2 text-warning">5</div>
             </div>
             <div class="block-content py-2 bg-body-light">
                 <p class="font-w600 font-size-sm text-muted mb-0">
@@ -80,9 +80,9 @@
                     <th style="width: 30px;"></th>
                     <th>Nama</th>
                     <th style="width: 15%;">Total</th>
-                    <th style="width: 15%;">Dikerjakan</th>
-                    <th style="width: 15%;">Menunggu</th>
                     <th style="width: 15%;">Selesai</th>
+                    <th style="width: 15%;">Menunggu</th>
+                    <th style="width: 15%;">Dikerjakan</th>
                 </tr>
             </thead>
             <tbody class="js-table-sections-header show table-active">
@@ -92,31 +92,31 @@
                     </td>
                     <td class="font-w600 font-size-sm">
                         <div class="py-1">
-                            Brian Cruz
+                            Septian
                         </div>
                     </td>
                     <td>
-                        <span class="badge badge-primary">10</span>
+                        <span class="badge badge-primary">20</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-success">10</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-dark">5</span>
                     </td>
                     <td>
                         <span class="badge badge-warning">5</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-info">2</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-success">3</span>
                     </td>
                 </tr>
             </tbody>
             <tbody class="font-size-sm">
                 <tr>
                     <td class="text-center"><span class="badge badge-warning">Dikerjakan</span></td>
-                    <td colspan="5" class="font-w600 font-size-sm">Tugas Menggambar</td>
+                    <td colspan="5" class="font-w600 font-size-sm">Perencanaan Bulan Agustus</td>
                 </tr>
                 <tr>
                     <td class="text-center"><span class="badge badge-success">Selesai</span></td>
-                    <td colspan="5" class="font-w600 font-size-sm">Tugas Menulis</td>
+                    <td colspan="5" class="font-w600 font-size-sm">Perencanaan Bulan Juli</td>
                 </tr>
             </tbody>
                         <tbody class="js-table-sections-header">
@@ -126,31 +126,31 @@
                     </td>
                     <td class="font-w600 font-size-sm">
                         <div class="py-1">
-                            Sam Cruz
+                            Dwi Cahyo
                         </div>
                     </td>
                     <td>
-                        <span class="badge badge-primary">10</span>
+                        <span class="badge badge-primary">15</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-success">8</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-dark">2</span>
                     </td>
                     <td>
                         <span class="badge badge-warning">5</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-info">2</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-success">3</span>
                     </td>
                 </tr>
             </tbody>
             <tbody class="font-size-sm">
                 <tr>
                     <td class="text-center"></td>
-                    <td colspan="5" class="font-w600 font-size-sm">Tugas Menggambar</td>
+                    <td colspan="5" class="font-w600 font-size-sm">Perencanaan Bulan Agustus</td>
                 </tr>
                 <tr>
                     <td class="text-center"></td>
-                    <td colspan="5" class="font-w600 font-size-sm">Tugas Menulis</td>
+                    <td colspan="5" class="font-w600 font-size-sm">Perencanaan Bulan Juli</td>
                 </tr>
             </tbody>
         </table>
