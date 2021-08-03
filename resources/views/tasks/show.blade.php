@@ -30,6 +30,15 @@
 </div>
 @endif
 
+@if (session()->has('file.approved'))
+<div class="alert alert-success alert-dismissable" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <p class="mb-0">{{ session('file.approved') }}</p>
+</div>
+@endif
+
 <div class="row push">
     <div class="col-lg-8">
         <div class="block block-rounded">
@@ -100,7 +109,7 @@
                                 <p>
                                     {{ $file['description'] }}
                                 </p>
-                                <a href="http://ciptakarya.pu.go.id/profil/profil/barat/jabar/bandung.pdf" target="_blank" class="btn btn-secondary">Unduh File</a>
+                                <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" target="_blank" class="btn btn-secondary">Unduh File</a>
                                 
                                 @if ($file->status['code'] == 'waiting')
                                 <div class="accordion mt-2" id="accordionExample">
@@ -112,25 +121,28 @@
                                                 </button>
                                             </h2>
                                         </div>
-                                        <div id="collapse-{{ $key }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                            <div class="card-body">
-                                                <div class="row push">
-                                                    <div class="col-lg-12">
-                                                        <div class="form-group">
-                                                            <label for="name">Catatan</label>
-                                                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Tambahkan Catatan (Opsional)" required>
-                                                            @error('name')
-                                                                <span style="color: red">{{ $message }}</span>
-                                                            @enderror
+                                        <form action="" method="POST" id="verification">
+                                            @csrf
+                                            <div id="collapse-{{ $key }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                                <div class="card-body">
+                                                    <div class="row push">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <label for="notes">Catatan</label>
+                                                                <input type="text" class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" placeholder="Tambahkan Catatan (Opsional)" required>
+                                                                @error('notes')
+                                                                    <span style="color: red">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-12 text-right">
-                                                        <button type="submit" class="btn btn-success" data-toggle="click-ripple">Setujui</button>
-                                                        <a href="#" class="btn btn-danger">Tolak</a>
+                                                        <div class="col-lg-12 text-right">
+                                                            <button class="btn btn-success approve-file" data-type="approve" href="{{ route('tasks.approve', encrypt($file->id)) }}">Setujui</button>
+                                                            <button class="btn btn-danger approve-file" data-type="reject">Tolak</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <form>
                                     </div>
                                 </div>
                                 @else 
@@ -195,7 +207,7 @@
                         </div>
                     </div>
                     <div class="col-lg-12">
-                        <a href="http://ciptakarya.pu.go.id/profil/profil/barat/jabar/bandung.pdf" target="_blank" class="btn btn-light btn-block">Unduh Contoh File</a>
+                        <a href="{{ route('download') }}?file={{ encrypt($default_file->id) }}&type=download" target="_blank" class="btn btn-light btn-block">Unduh Contoh File</a>
                     </div>
                 </div>
                 @else
@@ -219,6 +231,17 @@
         </div>
     </div>
 </div>
+
+<form action="" method="POST" id="approveForm">
+    @csrf
+    <input type="hidden" style="display: none;" id="notes_value" value="">
+    <input type="submit" style="display: none;">
+</form>
+
+<form action="" method="POST" id="rejectForm">
+    @csrf
+    <input type="submit" style="display: none;">
+</form>
 @endsection
 
 @section('js_after')
@@ -229,6 +252,30 @@
                 $('#description').prop('disabled', false);
                 $('.btn-submit').prop('disabled', false);
             }
+        });
+    </script>
+
+    <script type="text/javascript">
+        $('.approve-file').on('click', function(e){    
+            e.preventDefault();
+            let href = $(this).attr('href');
+            $('#verification').attr('action', href);
+            $('#verification').submit();
+
+            // swal({
+            //     title: "Are you sure to delete '"+ title +"'? This Will Delete Activation User too.",
+            //     text: "You will not be able to recover this data!",
+            //     type: "warning",
+            //     showCancelButton: true,
+            //     cancelButtonClass: "btn-default",
+            //     confirmButtonClass: "btn-danger",
+            //     confirmButtonText: "Delete",
+            //     closeOnConfirm: false
+            // },
+            // function(){
+            //     $('#deleteForm').attr('action', href);
+            //     $('#deleteForm').submit();
+            // })
         });
     </script>
 @endsection
