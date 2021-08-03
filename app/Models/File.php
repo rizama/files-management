@@ -28,6 +28,16 @@ class File extends Model
     }
 
     /**
+     * Get the user that owns the File
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by', 'id');
+    }
+
+    /**
      * Get the task that owns the File
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
