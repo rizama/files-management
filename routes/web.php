@@ -57,6 +57,7 @@ Route::group(
         Route::put('/tasks/{id}', 'TaskController@update')->name('tasks.update');
         Route::get('/tasks/{id}', 'TaskController@destroy')->name('tasks.destroy');
         Route::post('/tasks/{id}/send_file', 'TaskController@send_file_task')->name('tasks.send_file');
+        Route::post('/tasks/{id}/approve', 'TaskController@approve')->name('tasks.approve');
 
         // Files Route
         Route::get('/files/get-local', 'FileController@get_local_file');
@@ -64,5 +65,8 @@ Route::group(
 
         //Searches
         Route::get('/searches', 'SearchController@index')->name('searches.index');
-        Route::get('/search', 'SearchController@search')->name('do.search');        
+        Route::get('/search', 'SearchController@search')->name('do.search');     
+        
+        // File
+        Route::get('/download', 'FileController@download_file')->name('download');     
 });
