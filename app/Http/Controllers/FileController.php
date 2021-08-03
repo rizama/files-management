@@ -60,4 +60,38 @@ class FileController extends Controller
             dd($e);
         }
     }
+
+    public function download_file(Request $request)
+    {
+        try {
+            
+            try {
+                $decrypted_id = decrypt($request->file);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
+
+            $type = $request->type;
+            
+            $id = $decrypted_id;
+            $file = File::findOrFail($id);
+            $extension = pathinfo($file->new_name, PATHINFO_EXTENSION);
+            $filename = $file->original_name.".".$extension;
+
+            if ($type == 'download') {
+                return Storage::disk('s3')->download($file['path'], $filename);
+            } else if($type == 'url') {
+                return Storage::disk('s3')->url($file['path']);
+            } else {
+                return redirect()->back();
+            }
+
+
+        } catch (\Exception $e) {
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
+                return abort(404);
+            }
+            dd($e);
+        }
+    }
 }
