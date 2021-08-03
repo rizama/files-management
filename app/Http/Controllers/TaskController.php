@@ -375,7 +375,48 @@ class TaskController extends Controller
             return redirect()->route('tasks.show', encrypt($task->id));
 
         } catch (\Exception $e) {
-            dd($e);
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
+                return abort(404);
+            }
+
+            if ("The payload is invalid." == $e->getMessage()) {
+                return abort(404);
+            }
+            return abort(500);
+        }
+    }
+
+    public function approve(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $decrypted_id = decrypt($id);
+
+            $validator = Validator::make($request->all(), [
+                'notes' => 'nullable|string',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors());
+            }
+
+            $file = File::with('task')->findOrFail($decrypted_id);
+
+            // Update Files
+            $STAUS_APPROVE = 3; // approved
+
+            $file->status_approve = $STAUS_APPROVE; 
+            $file->notes = $request->notes; 
+            $file->verified_by = Auth::id();
+            $file->save();
+
+            DB::commit();
+            $request->session()->flash('file.approved', 'Dokumen disetujui!');
+            return redirect()->route('tasks.show', encrypt($file->task_id));
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw new \Exception($e->getMessage());
         }
     }
 
