@@ -55,7 +55,7 @@
                                             Masuk
                                         </h1>
                                         <h2 class="h6 font-w400 text-muted mb-3">
-                                            Sistem Management Tugas Perencanaan dan Pelaporan
+                                            Sistem Operasi Managemen Kerja Perencanaan
                                         </h2>
                                     </div>
                                     <!-- END Header -->
