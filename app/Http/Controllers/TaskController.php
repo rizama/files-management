@@ -420,6 +420,40 @@ class TaskController extends Controller
         }
     }
 
+    public function reject(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $decrypted_id = decrypt($id);
+
+            $validator = Validator::make($request->all(), [
+                'notes' => 'nullable|string',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors());
+            }
+
+            $file = File::with('task')->findOrFail($decrypted_id);
+
+            // Update Files
+            $STAUS_APPROVE = 4; // rejected
+
+            $file->status_approve = $STAUS_APPROVE; 
+            $file->notes = $request->notes; 
+            $file->verified_by = Auth::id();
+            $file->save();
+
+            DB::commit();
+            $request->session()->flash('file.reject', 'Dokumen ditolak!');
+            return redirect()->route('tasks.show', encrypt($file->task_id));
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     public function upload_to_local($task, $file, $custom_name)
     {
         $filename = $file->getClientOriginalName();

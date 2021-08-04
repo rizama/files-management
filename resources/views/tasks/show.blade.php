@@ -39,6 +39,15 @@
 </div>
 @endif
 
+@if (session()->has('file.reject'))
+<div class="alert alert-warning alert-dismissable" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <p class="mb-0">{{ session('file.reject') }}</p>
+</div>
+@endif
+
 <div class="row push">
     <div class="col-lg-8">
         <div class="block block-rounded">
@@ -109,42 +118,50 @@
                                 <p>
                                     {{ $file['description'] }}
                                 </p>
-                                <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" target="_blank" class="btn btn-secondary">Unduh File</a>
-                                
+                                <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" target="_blank" class="btn btn-secondary mb-2">Unduh File</a>
+
                                 @if ($file->status['code'] == 'waiting')
-                                <div class="accordion mt-2" id="accordionExample">
-                                    <div class="card">
-                                        <div class="card-header p-0" id="headingOne">
-                                            <h2 class="mb-0">
-                                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse-{{ $key }}" aria-expanded="true" aria-controls="collapse-{{ $key }}">
-                                                    Konfirmasi Dokumen
-                                                </button>
-                                            </h2>
-                                        </div>
-                                        <form action="" method="POST" id="verification">
-                                            @csrf
-                                            <div id="collapse-{{ $key }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                                <div class="card-body">
-                                                    <div class="row push">
-                                                        <div class="col-lg-12">
-                                                            <div class="form-group">
-                                                                <label for="notes">Catatan</label>
-                                                                <input type="text" class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" placeholder="Tambahkan Catatan (Opsional)" required>
-                                                                @error('notes')
-                                                                    <span style="color: red">{{ $message }}</span>
-                                                                @enderror
+                                    @if (Auth::user()->role->code == 'level_1')
+                                    <div class="accordion mt-2" id="accordionExample">
+                                        <div class="card">
+                                            <div class="card-header p-0" id="headingOne">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse-{{ $key }}" aria-expanded="true" aria-controls="collapse-{{ $key }}">
+                                                        Konfirmasi Dokumen
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <form action="" method="POST" id="verification">
+                                                @csrf
+                                                <div id="collapse-{{ $key }}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                                    <div class="card-body">
+                                                        <div class="row push">
+                                                            <div class="col-lg-12">
+                                                                <div class="form-group">
+                                                                    <label for="notes">Catatan</label>
+                                                                    <input type="text" class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" placeholder="Tambahkan Catatan (Opsional)" required>
+                                                                    @error('notes')
+                                                                        <span style="color: red">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-lg-12 text-right">
-                                                            <button class="btn btn-success approve-file" data-type="approve" href="{{ route('tasks.approve', encrypt($file->id)) }}">Setujui</button>
-                                                            <button class="btn btn-danger approve-file" data-type="reject">Tolak</button>
+                                                            <div class="col-lg-12 text-right">
+                                                                <button class="btn btn-success approve-file" data-type="approve" href="{{ route('tasks.approve', encrypt($file->id)) }}">Setujui</button>
+                                                                <button class="btn btn-danger reject-file" data-type="reject" href="{{ route('tasks.reject', encrypt($file->id)) }}">Tolak</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        <form>
+                                            <form>
+                                        </div>
                                     </div>
-                                </div>
+                                    @else
+                                    <div class="mt-2">
+                                        <div>
+                                            <span class="badge badge-info">Sedang Menunggu Konfirmasi</span>
+                                        </div>
+                                    </div>
+                                    @endif
                                 @else 
                                 <div class="mt-2">
                                     @php
@@ -261,21 +278,15 @@
             let href = $(this).attr('href');
             $('#verification').attr('action', href);
             $('#verification').submit();
+        });
+    </script>
 
-            // swal({
-            //     title: "Are you sure to delete '"+ title +"'? This Will Delete Activation User too.",
-            //     text: "You will not be able to recover this data!",
-            //     type: "warning",
-            //     showCancelButton: true,
-            //     cancelButtonClass: "btn-default",
-            //     confirmButtonClass: "btn-danger",
-            //     confirmButtonText: "Delete",
-            //     closeOnConfirm: false
-            // },
-            // function(){
-            //     $('#deleteForm').attr('action', href);
-            //     $('#deleteForm').submit();
-            // })
+    <script type="text/javascript">
+        $('.reject-file').on('click', function(e){    
+            e.preventDefault();
+            let href = $(this).attr('href');
+            $('#verification').attr('action', href);
+            $('#verification').submit();
         });
     </script>
 @endsection
