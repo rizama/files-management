@@ -57,7 +57,8 @@ Route::group(
         Route::put('/tasks/{id}', 'TaskController@update')->name('tasks.update');
         Route::get('/tasks/{id}', 'TaskController@destroy')->name('tasks.destroy');
         Route::post('/tasks/{id}/send_file', 'TaskController@send_file_task')->name('tasks.send_file');
-        Route::post('/tasks/{id}/approve', 'TaskController@approve')->name('tasks.approve');
+        Route::post('/tasks/{id}/approve/file', 'TaskController@approve')->name('tasks.approve');
+        Route::post('/tasks/{id}/reject/file', 'TaskController@reject')->name('tasks.reject');
 
         // Files Route
         Route::get('/files/get-local', 'FileController@get_local_file');
