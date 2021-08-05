@@ -21,7 +21,7 @@
     <div class="col-6 col-lg-3">
         <a class="block block-rounded block-link-shadow text-center" href="be_pages_ecom_orders.html">
             <div class="block-content block-content-full">
-                <div class="font-size-h2 text-primary">35</div>
+                <div class="font-size-h2 text-primary">{{ $task_total }}</div>
             </div>
             <div class="block-content py-2 bg-body-light">
                 <p class="font-w600 font-size-sm text-muted mb-0">
@@ -33,7 +33,7 @@
     <div class="col-6 col-lg-3">
         <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
             <div class="block-content block-content-full">
-                <div class="font-size-h2 text-success">20</div>
+                <div class="font-size-h2 text-success">{{ $task_done }}</div>
             </div>
             <div class="block-content py-2 bg-body-light">
                 <p class="font-w600 font-size-sm text-muted mb-0">
@@ -45,7 +45,7 @@
     <div class="col-6 col-lg-3">
         <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
             <div class="block-content block-content-full">
-                <div class="font-size-h2 text-dark">10</div>
+                <div class="font-size-h2 text-dark">{{ $task_waiting }}</div>
             </div>
             <div class="block-content py-2 bg-body-light">
                 <p class="font-w600 font-size-sm text-muted mb-0">
@@ -57,7 +57,7 @@
     <div class="col-6 col-lg-3">
         <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
             <div class="block-content block-content-full">
-                <div class="font-size-h2 text-warning">5</div>
+                <div class="font-size-h2 text-warning">{{ $task_progress }}</div>
             </div>
             <div class="block-content py-2 bg-body-light">
                 <p class="font-w600 font-size-sm text-muted mb-0">
