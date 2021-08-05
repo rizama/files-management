@@ -66,7 +66,6 @@ class HomeController extends Controller
                 $query->where('code', '!=', 'superadmin');
             })
             ->get();
-        dd($users);
 
         $res['task_total'] = count($tasks);
         $res['task_done'] = $done;
