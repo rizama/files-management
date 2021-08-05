@@ -50,9 +50,11 @@ class pageDialogs {
         jQuery('.js-swal-confirm').on('click', e => {
             e.preventDefault();
             var link = e.currentTarget.href;
+            var title = e.currentTarget.title;
+            var caption = e.currentTarget.dataset.caption;
             toast.fire({
-                title: 'Apakah anda yakin ?',
-                text: 'Data yang dihapus tidak dapat dikembalikan kembali',
+                title: title || 'Apakah anda yakin ?',
+                text: caption || 'Data yang dihapus tidak dapat dikembalikan kembali',
                 icon: 'warning',
                 showCancelButton: true,
                 customClass: {
@@ -71,14 +73,59 @@ class pageDialogs {
                     });
                 }
             }).then(result => {
-                console.log(result);
-                console.log(link);
                 if (result.isConfirmed) {
                     if (link) window.location.href = link;
                     toast.fire({
                         title: 'Terhapus!',
                         icon: 'success',
                         text: 'Data Berhasil dihapus.', 
+                        showConfirmButton: false,
+                    });
+                    // result.dismiss can be 'overlay', 'cancel', 'close', 'esc', 'timer'
+                } 
+                // else if (result.dismiss === 'cancel') {
+                //     toast.fire('Cancelled', 'Your imaginary file is safe :)', 'error');
+                // }
+            });
+        });
+
+        jQuery('.js-swal-confirm-with-form').on('click', e => {
+            e.preventDefault();
+            var link = e.currentTarget.href;
+            var title = e.currentTarget.title;
+            var caption = e.currentTarget.dataset.caption;
+            var form_id = e.currentTarget.dataset.form_id;
+            var success_text = e.currentTarget.dataset.success_text;
+            toast.fire({
+                title: title || 'Apakah anda yakin ?',
+                text: caption || '',
+                icon: 'info',
+                showCancelButton: true,
+                customClass: {
+                    confirmButton: 'btn btn-success m-1',
+                    cancelButton: 'btn btn-secondary m-1'
+                },
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Batal',
+                html: false,
+                closeOnConfirm: false,
+                preConfirm: e => {
+                    return new Promise(resolve => {
+                        setTimeout(() => {
+                            resolve();
+                        }, 50);
+                    });
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    if (form_id) {
+                        $('#'+form_id).attr('action', link);
+                        $('#'+form_id).submit();
+                    }
+                    toast.fire({
+                        title: 'Berhasil!',
+                        icon: 'success',
+                        text: success_text || '', 
                         showConfirmButton: false,
                     });
                     // result.dismiss can be 'overlay', 'cancel', 'close', 'esc', 'timer'

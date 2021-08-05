@@ -146,8 +146,16 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-12 text-right">
-                                                                <button class="btn btn-success approve-file" data-type="approve" href="{{ route('tasks.approve', encrypt($file->id)) }}">Setujui</button>
-                                                                <button class="btn btn-danger reject-file" data-type="reject" href="{{ route('tasks.reject', encrypt($file->id)) }}">Tolak</button>
+                                                                <a
+                                                                    class="btn btn-success approve-file js-swal-confirm-with-form"
+                                                                    data-type="approve"
+                                                                    href="{{ route('tasks.approve', encrypt($file->id)) }}"
+                                                                    title="Apakah anda yakin untuk menyetujui file ini ?"
+                                                                    data-caption="{{$file->original_name}} ({{$file->mime_type}})"
+                                                                    data-form_id="verification"
+                                                                    data-success_text="File Berhasil Disetujui"
+                                                                >Setujui</a>
+                                                                <a class="btn btn-danger reject-file js-swal-confirm" data-type="reject" href="{{ route('tasks.reject', encrypt($file->id)) }}">Tolak</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -273,12 +281,12 @@
     </script>
 
     <script type="text/javascript">
-        $('.approve-file').on('click', function(e){    
-            e.preventDefault();
-            let href = $(this).attr('href');
-            $('#verification').attr('action', href);
-            $('#verification').submit();
-        });
+        // $('.approve-file').on('click', function(e){    
+            // e.preventDefault();
+            // let href = $(this).attr('href');
+            // $('#verification').attr('action', href);
+            // $('#verification').submit();
+        // });
     </script>
 
     <script type="text/javascript">
