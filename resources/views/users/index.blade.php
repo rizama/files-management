@@ -65,7 +65,7 @@
                         <th>Nama</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Aksi</th>
+                        <th class="disable-sorting">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
