@@ -78,6 +78,7 @@ class TaskController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
+                'category_id' => 'nullable',
                 'description' => 'nullable|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable',
@@ -95,6 +96,7 @@ class TaskController extends Controller
             $task = new Task;
             $task->created_by = Auth::id();
             $task->name = $request->name;
+            $task->category_id = $request->category_id;
             $task->description = $request->description ?? '';
             $task->status = $ON_PROGRESS;
             $task->is_history_file_active = (int)$request->is_history_active;
@@ -105,7 +107,7 @@ class TaskController extends Controller
             $task->responsible_person()->attach($responsible_ids);
 
             if ($request->hasFile('default_file')) {
-                $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name);
+                $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
             }
 
             DB::commit();
@@ -195,6 +197,7 @@ class TaskController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
+                'category_id' => 'nullable',
                 'description' => 'required|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable|string',
@@ -225,18 +228,19 @@ class TaskController extends Controller
 
                     // Upload new File
                     if ($request->hasFile('default_file')) {
-                        $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name);
+                        $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
                     }
 
                 } else {
                     // Upload new File
                     if ($request->hasFile('default_file')) {
-                        $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name);
+                        $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
                     }
                 }
             }
 
             $task->name = $request->name;
+            $task->category_id = $request->category_id;
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
             $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
@@ -333,6 +337,7 @@ class TaskController extends Controller
                 'custom_name' => 'nullable|string',
                 'description' => 'nullable|string',
                 'task_file' => 'required|mimes:'.config('app.accept_file_be'),
+                'category_id' => 'nullable'
             ]);
 
             if ($validator->fails()) {
@@ -349,6 +354,7 @@ class TaskController extends Controller
 
             $custom_name = $request->custom_name;
             $description = $request->description;
+            $category_id = $request->category_id;
 
             if (!$task->is_history_file_active) {
                 // Delete Old File
@@ -364,13 +370,13 @@ class TaskController extends Controller
 
                 // Upload new File
                 if ($request->hasFile('task_file')) {
-                    $this->upload_to_s3($task, $request->file('task_file'), $custom_name, $description);
+                    $this->upload_to_s3($task, $request->file('task_file'), $custom_name, $description, $category_id);
                 }
 
             } else {
                 // Upload new File
                 if ($request->hasFile('task_file')) {
-                    $this->upload_to_s3($task, $request->file('task_file'), $custom_name, $description);
+                    $this->upload_to_s3($task, $request->file('task_file'), $custom_name, $description, $category_id);
                 }
             }
 
@@ -395,6 +401,7 @@ class TaskController extends Controller
             $validator = Validator::make($request->all(), [
                 'note_name' => 'required|string',
                 'note_content' => 'required|string',
+                'category_id' => 'nullable'
             ]);
 
             if ($validator->fails()) {
@@ -422,11 +429,11 @@ class TaskController extends Controller
                 }
 
                 // Upload new File
-                $this->upload_note_to_s3($task, $request->note_name, $request->note_content);
+                $this->upload_note_to_s3($task, $request->note_name, $request->note_content, $request->category_id);
 
             } else {
                 // Upload new File
-                $this->upload_note_to_s3($task, $request->note_name, $request->note_content);
+                $this->upload_note_to_s3($task, $request->note_name, $request->note_content, $request->category_id);
             }
 
             $request->session()->flash('task.file_uploaded', 'Dokumen berhasil diunggah!');
@@ -546,7 +553,7 @@ class TaskController extends Controller
         $file_upload->save();
     }
 
-    public function upload_file_default_to_s3($task, $file, $custom_name)
+    public function upload_file_default_to_s3($task, $file, $custom_name, $category_id)
     {
         $filename = $file->getClientOriginalName();
         if ($custom_name) {
@@ -569,6 +576,7 @@ class TaskController extends Controller
         $file_upload->task_id = $task->id;
         $file_upload->status_approve = $STATUS_APPROVAL;
         $file_upload->created_by = Auth::id();
+        $file_upload->category_id = $category_id;
         $file_upload->original_name = $original_name;
         $file_upload->description = 'Default File';
         $file_upload->mime_type = $mime_type;
@@ -579,7 +587,7 @@ class TaskController extends Controller
         $file_upload->save();
     }
 
-    public function upload_to_s3($task, $file, $custom_name, $description)
+    public function upload_to_s3($task, $file, $custom_name, $description, $category_id)
     {
         $filename = $file->getClientOriginalName();
         if ($custom_name) {
@@ -602,6 +610,7 @@ class TaskController extends Controller
         $file_upload->task_id = $task->id;
         $file_upload->status_approve = $STATUS_APPROVAL;
         $file_upload->created_by = Auth::id();
+        $file_upload->category_id = $category_id;
         $file_upload->original_name = $original_name;
         $file_upload->description = $description;
         $file_upload->mime_type = $mime_type;
@@ -612,7 +621,7 @@ class TaskController extends Controller
         $file_upload->save();
     }
 
-    public function upload_note_to_s3($task, $note_name, $note_content)
+    public function upload_note_to_s3($task, $note_name, $note_content, $category_id)
     {
         $filename = $note_name;
 
@@ -630,6 +639,7 @@ class TaskController extends Controller
         $file_upload->task_id = $task->id;
         $file_upload->status_approve = $STATUS_APPROVAL;
         $file_upload->created_by = Auth::id();
+        $file_upload->category_id = $category_id;
         $file_upload->original_name = $filename;
         $file_upload->description = $note_content;
         $file_upload->mime_type = $mime_type;
