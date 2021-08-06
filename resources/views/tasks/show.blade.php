@@ -72,6 +72,7 @@
                         </div>
                         <form action="{{ route('tasks.send_file', encrypt($task->id)) }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            <input type="hidden" name="category_id" value="{{$task->category_id}}">
                             <div class="block-content block-content-full">
                                 <div class="col-lg-12">
                                     <div class="form-group row">
@@ -104,7 +105,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 text-right">
-                                        <button type="submit" class="btn btn-primary btn-submit" data-toggle="click-ripple" disabled>Unggah</button>
+                                        <button type="submit" class="btn btn-primary btn-submit btn-file" data-toggle="click-ripple" disabled>Unggah</button>
                                     </div>
                                 </div>
                             </div>
@@ -116,6 +117,7 @@
                         </div>
                         <form action="{{ route('tasks.send_note', encrypt($task->id)) }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            <input type="hidden" name="category_id" value="{{$task->category_id}}">
                             <div class="block-content block-content-full">
                                 <div class="col-lg-12">
                                     <div class="form-group">
@@ -135,7 +137,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 text-right">
-                                        <button type="submit" class="btn btn-primary btn-submit" data-toggle="click-ripple">Unggah</button>
+                                        <button type="submit" class="btn btn-primary btn-submit" data-toggle="click-ripple" id="btn-note" disabled>Unggah</button>
                                     </div>
                                 </div>
                             </div>
@@ -335,18 +337,28 @@
             if($(this)[0]) {
                 $('#custom_name').prop('disabled', false);
                 $('#description').prop('disabled', false);
-                $('.btn-submit').prop('disabled', false);
+                $('.btn-file').prop('disabled', false);
             }
         });
     </script>
 
     <script type="text/javascript">
-        // $('.approve-file').on('click', function(e){    
-            // e.preventDefault();
-            // let href = $(this).attr('href');
-            // $('#verification').attr('action', href);
-            // $('#verification').submit();
-        // });
+        $('#note_name').change(function() {
+            if($('#note_name').val() && $('#note_content').val()) {
+                $('#btn-note').prop('disabled', false);
+            }
+            else {
+                $('#btn-note').prop('disabled', true);
+            }
+        });
+        $('#note_content').change(function() {
+            if($('#note_name').val() && $('#note_content').val()) {
+                $('#btn-note').prop('disabled', false);
+            }
+            else {
+                $('#btn-note').prop('disabled', true);
+            }
+        });
     </script>
 
     {{-- <script type="text/javascript">
