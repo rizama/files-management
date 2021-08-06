@@ -56,7 +56,7 @@
                         <th>Nama</th>
                         <th>Kode</th>
                         <th>Deskripsi</th>
-                        <th>Aksi</th>
+                        <th class="disable-sorting">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
