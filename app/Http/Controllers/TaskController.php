@@ -81,7 +81,7 @@ class TaskController extends Controller
                 'description' => 'nullable|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable',
-                'default_file' => 'nullable|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
+                'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
             ]);
@@ -143,7 +143,10 @@ class TaskController extends Controller
         }])
         ->findOrFail($decrypted_id);
         
+        $files = File::where('status_approve', 3)->orWhere('is_default', 1)->get();
+
         $ret['task'] = $task;
+        $ret['files'] = $files;
         $ret['default_file'] = $default_file->files ? $default_file->files[0] : null;
         return view('tasks.show', $ret);
         
@@ -195,7 +198,7 @@ class TaskController extends Controller
                 'description' => 'required|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable|string',
-                'default_file' => 'nullable|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
+                'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
             ]);
@@ -329,7 +332,7 @@ class TaskController extends Controller
             $validator = Validator::make($request->all(), [
                 'custom_name' => 'nullable|string',
                 'description' => 'nullable|string',
-                'task_file' => 'required|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
+                'task_file' => 'required|mimes:'.config('app.accept_file_be'),
             ]);
 
             if ($validator->fails()) {
@@ -388,18 +391,55 @@ class TaskController extends Controller
 
     public function send_note_task(Request $request, $id)
     {
-        $file = $request->note_name . '.txt';
-        $txt = fopen($file, "w") or die("Unable to open file!");
-        fwrite($txt, $request->note_content);
-        fclose($txt);
-        header('Content-Description: File Transfer');
-        header('Content-Disposition: attachment; filename='.basename($file));
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($file));
-        header("Content-Type: text/plain");
-        readfile($file);
+        try {
+            $validator = Validator::make($request->all(), [
+                'note_name' => 'required|string',
+                'note_content' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator->errors());
+            }
+
+            try {
+                $task_id = decrypt($id);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
+
+            $task = Task::where('id', $task_id)->firstOrFail();
+
+            if (!$task->is_history_file_active) {
+                // Delete Old File
+                $old_file = $task->files->where('is_default', '!=', 1)->last();
+                if ($old_file) {
+                    $old_name_file = $old_file->new_name;
+                    $exists = Storage::disk('s3')->exists('files/'.$old_name_file);
+                    if ($exists) {
+                        Storage::disk('s3')->delete('files/'.$old_name_file);
+                    }
+                    $old_file->delete();
+                }
+
+                // Upload new File
+                $this->upload_note_to_s3($task, $request->note_name, $request->note_content);
+
+            } else {
+                // Upload new File
+                $this->upload_note_to_s3($task, $request->note_name, $request->note_content);
+            }
+
+            $request->session()->flash('task.file_uploaded', 'Dokumen berhasil diunggah!');
+            return redirect()->route('tasks.show', encrypt($task->id));
+        } catch (\Exception $e) {
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
+                return abort(404);
+            }
+            if ("The payload is invalid." == $e->getMessage()) {
+                return abort(404);
+            }
+            return abort(500);
+        }
     }
 
     public function approve(Request $request, $id)
@@ -518,7 +558,7 @@ class TaskController extends Controller
         $mime_type = $file->getMimeType();
         $extension = $file->getClientOriginalExtension();
 
-        $path = Storage::disk('s3')->put('files', $file);
+        $path = Storage::disk('s3')->put($this->bucket_folder, $file);
         $new_name = basename($path);
 
         $STATUS_APPROVAL = 0;
@@ -570,5 +610,82 @@ class TaskController extends Controller
         $file_upload->is_default = $DEFAULT_FILE;
         $file_upload->type = $TYPE_FILE;
         $file_upload->save();
+    }
+
+    public function upload_note_to_s3($task, $note_name, $note_content)
+    {
+        $filename = $note_name;
+
+        $mime_type = 'text/plain';
+        $extension = '.txt';
+        $fullname = time().$extension;
+
+        Storage::disk('s3')->put($this->bucket_folder."/".$fullname, $note_content);
+
+        $STATUS_APPROVAL = 2; // waiting aproval
+        $DEFAULT_FILE = 0;
+        $TYPE_FILE = 'internal';
+
+        $file_upload = new File;
+        $file_upload->task_id = $task->id;
+        $file_upload->status_approve = $STATUS_APPROVAL;
+        $file_upload->created_by = Auth::id();
+        $file_upload->original_name = $filename;
+        $file_upload->description = $note_content;
+        $file_upload->mime_type = $mime_type;
+        $file_upload->new_name = $fullname;
+        $file_upload->path = $this->bucket_folder."/".$fullname;
+        $file_upload->is_default = $DEFAULT_FILE;
+        $file_upload->type = $TYPE_FILE;
+        $file_upload->save();
+    }
+
+    static public function mime2ext($mime) 
+    {
+        $mime_map = [
+            'image/bmp'                                                                 => 'bmp',
+            'image/x-bmp'                                                               => 'bmp',
+            'image/x-bitmap'                                                            => 'bmp',
+            'image/x-xbitmap'                                                           => 'bmp',
+            'image/x-win-bitmap'                                                        => 'bmp',
+            'image/x-windows-bmp'                                                       => 'bmp',
+            'image/ms-bmp'                                                              => 'bmp',
+            'image/x-ms-bmp'                                                            => 'bmp',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'   => 'docx',
+            'image/jpeg'                                                                => 'jpeg',
+            'image/pjpeg'                                                               => 'jpeg',
+            'application/pdf'                                                           => 'pdf',
+            'application/octet-stream'                                                  => 'pdf',
+            'image/png'                                                                 => 'png',
+            'image/x-png'                                                               => 'png',
+            'application/powerpoint'                                                    => 'ppt',
+            'application/vnd.ms-powerpoint'                                             => 'ppt',
+            'application/vnd.ms-office'                                                 => 'ppt',
+            'application/msword'                                                        => 'doc',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
+            'application/x-rar'                                                         => 'rar',
+            'application/rar'                                                           => 'rar',
+            'application/x-rar-compressed'                                              => 'rar',
+            'text/rtf'                                                                  => 'rtf',
+            'text/richtext'                                                             => 'rtx',
+            'text/plain'                                                                => 'txt',
+            'application/excel'                                                         => 'xl',
+            'application/msexcel'                                                       => 'xls',
+            'application/x-msexcel'                                                     => 'xls',
+            'application/x-ms-excel'                                                    => 'xls',
+            'application/x-excel'                                                       => 'xls',
+            'application/x-dos_ms_excel'                                                => 'xls',
+            'application/xls'                                                           => 'xls',
+            'application/x-xls'                                                         => 'xls',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'         => 'xlsx',
+            'application/vnd.ms-excel'                                                  => 'xlsx',
+            'application/x-zip'                                                         => 'zip',
+            'application/zip'                                                           => 'zip',
+            'application/x-zip-compressed'                                              => 'zip',
+            'application/s-compressed'                                                  => 'zip',
+            'multipart/x-zip'                                                           => 'zip',
+        ];
+
+        return isset($mime_map[$mime]) ? $mime_map[$mime] : false;
     }
 }
