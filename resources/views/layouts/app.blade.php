@@ -62,13 +62,19 @@
                             <li class="nav-main-item">
                                 <a class="nav-main-link {{ Request::is('users*') ? 'active' : '' }}" href="{{ url('/users') }}">
                                     <i class="nav-main-link-icon si si-users"></i>
-                                    <span class="nav-main-link-name">Users</span>
+                                    <span class="nav-main-link-name">Pengguna</span>
                                 </a>
                             </li>
                             <li class="nav-main-item">
                                 <a class="nav-main-link {{ Request::is('roles*') ? 'active' : '' }}" href="{{ url('/roles') }}">
                                     <i class="nav-main-link-icon fa fa-code-branch"></i>
-                                    <span class="nav-main-link-name">Roles</span>
+                                    <span class="nav-main-link-name">Role</span>
+                                </a>
+                            </li>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link {{ Request::is('categories*') ? 'active' : '' }}" href="{{ url('/categories') }}">
+                                    <i class="nav-main-link-icon si si-grid"></i>
+                                    <span class="nav-main-link-name">Kategori</span>
                                 </a>
                             </li>
                         @else

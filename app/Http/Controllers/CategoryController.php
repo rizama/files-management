@@ -31,7 +31,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        $ret['categories'] = $categories;
+
+        return view('categories.index', $ret);
     }
 
     /**
@@ -41,7 +44,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
@@ -68,10 +71,8 @@ class CategoryController extends Controller
             $category->description = $request->description;
             $category->save();
 
-            return encrypt($category->id);
-
-            // $request->session()->flash('category.created', 'Kategori Tugas telah dibuat!');
-            // return redirect()->route('categories.index');
+            $request->session()->flash('category.created', 'Kategori Tugas telah dibuat!');
+            return redirect()->route('categories.index');
 
         } catch (\Exception $e) {
             return abort(500);
@@ -95,9 +96,16 @@ class CategoryController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit($category_id)
     {
-        //
+        try {
+            $decrypted_id = decrypt($category_id);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        $category = Category::where('id', $decrypted_id)->firstOrFail();
+        $ret['category'] = $category;
+        return view('categories.edit', $ret);
     }
 
     /**
@@ -130,12 +138,9 @@ class CategoryController extends Controller
             $category->description = $request->description;
             $category->save();
 
-            return encrypt($category->id);
-
-            // $request->session()->flash('category.updated', 'Kategori Tugas telah diubah!');
-            // return redirect()->route('categories.index');
+            $request->session()->flash('category.updated', 'Kategori Tugas telah diubah!');
+            return redirect()->route('categories.index');
         } catch (\Exception $e) {
-            dd($e);
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
@@ -149,7 +154,7 @@ class CategoryController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             try {
@@ -161,10 +166,8 @@ class CategoryController extends Controller
             $category = Category::findOrFail($decrypted_id);
             $category->delete();
 
-            return encrypt($category->id);
-
-            // $request->session()->flash('category.deleted', 'Kategori Tugas telah dihapus!');
-            // return redirect()->route('categories.index');
+            $request->session()->flash('category.deleted', 'Kategori Tugas telah dihapus!');
+            return redirect()->route('categories.index');
 
         } catch (\Exception $e) {
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
