@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +25,10 @@ Route::get('/', function ()
 
 Route::get('/token', function () {
     return json_encode(csrf_token()); 
+});
+
+Route::get('/encrypt', function (Request $request) {
+    return encrypt($request->id); 
 });
 
 Auth::routes();
@@ -69,5 +74,13 @@ Route::group(
         Route::get('/search', 'SearchController@search')->name('do.search');     
         
         // File
-        Route::get('/download', 'FileController@download_file')->name('download');     
+        Route::get('/download', 'FileController@download_file')->name('download');  
+        
+        // Categories
+        Route::get('categories', 'CategoryController@index')->name('categories.index');
+        Route::get('categories/create', 'CategoryController@create')->name('categories.create');
+        Route::post('categories', 'CategoryController@store')->name('categories.store');
+        Route::get('categories/{id}', 'CategoryController@edit')->name('categories.edit');
+        Route::put('categories/{id}', 'CategoryController@update')->name('categories.update');
+        Route::delete('categories/{id}', 'CategoryController@destroy')->name('categories.destroy');
 });
