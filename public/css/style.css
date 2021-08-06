@@ -6,7 +6,7 @@
   content: 'Pilih File';
 }
 
-.block-file, .block-assign {
+/* .block-file, .block-assign {
   position: sticky;
   height: auto;
   display: block;
@@ -18,4 +18,10 @@
 
 .block-assign {
   top: 220px;
+} */
+
+.side-container {
+  position: sticky;
+  display: block;
+  top: 64px;
 }
