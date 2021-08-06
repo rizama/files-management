@@ -201,7 +201,7 @@
                                                                     data-type_button="approve"
                                                                     href="{{ route('tasks.approve', encrypt($file->id)) }}"
                                                                     title="Apakah anda yakin untuk menyetujui file ini ?"
-                                                                    data-caption="{{$file->original_name ?? ''}}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
+                                                                    data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }} {{$file->description ? ', Deskripsi: '.$file->description : ''}}"
                                                                     data-form_id="verification"
                                                                     data-success_text="File Berhasil Disetujui"
                                                                 >Setujui</a>
@@ -210,7 +210,7 @@
                                                                     data-type_button="reject"
                                                                     href="{{ route('tasks.reject', encrypt($file->id)) }}"
                                                                     title="Apakah anda yakin untuk menolak file ini ?"
-                                                                    data-caption="{{$file->original_name ?? ''}}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
+                                                                    data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
                                                                     data-form_id="verification"
                                                                     data-success_text="File Berhasil Ditolak"
                                                                 >Tolak</a>
