@@ -329,7 +329,7 @@ class TaskController extends Controller
             $validator = Validator::make($request->all(), [
                 'custom_name' => 'nullable|string',
                 'description' => 'nullable|string',
-                'task_file' => 'required|mimes:pdf,xlx,csv,doc,docx,ppt,pptx,rtf,txt'
+                'task_file' => 'required'
             ]);
 
             if ($validator->fails()) {
