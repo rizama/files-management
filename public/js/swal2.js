@@ -96,13 +96,14 @@ class pageDialogs {
             var caption = e.currentTarget.dataset.caption;
             var form_id = e.currentTarget.dataset.form_id;
             var success_text = e.currentTarget.dataset.success_text;
+            var type = e.currentTarget.dataset.type_button;
             toast.fire({
                 title: title || 'Apakah anda yakin ?',
                 text: caption || '',
                 icon: 'info',
                 showCancelButton: true,
                 customClass: {
-                    confirmButton: 'btn btn-success m-1',
+                    confirmButton: type === 'reject' ? 'btn btn-danger m-1' : 'btn btn-success m-1',
                     cancelButton: 'btn btn-secondary m-1'
                 },
                 confirmButtonText: 'Ya',

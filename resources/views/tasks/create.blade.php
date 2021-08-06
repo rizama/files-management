@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Manajemen Tugas - SIMANTAP
+    Manajemen Tugas - {{ env('APP_NAME') }}
 @endsection
 
 @section('css')

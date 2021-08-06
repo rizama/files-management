@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Si OM KEREN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,6 +55,11 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL', null),
+
+    // Custom Variable config
+
+    'accept_file_fe' => '.pdf,.xls,.csv,.doc,.docx,.ppt,.pptx,.rtf,.txt,.xlsx,.jpeg,.png,.bmp,.jpg',
+    'accept_file_be' => 'pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
 
     /*
     |--------------------------------------------------------------------------

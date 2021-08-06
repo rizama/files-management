@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>
-        @yield('title', config('app.name', 'SIMANTAP'))
+        @yield('title', config('app.name'))
     </title>
     <!-- Icons -->
     <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
@@ -140,7 +140,7 @@
                     </button>
                     <!-- END Toggle Mini Sidebar -->
                     <a class="navbar-brand text-light font-weight-bold" href="{{ url('/') }}">
-                        Sistem Manajemen Tugas Perencaan dan Pelaporan
+                        Sistem Operasi Manajemen Kerja dan Perencaan
                     </a>
                 </div>
                 <!-- Right Section -->
@@ -216,7 +216,7 @@
                         {{-- Crafted with <i class="fa fa-heart text-danger"></i> by <a class="font-w600" href="https://1.envato.market/ydb" target="_blank">pixelcave</a> --}}
                     </div>
                     <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-left">
-                        <a class="font-w600"  target="_blank">SIMANTAP</a> &copy; <span data-toggle="year-copy"></span>
+                        <a class="font-w600"  target="_blank">{{ env('APP_NAME') }}</a> &copy; <span data-toggle="year-copy"></span>
                     </div>
                 </div>
             </div>

@@ -7,10 +7,10 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Sistem Management Tugas Perencanaan dan Pelaporan</title>
+    <title>Sistem Operasi Manajemen Kerja dan Perencaan</title>
 
     <meta name="description"
-        content="Sistem Management Tugas Perencanaan dan Pelaporan">
+        content="Sistem Operasi Manajemen Kerja dan Perencaan">
     <meta name="author" content="pixelcave">
     <meta name="robots" content="noindex, nofollow">
 

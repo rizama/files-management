@@ -81,7 +81,7 @@ class TaskController extends Controller
                 'description' => 'nullable|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable',
-                'default_file' => 'nullable|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx',
+                'default_file' => 'nullable|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
             ]);
@@ -195,7 +195,7 @@ class TaskController extends Controller
                 'description' => 'required|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable|string',
-                'default_file' => 'nullable|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx',
+                'default_file' => 'nullable|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
             ]);
@@ -329,7 +329,7 @@ class TaskController extends Controller
             $validator = Validator::make($request->all(), [
                 'custom_name' => 'nullable|string',
                 'description' => 'nullable|string',
-                'task_file' => 'required'
+                'task_file' => 'required|mimes:pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
             ]);
 
             if ($validator->fails()) {
@@ -384,6 +384,22 @@ class TaskController extends Controller
             }
             return abort(500);
         }
+    }
+
+    public function send_note_task(Request $request, $id)
+    {
+        $file = $request->note_name . '.txt';
+        $txt = fopen($file, "w") or die("Unable to open file!");
+        fwrite($txt, $request->note_content);
+        fclose($txt);
+        header('Content-Description: File Transfer');
+        header('Content-Disposition: attachment; filename='.basename($file));
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($file));
+        header("Content-Type: text/plain");
+        readfile($file);
     }
 
     public function approve(Request $request, $id)
