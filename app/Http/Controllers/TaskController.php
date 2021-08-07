@@ -145,7 +145,7 @@ class TaskController extends Controller
         }])
         ->findOrFail($decrypted_id);
         
-        $files = File::where('status_approve', 3)->orWhere('is_default', 1)->get();
+        $files = File::where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->get();
 
         $ret['task'] = $task;
         $ret['files'] = $files;
@@ -466,9 +466,9 @@ class TaskController extends Controller
             $file = File::with('task')->findOrFail($decrypted_id);
 
             // Update Files
-            $STAUS_APPROVE = 3; // approved
+            $STATUS_APPROVE = 3; // approved
 
-            $file->status_approve = $STAUS_APPROVE; 
+            $file->status_approve = $STATUS_APPROVE; 
             $file->notes = $request->notes; 
             $file->verified_by = Auth::id();
             $file->save();
@@ -500,9 +500,9 @@ class TaskController extends Controller
             $file = File::with('task')->findOrFail($decrypted_id);
 
             // Update Files
-            $STAUS_APPROVE = 4; // rejected
+            $STATUS_APPROVE = 4; // rejected
 
-            $file->status_approve = $STAUS_APPROVE; 
+            $file->status_approve = $STATUS_APPROVE; 
             $file->notes = $request->notes; 
             $file->verified_by = Auth::id();
             $file->save();
@@ -517,7 +517,38 @@ class TaskController extends Controller
         }
     }
 
-    public function upload_to_local($task, $file, $custom_name)
+    public function approve_task(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $decrypted_id = decrypt($id);
+
+            $task = Task::findOrFail($decrypted_id);
+
+            $STATUS_APPROVE = 3; // approved
+
+            $task->status = $STATUS_APPROVE; 
+            $task->verified_by = Auth::id();
+            $task->save();
+
+            DB::commit();
+
+            $request->session()->flash('task.approved', 'Tugas disetujui!');
+            return redirect()->route('tasks.show', encrypt($task->task_id));
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
+                return abort(404);
+            }
+            if ("The payload is invalid." == $e->getMessage()) {
+                return abort(404);
+            }
+            return abort(500);
+        }
+    }
+
+    public function upload_to_local($task, $file, $custom_name, $category_id)
     {
         $filename = $file->getClientOriginalName();
         if ($custom_name) {
@@ -543,6 +574,7 @@ class TaskController extends Controller
         $file_upload->task_id = $task->id;
         $file_upload->status_approve = $STATUS_APPROVAL;
         $file_upload->created_by = Auth::id();
+        $file_upload->category_id = $category_id;
         $file_upload->original_name = $original_name;
         $file_upload->description = 'Default File';
         $file_upload->mime_type = $mime_type;
