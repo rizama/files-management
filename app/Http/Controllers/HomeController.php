@@ -53,6 +53,9 @@ class HomeController extends Controller
                     if (($task->files[0]->status_approve == 4)) {
                         $progress++;
                     }
+                    if (($task->files[0]->status_approve == 3)) {
+                        $progress++;
+                    }
                 } else {
                     if ($task->status == 1) {
                         $progress++;
@@ -61,7 +64,9 @@ class HomeController extends Controller
             }   
         }
 
-        $users = User::with(['responsible_tasks', 'role'])
+        $users = User::with(['responsible_tasks', 'role', 'files' => function($q){
+                $q->with('task')->where('is_default', 0)->orderBy('created_at', 'desc');
+            }])
             ->whereHas('role', function($query){
                 $query->where('code', '!=', 'superadmin');
             })
@@ -71,7 +76,7 @@ class HomeController extends Controller
         $res['task_done'] = $done;
         $res['task_waiting'] = $waiting;
         $res['task_progress'] = $progress;
-
+        $res['users'] = $users;
         return view('home', $res);
     }
 }

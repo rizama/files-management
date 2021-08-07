@@ -45,18 +45,6 @@
     <div class="col-6 col-lg-3">
         <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
             <div class="block-content block-content-full">
-                <div class="font-size-h2 text-dark">{{ $task_waiting }}</div>
-            </div>
-            <div class="block-content py-2 bg-body-light">
-                <p class="font-w600 font-size-sm text-muted mb-0">
-                    Tugas Menunggu Persetujuan
-                </p>
-            </div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
-            <div class="block-content block-content-full">
                 <div class="font-size-h2 text-warning">{{ $task_progress }}</div>
             </div>
             <div class="block-content py-2 bg-body-light">
@@ -66,12 +54,24 @@
             </div>
         </a>
     </div>
+    <div class="col-6 col-lg-3">
+        <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+            <div class="block-content block-content-full">
+                <div class="font-size-h2 text-dark">{{ $task_waiting }}</div>
+            </div>
+            <div class="block-content py-2 bg-body-light">
+                <p class="font-w600 font-size-sm text-muted mb-0">
+                    Dokumen Menunggu Persetujuan
+                </p>
+            </div>
+        </a>
+    </div>
 </div>
 
 <!-- Table Sections (.js-table-sections class is initialized in Helpers.tableToolsSections()) -->
 <div class="block block-rounded">
     <div class="block-header">
-        <h3 class="block-title">Status Proges Pekerjaan</h3>
+        <h3 class="block-title">Perkembangan Pekerjaan</h3>
     </div>
     <div class="block-content">
         <table class="js-table-sections table table-hover table-vcenter">
@@ -79,80 +79,57 @@
                 <tr>
                     <th style="width: 30px;"></th>
                     <th>Nama</th>
+                    <th style="width: 15%;">Dokumen Disetujui</th>
+                    <th style="width: 15%;">Dokumen Menunggu</th>
+                    <th style="width: 15%;">Dokumen Ditolak</th>
                     <th style="width: 15%;">Total</th>
-                    <th style="width: 15%;">Selesai</th>
-                    <th style="width: 15%;">Menunggu</th>
-                    <th style="width: 15%;">Dikerjakan</th>
                 </tr>
             </thead>
-            <tbody class="js-table-sections-header show table-active">
+            {{-- {{ dd($users[2]) }} --}}
+
+            @foreach ($users as $user)
+            <tbody class="js-table-sections-header">
                 <tr>
                     <td class="text-center">
                         <i class="fa fa-angle-right text-muted"></i>
                     </td>
                     <td class="font-w600 font-size-sm">
                         <div class="py-1">
-                            Septian
+                            {{ $user->name }}
                         </div>
                     </td>
                     <td>
-                        <span class="badge badge-primary">20</span>
+                        <span class="badge badge-success">{{ count($user->files->where('status_approve', 3)) }}</span>
                     </td>
                     <td>
-                        <span class="badge badge-success">10</span>
+                        <span class="badge badge-dark">{{ count($user->files->where('status_approve', 2)) }}</span>
                     </td>
                     <td>
-                        <span class="badge badge-dark">5</span>
+                        <span class="badge badge-danger">{{ count($user->files->where('status_approve', 4)) }}</span>
                     </td>
                     <td>
-                        <span class="badge badge-warning">5</span>
+                        <span class="badge badge-primary">{{ count($user->files) }}</span>
                     </td>
                 </tr>
             </tbody>
             <tbody class="font-size-sm">
+                @foreach ($user->files as $file)
                 <tr>
-                    <td class="text-center"><span class="badge badge-warning">Dikerjakan</span></td>
-                    <td colspan="5" class="font-w600 font-size-sm">Perencanaan Bulan Agustus</td>
+                    @php
+                        if($file->status_approve == 3){
+                            $status = ['success', 'Disetujui'];
+                        } else if ($file->status_approve == 2) {
+                            $status = ['dark', 'Menunggu'];
+                        } else if ($file->status_approve == 4) {
+                            $status = ['danger', 'Ditolak'];
+                        }
+                    @endphp
+                    <td class="text-center"><span class="badge badge-{{ $status[0] }}">{{ $status[1] }}</span></td>
+                    <td colspan="5" class="font-w600 font-size-sm"><a href="{{ route('tasks.show', encrypt($file->task->id)) }}">{{ $file->task->name }}</a></td>
                 </tr>
-                <tr>
-                    <td class="text-center"><span class="badge badge-success">Selesai</span></td>
-                    <td colspan="5" class="font-w600 font-size-sm">Perencanaan Bulan Juli</td>
-                </tr>
+                @endforeach
             </tbody>
-                        <tbody class="js-table-sections-header">
-                <tr>
-                    <td class="text-center">
-                        <i class="fa fa-angle-right text-muted"></i>
-                    </td>
-                    <td class="font-w600 font-size-sm">
-                        <div class="py-1">
-                            Dwi Cahyo
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge badge-primary">15</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-success">8</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-dark">2</span>
-                    </td>
-                    <td>
-                        <span class="badge badge-warning">5</span>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody class="font-size-sm">
-                <tr>
-                    <td class="text-center"></td>
-                    <td colspan="5" class="font-w600 font-size-sm">Perencanaan Bulan Agustus</td>
-                </tr>
-                <tr>
-                    <td class="text-center"></td>
-                    <td colspan="5" class="font-w600 font-size-sm">Perencanaan Bulan Juli</td>
-                </tr>
-            </tbody>
+            @endforeach
         </table>
     </div>
 </div>
