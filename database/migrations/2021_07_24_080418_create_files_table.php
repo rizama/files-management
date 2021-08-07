@@ -19,7 +19,7 @@ class CreateFilesTable extends Migration
             $table->unsignedBigInteger('status_approve');
             $table->unsignedBigInteger('created_by');
             $table->string('original_name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('mime_type');
             $table->string('new_name');
             $table->string('path');
