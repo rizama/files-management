@@ -151,6 +151,11 @@ class TaskController extends Controller
         
         $files = File::where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->get();
 
+
+        foreach ($task->files as $key => $file) {
+            $file['file_url'] = $this->generate_url($file->id);
+        }
+
         $ret['task'] = $task;
         $ret['files'] = $files;
         $ret['default_file'] = $default_file->files ? $default_file->files[0] : null;
@@ -733,5 +738,19 @@ class TaskController extends Controller
         ];
 
         return isset($mime_map[$mime]) ? $mime_map[$mime] : false;
+    }
+
+    public function generate_url($id)
+    {
+        try {
+            $file = File::findOrFail($id);
+            $extension = pathinfo($file->new_name, PATHINFO_EXTENSION);
+            return Storage::disk('s3')->url($file['path']);
+        } catch (\Exception $e) {
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
+                return abort(404);
+            }
+            dd($e);
+        }
     }
 }
