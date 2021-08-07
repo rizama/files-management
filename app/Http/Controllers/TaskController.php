@@ -38,7 +38,7 @@ class TaskController extends Controller
     public function index()
     {
         try {
-            $tasks = Task::with('responsible_person','files')->orderBy('created_at', 'desc')->get();
+            $tasks = Task::with('responsible_person','files','category')->orderBy('created_at', 'desc')->get();
             $ret['tasks'] = $tasks;
             $ret['user'] = Auth::user();
     
@@ -542,8 +542,8 @@ class TaskController extends Controller
 
             DB::commit();
 
-            $request->session()->flash('task.approved', 'Tugas disetujui!');
-            return redirect()->route('tasks.show', encrypt($task->task_id));
+            $request->session()->flash('task.approved', 'Tugas selesai!');
+            return redirect()->route('tasks.show', encrypt($task->id));
 
         } catch (\Exception $e) {
             DB::rollback();
