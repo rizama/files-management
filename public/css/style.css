@@ -39,3 +39,25 @@
   position: absolute;
   right: 22px;
 }
+
+/* Block Task */
+.timeline-file .block-header {
+  padding-top: 0;
+  /* padding-bottom: 0; */
+}
+
+.timeline-file .block-header,
+.timeline-file .block-content {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.timeline-file .block-title small {
+  display: block;
+  line-height: 1rem;
+}
+
+.timeline-file p.block-title {
+  font-weight: normal;
+  text-transform: none;
+}

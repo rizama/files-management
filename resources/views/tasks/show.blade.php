@@ -81,28 +81,32 @@
                                             <!-- Populating custom file input label with the selected filename (data-toggle="custom-file-input" is initialized in Helpers.coreBootstrapCustomFileInput()) -->
                                             <input type="file" class="custom-file-input @error('task_file') is-invalid @enderror" data-toggle="custom-file-input" id="task_file" name="task_file" lang="id" accept="{{ config('app.accept_file_fe') }}">
                                             <label class="custom-file-label" for="task_file"></label>
-                                            @error('task_file')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="custom_name" class="col-lg-3 col-form-label">Ubah Nama File</label>
                                         <input type="text" class="form-control col-lg-9 @error('custom_name') is-invalid @enderror" id="custom_name" name="custom_name" placeholder="Masukan Nama File" disabled>
                                         @error('custom_name')
-                                            <span style="color: red">{{ $message }}</span>
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
                                         @enderror
                                     </div>
                                     <div class="form-group row">
                                         <label for="description" class="col-lg-3 col-form-label">Deskripsi</label>
                                         <textarea name="description" id="description" class="form-control col-lg-9 @error('description') is-invalid @enderror" placeholder="Masukan Deskripsi" disabled></textarea>
                                         @error('description')
-                                            <span style="color: red">{{ $message }}</span>
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
                                         @enderror
                                     </div>
                                 </div>
+                                @error('task_file')
+                                    <div class="invalid-feedback d-block">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                                 <div class="row">
                                     <div class="col-lg-12 text-right">
                                         <button type="submit" class="btn btn-primary btn-submit btn-file" data-toggle="click-ripple" disabled>Unggah</button>
@@ -124,14 +128,18 @@
                                         <label for="note_name" class="col-form-label">Nama Catatan</label>
                                         <input type="text" class="form-control @error('note_name') is-invalid @enderror" id="note_name" name="note_name" placeholder="Masukan Nama File">
                                         @error('note_name')
-                                            <span style="color: red">{{ $message }}</span>
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
                                         @enderror
                                     </div>
                                     <div class="form-group">
                                         <label for="note_content" class="col-form-label">Isi Catatan</label>
                                         <textarea name="note_content" id="note_content" class="form-control @error('note_content') is-invalid @enderror" placeholder="Masukan Deskripsi"></textarea>
                                         @error('note_content')
-                                            <span style="color: red">{{ $message }}</span>
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
                                         @enderror
                                     </div>
                                 </div>
@@ -159,7 +167,7 @@
                         </div>
                         <div class="timeline-event-block block invisible" data-toggle="appear">
                             <div class="block-header">
-                                <h3 class="block-title">{{ $file->user['name']}}</h3>
+                                <h3 class="block-title"><small>Pengunggah </small>{{ $file->user['name']}}</h3>
                                 <div class="block-options">
                                     <div class="timeline-event-time block-options-item font-size-sm">
                                         {{ \Carbon\Carbon::parse($file['created_at'])->diffForHumans() }}
@@ -167,12 +175,15 @@
                                 </div>
                             </div>
                             <div class="block-content pt-0">
-                                <p>
-                                    {{ $file['description'] }}
+                                <p class="block-title">
+                                    <small>Deskripsi</small>{{ $file['description'] ?? '-' }}
                                 </p>
-                                <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" target="_blank" class="btn btn-secondary mb-2">Unduh File</a>
+                                <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" target="_blank" class="btn btn-secondary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}">Unduh File</a>
+                                @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp']))
+                                    <button type="button" class="btn btn-alt-primary push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" id="preview-btn-modal">Pratinjau Dokumen</button>
+                                @endif
 
-                                @if ($file->status['code'] == 'waiting')
+                                @if ($file->status['code'] == 'waiting' && $task->status !== 3)
                                     @if (Auth::user()->role->code == 'level_1')
                                     <div class="accordion mt-2" id="accordionExample">
                                         <div class="card">
@@ -234,7 +245,11 @@
                                 <div class="mt-2">
                                     @php
                                         if($file->status['code'] == 'waiting'){
-                                            $status = 'warning';
+                                            if ($task->status === 3) {
+                                                $status = 'success';
+                                            } else {
+                                                $status = 'warning';
+                                            }
                                         } else if($file->status['code'] == 'approved'){
                                             $status = 'success';
                                         } else if($file->status['code'] == 'rejected'){
@@ -248,7 +263,7 @@
                                             <tr>
                                                 <td><b>Status</b></td>
                                                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                                <td> <span class="badge badge-{{ $status }}">{{ $file->status['name'] }}</span></td>
+                                                <td> <span class="badge badge-{{ $status }}">{{ $file->status['code'] == 'waiting' && $task->status === 3 ? 'Selesai' : $file->status['name'] }}</span></td>
                                             </tr>
                                             <tr>
                                                 <td><b>Catatan</b></td>
@@ -271,12 +286,26 @@
     </div>
     <div class="col-lg-4">
         <div class="side-container">
+            @if(Auth::user()->role->code === 'level_1' && $task->status !== 3)
+                <a
+                    href="{{ url('/tasks/'.encrypt($task->id).'/approve/task') }}"
+                    class="btn btn-success btn-block mb-2 js-swal-confirm-href"
+                    title="Apakah anda yakin untuk menyelesaikan tugas ini ?"
+                    data-success_text="Tugas selesai"
+                >Selesaikan Tugas</a>
+            @endif
             <div class="block block-rounded block-file">
                 <div class="block-header">
-                    <h3 class="block-title">Info File Tugas</h3>
+                    <h3 class="block-title">Info Tugas</h3>
                 </div>
                 <div class="block-content block-content-full pt-0">
                     <div class="row push mb-0">
+                        <div class="col-lg-12">
+                            <div class="form-group mb-0">
+                                <label>Kategori</label>
+                                <span class="float-right">{{ $task->category->name }}</span>
+                            </div>
+                        </div>
                         <div class="col-lg-12">
                             <div class="form-group mb-0">
                                 <label>Riwayat File</label>
@@ -293,7 +322,7 @@
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <a href="{{ route('download') }}?file={{ encrypt($default_file->id) }}&type=download" target="_blank" class="btn btn-light btn-block">Unduh Contoh File</a>
+                            <a href="{{ route('download') }}?file={{ encrypt($default_file->id) }}&type=download" target="_blank" class="btn btn-info btn-block">Unduh Contoh File</a>
                         </div>
                     </div>
                     @else
@@ -303,7 +332,7 @@
             </div>
             <div class="block block-rounded block-assign">
                 <div class="block-header">
-                    <h3 class="block-title">Ditugaskan ke</h3>
+                    <h3 class="block-title">Petugas</h3>
                 </div>
                 <div class="block-content block-content-full pt-0">
                     <ul style="padding-left: 20px" class="mb-0">
@@ -319,6 +348,34 @@
     </div>
 </div>
 
+<!-- Preview Modal -->
+<div class="modal" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="preview-modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded block-themed block-transparent mb-0">
+                <div class="block-header bg-primary-dark">
+                    <h3 class="block-title preview-title"></h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-toggle="block-option" data-action="fullscreen_toggle"></button>
+                        <button type="button" class="btn-block-option" data-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-fw fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="block-content font-size-sm">
+                    <div class="embed-responsive embed-responsive-16by9 preview-content">
+                        <embed class="embed-responsive-item preview-src" src="" allowfullscreen></embed>
+                    </div>
+                </div>
+                <div class="block-content block-content-full text-right border-top">
+                    <button type="button" class="btn btn-alt-primary mr-1" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Preview Modal -->
+
 <form action="" method="POST" id="approveForm">
     @csrf
     <input type="hidden" style="display: none;" id="notes_value" value="">
@@ -332,7 +389,7 @@
 @endsection
 
 @section('js_after')
-    <script>
+    <script type="text/javascript">
         $('#task_file').change(function() {
             if($(this)[0]) {
                 $('#custom_name').prop('disabled', false);
@@ -340,10 +397,7 @@
                 $('.btn-file').prop('disabled', false);
             }
         });
-    </script>
-
-    <script type="text/javascript">
-        $('#note_name').change(function() {
+        $('#note_name').keyup(function() {
             if($('#note_name').val() && $('#note_content').val()) {
                 $('#btn-note').prop('disabled', false);
             }
@@ -351,7 +405,7 @@
                 $('#btn-note').prop('disabled', true);
             }
         });
-        $('#note_content').change(function() {
+        $('#note_content').keyup(function() {
             if($('#note_name').val() && $('#note_content').val()) {
                 $('#btn-note').prop('disabled', false);
             }
@@ -359,14 +413,10 @@
                 $('#btn-note').prop('disabled', true);
             }
         });
-    </script>
-
-    {{-- <script type="text/javascript">
-        $('.reject-file').on('click', function(e){    
-            e.preventDefault();
-            let href = $(this).attr('href');
-            $('#verification').attr('action', href);
-            $('#verification').submit();
+        $('#preview-modal').on('show.bs.modal', function(e) {
+            var file = $(e.relatedTarget).data('file');
+            $('.preview-title').html(file.original_name);
+            $('.preview-src').attr('src', file.file_url);
         });
-    </script> --}}
+    </script>
 @endsection

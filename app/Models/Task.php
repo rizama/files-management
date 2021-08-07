@@ -37,4 +37,14 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
+    
+    /**
+     * Get the user that owns the Task
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category()
+    {
+        return $this->BelongsTo(Category::class, 'category_id', 'id');
+    }
 }

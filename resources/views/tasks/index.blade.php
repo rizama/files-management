@@ -64,9 +64,9 @@
                         <th class="text-center" style="width: 80px;">No</th>
                         <th>Nama</th>
                         <th>Deskripsi</th>
-                        <th>Riwayat File</th>
-                        <th>Ditugaskan Ke</th>
-                        <th>Tanggal dibuat</th>
+                        <th>Kategori</th>
+                        <th>Petugas</th>
+                        <th>Tanggal</th>
                         <th class="disable-sorting">Aksi</th>
                     </tr>
                 </thead>
@@ -81,7 +81,7 @@
                                 {{ $task->description }}
                             </td>
                             <td>
-                                <span class="badge {{ $task->is_history_file_active === 1 ? 'badge-success' : 'badge-danger' }}">{{ $task->is_history_file_active === 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
+                                {{ $task->category->name ?? '-' }}
                             </td>
                             <td class="font-w600 font-size-sm">
                                 @forelse ($task->responsible_person as $responsible_person)
