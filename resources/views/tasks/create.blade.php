@@ -47,7 +47,8 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="responsible_person">Kategori</label>
-                        <select class="js-select2-clear form-control" id="example-select2" name="category_id" style="width: 100%;" data-placeholder="Pilih Kategori Tugas" data-allowClear="true">
+                        <select class="js-select2 form-control" id="select2-categories" name="category_id" style="width: 100%;" data-placeholder="Pilih Kategori Tugas" data-allow-clear="true">
+                            <option></option>
                             @foreach ($categories as $key => $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
@@ -68,28 +69,55 @@
                         @enderror
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                     <div class="form-group">
-                        <label>Contoh File</label>
-                        <div class="custom-file">
-                            <!-- Populating custom file input label with the selected filename (data-toggle="custom-file-input" is initialized in Helpers.coreBootstrapCustomFileInput()) -->
-                            <input type="file" class="custom-file-input" data-toggle="custom-file-input" id="default_file" name="default_file" lang="id" accept="{{ config('app.accept_file_fe') }}">
-                            <label class="custom-file-label" for="default_file"></label>
+                        <div class="custom-control custom-checkbox mb-1">
+                            <input type="checkbox" class="custom-control-input" id="existing_file" name="existing_file" onclick="toggleExistingFile(this)">
+                            <label class="custom-control-label" for="existing_file">Gunakan Dokumen yang sudah ada</label>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="form-group">
-                        <label for="custom_name">Ubah Nama File</label>
-                        <input type="text" class="form-control @error('custom_name') is-invalid @enderror" id="custom_name" name="custom_name" placeholder="Masukan Nama File" disabled>
-                        @error('custom_name')
-                            <span style="color: red">{{ $message }}</span>
-                        @enderror
+                <div class="container-existing_file d-none col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="responsible_person">Dokumen</label>
+                                <select class="js-select2 form-control" id="select2-files" name="file_id" style="width: 100%;" data-placeholder="Pilih Dokumen yang tersedia" data-allow-clear="true">
+                                    <option></option>
+                                    @foreach ($files as $key => $file)
+                                        <option value="{{ $file->id }}">({{ \Carbon\Carbon::parse($file->updated_at)->isoFormat('D MMMM Y, HH:MM') }}) - {{ $file->original_name }}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-default_file col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Contoh Dokumen</label>
+                                <div class="custom-file">
+                                    <!-- Populating custom file input label with the selected filename (data-toggle="custom-file-input" is initialized in Helpers.coreBootstrapCustomFileInput()) -->
+                                    <input type="file" class="custom-file-input" data-toggle="custom-file-input" id="default_file" name="default_file" lang="id" accept="{{ config('app.accept_file_fe') }}">
+                                    <label class="custom-file-label" for="default_file"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="custom_name">Ubah Nama Dokumen</label>
+                                <input type="text" class="form-control @error('custom_name') is-invalid @enderror" id="custom_name" name="custom_name" placeholder="Masukan Nama Dokumen" disabled>
+                                @error('custom_name')
+                                    <span style="color: red">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-12">
                     <div class="form-group">
-                        <label for="responsible_person">Ditugaskan ke</label>
+                        <label for="responsible_person">Petugas</label>
                         <select class="js-select2 form-control" id="example-select2-multiple" name="responsible_person[]" style="width: 100%;" data-placeholder="" multiple>
                             @foreach ($users as $key => $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -114,8 +142,18 @@
         $('#is_history_active').click(function() {
             $(this).val(this.checked ? 1 : 0);
         });
-        $(".js-select2-clear").select2({
-            allowClear: true
-        });
+
+        function toggleExistingFile(e){
+            if (e.checked) {
+                $('.container-default_file').addClass('d-none');
+                $('.container-existing_file').removeClass('d-none');
+                $('#default_file').val(null);
+                $('#custom_name').val(null);
+            } else {
+                $('.container-default_file').removeClass('d-none');
+                $('.container-existing_file').addClass('d-none');
+                $('#select2-files').val(null);
+            }
+        }
     </script>
 @endsection

@@ -303,7 +303,7 @@
                         <div class="col-lg-12">
                             <div class="form-group mb-0">
                                 <label>Kategori</label>
-                                <span class="float-right">{{ $task->category->name }}</span>
+                                <span class="float-right">{{ $task->category->name ?? '-' }}</span>
                             </div>
                         </div>
                         <div class="col-lg-12">
