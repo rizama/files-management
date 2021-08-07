@@ -65,6 +65,7 @@ Route::group(
         Route::post('/tasks/{id}/send_note', 'TaskController@send_note_task')->name('tasks.send_note');
         Route::post('/tasks/{id}/approve/file', 'TaskController@approve')->name('tasks.approve');
         Route::post('/tasks/{id}/reject/file', 'TaskController@reject')->name('tasks.reject');
+        Route::get('/tasks/{id}/approve/task', 'TaskController@approve_task')->name('tasks.approve_task');
 
         // Files Route
         Route::get('/files/get-local', 'FileController@get_local_file');
