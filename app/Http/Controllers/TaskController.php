@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use \Illuminate\Support\Facades\Validator;
 
 use App\Models\Task;
+use App\Models\Category;
 use App\Models\File;
 use App\Models\TaskUser;
 use Auth;
@@ -59,7 +60,10 @@ class TaskController extends Controller
                 $q->where('code', '!=', 'superadmin');
             })->get();
 
+            $categories = Category::all();
+
             $ret['users'] = $users;
+            $ret['categories'] = $categories;
             return view('tasks.create', $ret);
         } catch (\Exception $e) {
             return abort(500);

@@ -25,3 +25,17 @@
   display: block;
   top: 64px;
 }
+
+/* Data Table container */
+.dataTables_wrapper {
+  overflow: auto;
+}
+
+/* Select2 Clear single */
+.select2-container--default .select2-selection--single .select2-selection__clear {
+  cursor: pointer;
+  float: right;
+  font-weight: bold;
+  position: absolute;
+  right: 22px;
+}
