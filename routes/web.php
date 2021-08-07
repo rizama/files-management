@@ -72,8 +72,8 @@ Route::group(
         Route::get('/files/get-s3', 'FileController@get_s3_file');
 
         //Searches
-        Route::get('/searches', 'SearchController@index')->name('searches.index');
-        Route::get('/search', 'SearchController@search')->name('do.search');     
+        Route::get('/search', 'SearchController@index')->name('search.index');
+        // Route::get('/search', 'SearchController@search')->name('do.search');  
         
         // File
         Route::get('/download', 'FileController@download_file')->name('download');  
