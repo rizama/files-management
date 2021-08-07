@@ -62,6 +62,9 @@ class TaskController extends Controller
 
             $categories = Category::all();
 
+            $files = File::where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->get();
+
+            $ret['files'] = $files;
             $ret['users'] = $users;
             $ret['categories'] = $categories;
             return view('tasks.create', $ret);
@@ -78,6 +81,7 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
@@ -148,16 +152,12 @@ class TaskController extends Controller
             $q->where('is_default', 1)->orderBy('created_at', 'desc')->limit(1);
         }])
         ->findOrFail($decrypted_id);
-        
-        $files = File::where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->get();
-
 
         foreach ($task->files as $key => $file) {
             $file['file_url'] = $this->generate_url($file->id);
         }
 
         $ret['task'] = $task;
-        $ret['files'] = $files;
         $ret['default_file'] = $default_file->files ? $default_file->files[0] : null;
         return view('tasks.show', $ret);
         
@@ -180,9 +180,14 @@ class TaskController extends Controller
         $users = User::with(['role'])->whereHas('role', function($q){
             $q->where('code', '!=', 'superadmin');
         })->get();
+        $categories = Category::all();
 
+        $files = File::where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->get();
+
+        $ret['files'] = $files;
         $ret['users'] = $users;
         $ret['task'] = $task;
+        $ret['categories'] = $categories;
         return view('tasks.edit', $ret);
     }
 
