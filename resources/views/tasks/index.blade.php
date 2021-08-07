@@ -90,7 +90,7 @@
                                     Semua Staf
                                 @endforelse
                             </td>
-                            <td>{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y') }}</td>
+                            <td class="font-size-sm">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y') }}</td>
                             <td>
                                 <div class="btn-group">
                                     <a class="btn btn-sm btn-primary"

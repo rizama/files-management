@@ -13,13 +13,13 @@
 @endsection
 
 @section('child-breadcrumb')
-    Buat Tugas
+    Tambah Tugas
 @endsection
 
 @section('content')
 <div class="block block-rounded">
     <div class="block-header">
-        <h3 class="block-title">Buat Tugas</h3>
+        <h3 class="block-title">Tambah Tugas</h3>
     </div>
     <div class="block-content block-content-full">
         <form action="{{ route('tasks.store') }}" method="POST" enctype="multipart/form-data">
@@ -44,6 +44,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="responsible_person">Kategori</label>
+                        <select class="js-select2-clear form-control" id="example-select2" name="category_id" style="width: 100%;" data-placeholder="Pilih Kategori Tugas" data-allowClear="true">
+                            @foreach ($categories as $key => $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                </div>
                 <div class="col-lg-12">
                     <div class="form-group">
                         <label for="email">Deskripsi</label></label>
@@ -61,7 +73,7 @@
                         <label>Contoh File</label>
                         <div class="custom-file">
                             <!-- Populating custom file input label with the selected filename (data-toggle="custom-file-input" is initialized in Helpers.coreBootstrapCustomFileInput()) -->
-                            <input type="file" class="custom-file-input" data-toggle="custom-file-input" id="default_file" name="default_file" lang="id">
+                            <input type="file" class="custom-file-input" data-toggle="custom-file-input" id="default_file" name="default_file" lang="id" accept="{{ config('app.accept_file_fe') }}">
                             <label class="custom-file-label" for="default_file"></label>
                         </div>
                     </div>
@@ -86,12 +98,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-12 text-right">
-                    <button type="submit" class="btn btn-primary" data-toggle="click-ripple">Buat</button>
-                    <a href="{{ url()->previous() }}" class="btn btn-secondary">Batal</a>
-                </div>
-            </div>
+            @include('layouts.create_submit')
         </form>
     </div>
 </div>
@@ -106,6 +113,9 @@
         });
         $('#is_history_active').click(function() {
             $(this).val(this.checked ? 1 : 0);
+        });
+        $(".js-select2-clear").select2({
+            allowClear: true
         });
     </script>
 @endsection
