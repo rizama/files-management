@@ -89,4 +89,11 @@ Route::group(
         Route::get('categories/edit/{id}', 'CategoryController@edit')->name('categories.edit');
         Route::put('categories/{id}', 'CategoryController@update')->name('categories.update');
         Route::get('categories/{id}', 'CategoryController@destroy')->name('categories.destroy');
+
+        // File Public
+        Route::get('file_publics', 'FilePublicController@index')->name('file_publics.index');
+        Route::post('file_publics', 'FilePublicController@store')->name('file_publics.store');
+        Route::get('file_publics/{id}', 'FilePublicController@edit')->name('file_publics.edit');
+        Route::put('file_publics/{id}', 'FilePublicController@update')->name('file_publics.update');
+        Route::delete('file_publics/{id}', 'FilePublicController@destroy')->name('file_publics.destroy');
 });
