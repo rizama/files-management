@@ -81,7 +81,6 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
         try {
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
@@ -115,8 +114,15 @@ class TaskController extends Controller
             $task->responsible_person()->attach($responsible_ids);
 
             if ($request->hasFile('default_file')) {
-                $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
+                $file_id = $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
             }
+
+            if ($request->existing_file == "on") {
+                $task->default_file_id = $request->file_id;
+            } else {
+                $task->default_file_id = $file_id;
+            }
+            $task->save();
 
             DB::commit();
 
@@ -145,7 +151,7 @@ class TaskController extends Controller
         }
         $task = Task::with(['responsible_person','files' => function($q) {
                 $q->where('is_default', 0)->with('user', 'status')->orderBy('created_at', 'desc');
-            }])
+            }, 'default_file'])
             ->where('id', $decrypted_id)->firstOrFail();
         
         $default_file = Task::with(['files' => function($q) {
@@ -157,8 +163,18 @@ class TaskController extends Controller
             $file['file_url'] = $this->generate_url($file->id);
         }
 
+        if (count($default_file->files) != 0) {
+            if ($task->default_file) {
+                $default = $task->default_file;
+            } else {
+                $default = null;
+            }
+        } else {
+            $default = $default_file->files[0];
+        }
         $ret['task'] = $task;
-        $ret['default_file'] = $default_file->files ? $default_file->files[0] : null;
+        $ret['default_file'] = $default;
+
         return view('tasks.show', $ret);
         
     }
@@ -176,7 +192,9 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
-        $task = Task::where('id', $decrypted_id)->firstOrFail();
+        $task = Task::with(['default_file', 'files' => function($q) {
+            $q->where('is_default', 1)->with('user', 'status')->orderBy('created_at', 'desc');
+        }])->where('id', $decrypted_id)->firstOrFail();
         $users = User::with(['role'])->whereHas('role', function($q){
             $q->where('code', '!=', 'superadmin');
         })->get();
@@ -184,10 +202,17 @@ class TaskController extends Controller
 
         $files = File::where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->get();
 
+        if ($task->default_file) {
+            $default_file_id = $task->default_file->id;
+        } else {
+            $default_file_id = $task->files[0]->id;
+        }
+
         $ret['files'] = $files;
         $ret['users'] = $users;
         $ret['task'] = $task;
         $ret['categories'] = $categories;
+        $ret['default_file_id'] = $default_file_id;
         return view('tasks.edit', $ret);
     }
 
@@ -255,6 +280,7 @@ class TaskController extends Controller
 
             $task->name = $request->name;
             $task->category_id = $request->category_id;
+            $task->default_file_id = $request->file_id;
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
             $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
@@ -631,6 +657,8 @@ class TaskController extends Controller
         $file_upload->is_default = $DEFAULT_FILE;
         $file_upload->type = $TYPE_FILE;
         $file_upload->save();
+
+        return $file_upload->id;
     }
 
     public function upload_to_s3($task, $file, $custom_name, $description, $category_id)
@@ -665,6 +693,8 @@ class TaskController extends Controller
         $file_upload->is_default = $DEFAULT_FILE;
         $file_upload->type = $TYPE_FILE;
         $file_upload->save();
+
+        return $file_upload->id;
     }
 
     public function upload_note_to_s3($task, $note_name, $note_content, $category_id)
@@ -694,6 +724,8 @@ class TaskController extends Controller
         $file_upload->is_default = $DEFAULT_FILE;
         $file_upload->type = $TYPE_FILE;
         $file_upload->save();
+
+        return $file_upload->id;
     }
 
     static public function mime2ext($mime) 
