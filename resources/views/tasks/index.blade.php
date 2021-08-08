@@ -23,30 +23,30 @@
         </div>
     @endif
 
-    @if (session()->has('user.created'))
+    @if (session()->has('task.created'))
         <div class="alert alert-success alert-dismissable" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <p class="mb-0">{{ session('user.created') }}</p>
+            <p class="mb-0">{{ session('task.created') }}</p>
         </div>
     @endif
 
-    @if (session()->has('user.updated'))
+    @if (session()->has('task.updated'))
         <div class="alert alert-success alert-dismissable" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <p class="mb-0">{{ session('user.updated') }}</p>
+            <p class="mb-0">{{ session('task.updated') }}</p>
         </div>
     @endif
 
-    @if (session()->has('user.deleted'))
+    @if (session()->has('task.deleted'))
         <div class="alert alert-success alert-dismissable" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            <p class="mb-0">{{ session('user.deleted') }}</p>
+            <p class="mb-0">{{ session('task.deleted') }}</p>
         </div>
     @endif
 
