@@ -47,4 +47,14 @@ class Task extends Model
     {
         return $this->BelongsTo(Category::class, 'category_id', 'id');
     }
+
+    /**
+     * Get the default_file associated with the Task
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function default_file()
+    {
+        return $this->hasOne(File::class, 'id', 'default_file_id');
+    }
 }
