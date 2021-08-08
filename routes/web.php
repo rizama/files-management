@@ -31,6 +31,10 @@ Route::get('/encrypt', function (Request $request) {
     return encrypt($request->id); 
 });
 
+Route::get('/decrypt', function (Request $request) {
+    return decrypt($request->id); 
+});
+
 Auth::routes();
 
 Route::get('/dashboard', 'HomeController@index')->name('dashboard');
