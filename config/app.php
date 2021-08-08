@@ -60,6 +60,7 @@ return [
 
     'accept_file_fe' => '.pdf,.xls,.csv,.doc,.docx,.ppt,.pptx,.rtf,.txt,.xlsx,.jpeg,.png,.bmp,.jpg',
     'accept_file_be' => 'pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
+    'bucket_aws' => 'files',
 
     /*
     |--------------------------------------------------------------------------
