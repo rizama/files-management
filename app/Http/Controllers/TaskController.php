@@ -27,7 +27,7 @@ class TaskController extends Controller
             return $next($request);
         });
 
-        $this->bucket_folder = 'files';
+        $this->bucket_folder = config('app.bucket_aws');
     }
 
     /**
