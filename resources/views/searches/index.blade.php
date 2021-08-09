@@ -47,9 +47,11 @@
                 <!-- tasks -->
                 <div class="tab-pane fade fade-up" id="search-tasks" role="tabpanel">
                     @if (isset($tasks))
+                    @if (app('request')->input('q'))
                     <div class="font-size-h4 font-w600 p-2 mb-4 border-left border-4x border-primary bg-body-light">
                         <span class="text-primary font-w700">{{ isset($tasks) ? count($tasks) : 0 }}</span> Tugas ditemukan
                     </div>
+                    @endif
                         @if (count($tasks))
                         <table class="table table-striped table-vcenter">
                             <thead>
@@ -135,17 +137,21 @@
                 <!-- Files -->
                 <div class="tab-pane fade fade-up show active" id="search-files" role="tabpanel">
                     @if (isset($files))
+                        @if (app('request')->input('q'))
                         <div class="font-size-h4 font-w600 p-2 mb-4 border-left border-4x border-primary bg-body-light">
                             <span class="text-primary font-w700">{{ isset($files) ? count($files) : 0 }}</span> File ditemukan
-                        </div>
+                        </div>                            
+                        @endif
+
                         @if (count($files))
                         <table class="table table-striped table-vcenter">
                             <thead>
                                 <tr>
-                                    <th style="width: 50%;">File</th>
+                                    <th class="d-none d-lg-table-cell text-center" style="width: 40%;">File</th>
+                                    <th class="d-none d-lg-table-cell text-center" style="width: 15%;">Tugas</th>
                                     <th class="d-none d-lg-table-cell text-center" style="width: 15%;">Tanggal</th>
                                     <th class="d-none d-lg-table-cell text-center" style="width: 15%;">Pengunggah</th>
-                                    <th class="text-center" style="width: 20%;">Aksi</th>
+                                    <th class="text-center" style="width: 10%;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -158,6 +164,9 @@
                                         <p class="d-none d-sm-block text-muted">
                                             {{ $file->description }}
                                         </p>
+                                    </td>
+                                    <td class="d-none d-lg-table-cell text-center">
+                                        {{ $file->task->name }}
                                     </td>
                                     <td class="d-none d-lg-table-cell text-center">
                                         {{ \Carbon\Carbon::parse($file->created_at)->isoFormat('D MMMM YYYY') }}
@@ -207,7 +216,7 @@
                                 <center>Tidak ada hasil pencarian</center>
                             </div>
                         @endif 
-                    @else   
+                    @else
                         <div class="mb-3">
                             <center>Belum melakukan pencarian</center>
                         </div>
