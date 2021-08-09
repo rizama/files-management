@@ -61,7 +61,7 @@
             </div>
             <div class="block-content py-2 bg-body-light">
                 <p class="font-w600 font-size-sm text-muted mb-0">
-                    Dokumen Menunggu Persetujuan
+                    Dokumen Menunggu
                 </p>
             </div>
         </a>
