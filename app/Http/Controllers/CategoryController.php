@@ -58,7 +58,7 @@ class CategoryController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
-                'description' => 'string'
+                'description' => 'nullable|string'
             ]);
 
             if ($validator->fails()) {
