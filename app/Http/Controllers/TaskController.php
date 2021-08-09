@@ -167,7 +167,7 @@ class TaskController extends Controller
             if ($task->default_file) {
                 $default = $task->default_file;
             } else {
-                $default = null;
+                $default = $default_file->files[0];
             }
         } else {
             $default = $default_file->files[0];
