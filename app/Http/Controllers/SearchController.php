@@ -14,12 +14,12 @@ class SearchController extends Controller
         $keyword = $request->q;
         if ($keyword) {
              // Person
-            $files = File::where('original_name', 'LIKE', "%$keyword%")->where('status_approve', 3)
+            $files = File::where('original_name', 'LIKE', "%$keyword%")
                 ->orWhereHas('user', function($query) use($keyword){
                     $query->where('name', 'LIKE', "%$keyword%");
                 })->orWhereHas('task', function($query) use($keyword){
                     $query->where('name', 'LIKE', "%$keyword%")->where('status', 1);
-                })->with('task', 'user')->orderBy('updated_at', 'desc')->get();
+                })->with('task', 'user')->orderBy('updated_at', 'desc')->where('status_approve', 3)->get();
 
             $tasks = Task::with(['responsible_person', 'user'])
                 ->whereHas('responsible_person', function($q) use($keyword){
@@ -29,10 +29,16 @@ class SearchController extends Controller
 
             $ret['files'] = $files;
             $ret['tasks'] = $tasks;
-            // return response()->json(["files" => $files, "tasks" => $tasks], 200);
+
             return view('searches.index', $ret);
         }
-        return view('searches.index');
+
+        $files = File::with('task', 'user')->where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->limit(10)->get();
+        $tasks = Task::with(['responsible_person', 'user'])->orderBy('updated_at', 'desc')->limit(10)->get();
+
+        $ret['files'] = $files;
+        $ret['tasks'] = $tasks;
+        return view('searches.index', $ret);
     }
 
     public function search(Request $request)
