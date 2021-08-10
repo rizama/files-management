@@ -154,6 +154,7 @@
                 </div>
             </div>
         @endif
+        <a href="{{ url()->previous() }}" class="btn btn-alt-secondary mb-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
         <div class="block block-rounded">
             <div class="block-header">
                 <h3 class="block-title">Riwayat File</h3>
