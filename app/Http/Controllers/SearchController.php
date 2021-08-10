@@ -13,7 +13,7 @@ class SearchController extends Controller
     {
         $keyword = $request->q;
         if ($keyword) {
-             // Person
+
             $files = File::where('original_name', 'LIKE', "%$keyword%")
                 ->orWhereHas('user', function($query) use($keyword){
                     $query->where('name', 'LIKE', "%$keyword%");
@@ -45,9 +45,6 @@ class SearchController extends Controller
     {
         $keyword = $request->q;
 
-        // ->where('name', 'LIKE', "%$keyword%")
-        
-        // Person
         $files = File::where('original_name', 'LIKE', "%$keyword%")->where('status_approve', 3)
             ->orWhereHas('user', function($query) use($keyword){
                 $query->where('name', 'LIKE', "%$keyword%");
