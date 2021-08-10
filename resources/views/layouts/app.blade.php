@@ -91,6 +91,12 @@
                                 </a>
                             </li>
                             <li class="nav-main-item">
+                                <a class="nav-main-link {{ Request::is('mytasks*') ? 'active' : '' }}" href="{{ route('tasks.my_task') }}">
+                                    <i class="nav-main-link-icon fa fa-tasks"></i>
+                                    <span class="nav-main-link-name">Tugas Saya</span>
+                                </a>
+                            </li>
+                            <li class="nav-main-item">
                                 <a class="nav-main-link {{ Request::is('search*') ? 'active' : '' }}" href="{{ url('/search') }}">
                                     <i class="nav-main-link-icon si si-magnifier"></i>
                                     <span class="nav-main-link-name">Pencarian</span>
