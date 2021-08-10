@@ -588,6 +588,26 @@ class TaskController extends Controller
         }
     }
 
+    public function my_task(Request $request)
+    {
+        try {
+            $user_id = Auth::id(); 
+            $user = User::with('responsible_tasks')->where('id', $user_id)->first();
+
+            return response()->json($user, 200);
+
+        } catch (\Exception $e) {
+            dd($e);
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
+                return abort(404);
+            }
+            if ("The payload is invalid." == $e->getMessage()) {
+                return abort(404);
+            }
+            return abort(500);
+        }
+    }
+
     public function upload_to_local($task, $file, $custom_name, $category_id)
     {
         $filename = $file->getClientOriginalName();
