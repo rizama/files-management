@@ -59,6 +59,7 @@ Route::group(
 
         // Tasks Route
         Route::get('/tasks', 'TaskController@index')->name('tasks.index');
+        Route::get('mytasks', 'TaskController@my_task')->name('tasks.my_task');
         Route::get('/tasks/show/{id}', 'TaskController@show')->name('tasks.show');
         Route::get('/tasks/create', 'TaskController@create')->name('tasks.create');
         Route::post('/tasks', 'TaskController@store')->name('tasks.store');
