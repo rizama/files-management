@@ -593,11 +593,11 @@ class TaskController extends Controller
         try {
             $user_id = Auth::id(); 
             $user = User::with('responsible_tasks')->where('id', $user_id)->first();
+            $ret['user'] = $user;
 
-            return response()->json($user, 200);
+            return view('mytasks.index', $ret);
 
         } catch (\Exception $e) {
-            dd($e);
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
