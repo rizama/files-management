@@ -18,7 +18,9 @@
                         <small></small>
                     </div>
                     <div class="block-content">
-                        <p>{{ $task->description }}</p>
+                        <p>Deskripsi: {{ $task->description }}</p>
+                        <p>Kategori : {{ $task->category['name'] }}</p>
+                        <p>Status   : {{ $task->status_task['name'] }}</p>
                         <div class="text-right mb-1">
                             <a class="btn btn-sm bg-info-light text-info" href="{{ url('/tasks/show/').'/'.encrypt($task->id) }}">Lihat tugas <i class="fa fa-arrow-right ml-1"></i> </a>
                         </div>
