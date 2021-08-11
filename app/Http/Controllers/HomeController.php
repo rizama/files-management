@@ -68,7 +68,7 @@ class HomeController extends Controller
                 $q->with('task')->where('is_default', 0)->orderBy('created_at', 'desc');
             }])
             ->whereHas('role', function($query){
-                $query->where('code', '!=', 'superadmin');
+                $query->where('code', '!=', 'superadmin')->where('code', '!=', 'level_1');
             })
             ->get();
 
