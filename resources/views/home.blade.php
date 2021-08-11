@@ -77,12 +77,15 @@
         <table class="js-table-sections table table-hover table-vcenter">
             <thead>
                 <tr>
-                    <th style="width: 30px;"></th>
-                    <th>Nama</th>
-                    <th style="width: 15%;">Dokumen Disetujui</th>
-                    <th style="width: 15%;">Dokumen Menunggu</th>
-                    <th style="width: 15%;">Dokumen Ditolak</th>
-                    <th style="width: 15%;">Total</th>
+                    <th style="width: 30px;" rowspan="2"></th>
+                    <th rowspan="2" style="vertical-align: middle;">Nama</th>
+                    <th colspan="5" class="text-center">Dokumen</th>
+                </tr>
+                <tr>
+                    <th style="width: 15%;" class="text-center">Disetujui</th>
+                    <th style="width: 15%;" class="text-center">Menunggu</th>
+                    <th style="width: 15%;" class="text-center">Ditolak</th>
+                    <th style="width: 15%;" class="text-center">Total</th>
                 </tr>
             </thead>
             {{-- {{ dd($users[2]) }} --}}

@@ -1,3 +1,8 @@
+body {
+  background-image: url("../media/farmer/farmer.png");
+  background-repeat: repeat;
+}
+
 .back-button {
   margin-right: 10px;
 }
