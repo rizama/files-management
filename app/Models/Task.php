@@ -57,4 +57,14 @@ class Task extends Model
     {
         return $this->hasOne(File::class, 'id', 'default_file_id');
     }
+
+    /**
+     * Get the status associated with the Task
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function status_task()
+    {
+        return $this->hasOne(StatusApprove::class, 'id', 'status');
+    }
 }
