@@ -163,7 +163,7 @@ class TaskController extends Controller
             $file['file_url'] = $this->generate_url($file->id);
         }
 
-        if (count($default_file->files) != 0) {
+        if (count($default_file->files) >= 0) {
             if ($task->default_file) {
                 $default = $task->default_file;
             } else {
@@ -392,6 +392,19 @@ class TaskController extends Controller
 
             $task = Task::where('id', $task_id)->firstOrFail();
 
+            if (count($task->responsible_person)) {
+                $ids = [];
+                foreach ($task->responsible_person as $a => $responsible) {
+                    array_push($ids, $responsible->id);
+                }
+
+                if (!in_array(Auth::id(), $ids)) {
+                    return redirect()->back()->withErrors([
+                        "message" => "not authorized"
+                    ]);
+                }
+            }
+
             $custom_name = $request->custom_name;
             $description = $request->description;
             $category_id = $request->category_id;
@@ -455,6 +468,19 @@ class TaskController extends Controller
             }
 
             $task = Task::where('id', $task_id)->firstOrFail();
+
+            if (count($task->responsible_person)) {
+                $ids = [];
+                foreach ($task->responsible_person as $a => $responsible) {
+                    array_push($ids, $responsible->id);
+                }
+
+                if (!in_array(Auth::id(), $ids)) {
+                    return redirect()->back()->withErrors([
+                        "message" => "not authorized"
+                    ]);
+                }
+            }
 
             if (!$task->is_history_file_active) {
                 // Delete Old File
