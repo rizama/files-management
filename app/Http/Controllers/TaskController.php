@@ -607,9 +607,20 @@ class TaskController extends Controller
             DB::beginTransaction();
             $decrypted_id = decrypt($id);
 
-            $task = Task::findOrFail($decrypted_id);
+            $task = Task::with(['files' => function($q){
+                $q->orderBy('created_at', 'desc');
+            }])->findOrFail($decrypted_id);
 
             $STATUS_APPROVE = 3; // approved
+
+            if (count($task->files)) {
+                $file_id = $task->files[0]['id'];               
+                $file = File::where('id', $file_id)->first();
+                if ($file) {
+                    $file->status_approve = $STATUS_APPROVE;
+                    $file->save();
+                }
+            }
 
             $task->status = $STATUS_APPROVE; 
             $task->verified_by = Auth::id();
@@ -621,6 +632,7 @@ class TaskController extends Controller
             return redirect()->route('tasks.show', encrypt($task->id));
 
         } catch (\Exception $e) {
+            dd($e);
             DB::rollback();
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
