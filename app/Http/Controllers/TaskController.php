@@ -638,7 +638,7 @@ class TaskController extends Controller
             $user_id = Auth::id(); 
             $user = User::with('responsible_tasks.category', 'responsible_tasks.status_task')->where('id', $user_id)->first();
             $ret['user'] = $user;
-            // dd($user);
+
             return view('mytasks.index', $ret);
 
         } catch (\Exception $e) {

@@ -50,7 +50,8 @@
 
 <div class="row push">
     <div class="col-lg-8">
-        @if($task->status !== 3)
+        <a href="{{ url()->previous() }}" class="btn btn-alt-secondary mb-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+        @if($task->status !== 3 && (in_array(Auth::user()->id, json_decode($task->assign_to)) || json_decode($task->assign_to) == []))
             <div class="block block-rounded">
                 <ul class="nav nav-tabs nav-tabs-block align-items-center" data-toggle="tabs" role="tablist">
                     <li class="nav-item">
@@ -154,7 +155,6 @@
                 </div>
             </div>
         @endif
-        <a href="{{ url()->previous() }}" class="btn btn-alt-secondary mb-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
         <div class="block block-rounded">
             <div class="block-header">
                 <h3 class="block-title">Riwayat File</h3>
@@ -184,7 +184,7 @@
                                     <button type="button" class="btn btn-alt-primary push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" id="preview-btn-modal">Pratinjau Dokumen</button>
                                 @endif
 
-                                @if ($file->status['code'] == 'waiting' && $task->status !== 3)
+                                @if ($file->status['code'] == 'waiting' && $task->status !== 3 && $key === 0)
                                     @if (Auth::user()->role->code == 'level_1')
                                     <div class="accordion mt-2" id="accordionExample">
                                         <div class="card">
@@ -242,38 +242,39 @@
                                         </div>
                                     </div>
                                     @endif
-                                @else 
-                                <div class="mt-2">
-                                    @php
-                                        if($file->status['code'] == 'waiting'){
-                                            if ($task->status === 3) {
+                                @elseif($file->status['code'] == 'waiting' && $task->status !== 3 && $key !== 0)
+                                @else
+                                    <div class="mt-2">
+                                        @php
+                                            if($file->status['code'] == 'waiting'){
+                                                if ($task->status === 3) {
+                                                    $status = 'success';
+                                                } else {
+                                                    $status = 'warning';
+                                                }
+                                            } else if($file->status['code'] == 'approved'){
                                                 $status = 'success';
+                                            } else if($file->status['code'] == 'rejected'){
+                                                $status = 'danger';
                                             } else {
-                                                $status = 'warning';
+                                                $status = 'info';
                                             }
-                                        } else if($file->status['code'] == 'approved'){
-                                            $status = 'success';
-                                        } else if($file->status['code'] == 'rejected'){
-                                            $status = 'danger';
-                                        } else {
-                                            $status = 'info';
-                                        }
-                                    @endphp
-                                    <div>
-                                        <table>
-                                            <tr>
-                                                <td><b>Status</b></td>
-                                                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                                <td> <span class="badge badge-{{ $status }}">{{ $file->status['code'] == 'waiting' && $task->status === 3 ? 'Selesai' : $file->status['name'] }}</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>Catatan</b></td>
-                                                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                                <td>{{ $file['notes'] ?? '-' }}</td>
-                                            </tr>
-                                        </table>
+                                        @endphp
+                                        <div>
+                                            <table>
+                                                <tr>
+                                                    <td><b>Status</b></td>
+                                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td> <span class="badge badge-{{ $status }}">{{ $file->status['code'] == 'waiting' && $task->status === 3 ? 'Selesai' : $file->status['name'] }}</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Catatan</b></td>
+                                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td>{{ $file['notes'] ?? '-' }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
                                 @endif
                             </div>
                         </div>

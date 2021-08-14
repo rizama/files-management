@@ -87,7 +87,7 @@
                                 <select class="js-select2 form-control" id="select2-files" name="file_id" style="width: 100%;" data-placeholder="Pilih Dokumen yang tersedia" data-allow-clear="true">
                                     <option></option>
                                     @foreach ($files as $key => $file)
-                                        <option value="{{ $file->id }}" {{ $default_file_id === $file->id ? 'checked' : '' }}>({{ \Carbon\Carbon::parse($file->updated_at)->isoFormat('D MMMM Y, HH:MM') }}) - {{ $file->original_name }}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}</option>
+                                        <option value="{{ $file->id }}" {{ $default_file_id === $file->id ? 'selected' : '' }}>({{ \Carbon\Carbon::parse($file->updated_at)->isoFormat('D MMMM Y, HH:MM') }}) - {{ $file->original_name }}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}</option>
                                     @endforeach
                                 </select>
                             </div>
