@@ -61,24 +61,21 @@
             <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
                 <thead>
                     <tr>
-                        <th class="text-center" style="width: 80px;">No</th>
+                        {{-- <th class="text-center" style="width: 80px;">No</th> --}}
                         <th>Nama</th>
-                        <th>Deskripsi</th>
                         <th>Kategori</th>
                         <th>Petugas</th>
                         <th>Tanggal</th>
+                        <th>Status</th>
                         <th class="disable-sorting">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($tasks as $task)
                         <tr>
-                            <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td>
+                            {{-- <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td> --}}
                             <td class="font-w600 font-size-sm">
                                 {{ $task->name }}
-                            </td>
-                            <td class="d-none d-sm-table-cell font-size-sm">
-                                {{ $task->description }}
                             </td>
                             <td>
                                 {{ $task->category->name ?? '-' }}
@@ -90,7 +87,10 @@
                                     Semua Staf
                                 @endforelse
                             </td>
-                            <td class="font-size-sm">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y') }}</td>
+                            <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y') }}</td>
+                            <td>
+                                <span class="badge badge-{{ $task->status === 3 ? 'success' : 'warning' }}">{{ $task->status === 3 ? 'Disetujui' : 'On Progress' }}</span>
+                            </td>
                             <td>
                                 <div class="btn-group">
                                     <a class="btn btn-sm btn-primary"
