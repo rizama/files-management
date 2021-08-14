@@ -55,7 +55,9 @@
     <div class="block block-rounded">
         <div class="block-header">
             <h2 class="block-title">Daftar Tugas</h2>
-            <a class="btn btn-primary pull-right btn-sm" href="{{ url('/tasks/create') }}">Tambah Tugas</a>
+            @if ($user->role->code == 'level_1')
+                <a class="btn btn-primary pull-right btn-sm" href="{{ url('/tasks/create') }}">Tambah Tugas</a>
+            @endif
         </div>
         <div class="block-content block-content-full">
             <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
