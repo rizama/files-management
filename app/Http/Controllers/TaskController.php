@@ -253,7 +253,10 @@ class TaskController extends Controller
 
             if ($request->hasFile('default_file')) {
                 if (!$request->is_history_active) {
-
+                    
+                    // Remove Selected 
+                    $task->default_file_id = null;
+                    
                     // Delete Old File
                     $old_file = $task->files->last();
                     if ($old_file) {
@@ -280,7 +283,11 @@ class TaskController extends Controller
 
             $task->name = $request->name;
             $task->category_id = $request->category_id;
-            $task->default_file_id = $request->file_id;
+
+            if ($request->file_id) {
+                $task->default_file_id = $request->file_id;
+            }
+            
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
             $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
