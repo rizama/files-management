@@ -7,20 +7,20 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Sistem Operasi Manajemen Kerja dan Perencaan</title>
 
     <meta name="description"
         content="Sistem Operasi Manajemen Kerja dan Perencaan">
     <meta name="author" content="pixelcave">
     <meta name="robots" content="noindex, nofollow">
 
+    <title>
+        @yield('title', config('app.name'))
+    </title>
     <!-- Icons -->
     <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
-    <link rel="shortcut icon" href="{{ asset('media/favicons/favicon.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192"
-        href="{{ asset('media/favicons/favicon-192x192.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180"
-        href="{{ asset('media/favicons/apple-touch-icon-180x180.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/icon_1.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('img/icon_1.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/icon_1.png') }}">
     <!-- END Icons -->
 
     <!-- Stylesheets -->
@@ -48,7 +48,8 @@
                                 <div class="col-md-8 col-lg-6 col-xl-4 py-4">
                                     <!-- Header -->
                                     <div class="text-center">
-                                        <p class="mb-2">
+                                        <img src="{{ asset('img/main_logo_color.png') }}" class="img-fluid"/>
+                                        {{-- <p class="mb-2">
                                             <i class="fa fa-2x fa-circle-notch text-primary"></i>
                                         </p>
                                         <h1 class="h4 mb-1">
@@ -56,7 +57,7 @@
                                         </h1>
                                         <h2 class="h6 font-w400 text-muted mb-3">
                                             Sistem Operasi Managemen Kerja Perencanaan
-                                        </h2>
+                                        </h2> --}}
                                     </div>
                                     <!-- END Header -->
 
@@ -121,7 +122,10 @@
 
                     <!-- Footer -->
                     <div class="font-size-sm text-center text-muted py-3">
-                        <strong>Dinas Perkebunan - Perencanaan</strong> &copy; <span data-toggle="year-copy"></span>
+                        <img src="{{ asset('img/pemprov.png') }}" class="img-fluid mr-2" style="height: 50px;"/>
+                        <img src="{{ asset('img/disbun.png') }}" class="img-fluid" style="height: 50px;"/>
+                        {{-- <strong>Dinas Perkebunan - Perencanaan</strong> &copy; <span data-toggle="year-copy"></span> --}}
+                        <div>&copy; <span data-toggle="year-copy"></span></div>
                     </div>
                     <!-- END Footer -->
                 </div>
