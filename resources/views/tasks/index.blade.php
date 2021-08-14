@@ -101,6 +101,7 @@
                                     >
                                         <i class="fa fa-fw fa-eye"></i>
                                     </a>
+                                    @if($task->created_by === $user->id)
                                     <a class="btn btn-sm btn-warning"
                                         href="{{ url('/tasks/edit/').'/'.encrypt($task->id) }}"
                                         data-animation="true" data-toggle="tooltip"
@@ -109,6 +110,7 @@
                                     >
                                         <i class="fa fa-fw fa-pencil-alt"></i>
                                     </a>
+                                    @endif
                                     @if($task->created_by === $user->id)
                                         <a class="btn btn-sm btn-danger js-swal-confirm"
                                             href="{{ route('tasks.destroy', encrypt($task->id)) }}"
