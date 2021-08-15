@@ -14,10 +14,11 @@
 
 @section('child-breadcrumb')
     {{ $task->name }}
-@endsection
-
-@section('info-page-title')
-    {{ $task->description }} 
+    <div>
+        @section('info-page-title')
+            Deskripsi : {{ $task->description ?? '-' }} 
+        @endsection
+    </div>
 @endsection
 
 @section('content')
@@ -180,8 +181,8 @@
                                     <small>Deskripsi</small>{{ $file['description'] ?? '-' }}
                                 </p>
                                 <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" target="_blank" class="btn btn-secondary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}">Unduh File</a>
-                                @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp']))
-                                    <button type="button" class="btn btn-alt-primary push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" id="preview-btn-modal">Pratinjau Dokumen</button>
+                                @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp', 'txt']))
+                                    <button type="button" class="btn btn-alt-primary push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" data-ext="{{App\Http\Controllers\TaskController::mime2ext($file->mime_type)}}" id="preview-btn-modal">Pratinjau Dokumen</button>
                                 @endif
 
                                 @if ($file->status['code'] == 'waiting' && $task->status !== 3 && $key === 0)
@@ -352,7 +353,7 @@
 
 <!-- Preview Modal -->
 <div class="modal" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="preview-modal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="block block-rounded block-themed block-transparent mb-0">
                 <div class="block-header bg-primary-dark">
@@ -364,7 +365,8 @@
                         </button>
                     </div>
                 </div>
-                <div class="block-content font-size-sm">
+                <div class="block-content font-size-sm text-center">
+                    <img src="" class="img-fluid preview-src-img" />
                     <div class="embed-responsive embed-responsive-16by9 preview-content">
                         <embed class="embed-responsive-item preview-src" src="" allowfullscreen></embed>
                     </div>
@@ -415,10 +417,23 @@
                 $('#btn-note').prop('disabled', true);
             }
         });
-        $('#preview-modal').on('show.bs.modal', function(e) {
+        $('#preview-modal').on('shown.bs.modal', function(e) {
             var file = $(e.relatedTarget).data('file');
+            var ext = $(e.relatedTarget).data('ext');
             $('.preview-title').html(file.original_name);
-            $('.preview-src').attr('src', file.file_url);
+            if(['pdf', 'txt'].includes(ext)) {
+                $('.embed-responsive').removeClass('d-none');
+                $('.preview-src-img').addClass('d-none');
+                $('.preview-src').attr('src', file.file_url);
+            } else {
+                $('.preview-src-img').removeClass('d-none');
+                $('.embed-responsive').addClass('d-none');
+                $('.preview-src-img').attr('src', file.file_url);
+            }
+        });
+        $('#preview-modal').on('hidden.bs.modal', function(e) {
+            $('.preview-src').attr('src', '#');
+            $('.preview-src-img').attr('src', '#');
         });
     </script>
 @endsection
