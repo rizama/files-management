@@ -57,7 +57,9 @@ class TaskController extends Controller
     {
         try {
             $users = User::with(['role'])->whereHas('role', function($q){
-                $q->where('code', '!=', 'superadmin');
+                $q->where('code', '!=', 'superadmin')
+                ->where('code', '!=', 'guest')
+                ->where('code', '!=', 'level_1');
             })->get();
 
             $categories = Category::all();
@@ -196,7 +198,9 @@ class TaskController extends Controller
             $q->where('is_default', 1)->with('user', 'status')->orderBy('created_at', 'desc');
         }])->where('id', $decrypted_id)->firstOrFail();
         $users = User::with(['role'])->whereHas('role', function($q){
-            $q->where('code', '!=', 'superadmin');
+            $q->where('code', '!=', 'superadmin')
+            ->where('code', '!=', 'guest')
+            ->where('code', '!=', 'level_1');
         })->get();
         $categories = Category::all();
 
@@ -356,6 +360,7 @@ class TaskController extends Controller
             }
 
             $task = Task::findOrFail($decrypted_id);
+            $task->responsible_person()->detach();
 
             $files = File::where('task_id', $task->id)->get();
 
