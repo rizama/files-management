@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FilePublic;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -31,7 +32,9 @@ class FilePublicController extends Controller
      */
     public function index()
     {
-        //
+        $file_publics = FilePublic::all();
+        $ret['file_publics'] = $file_publics;
+        return view('file_publics.index', $ret);
     }
 
     /**
@@ -41,7 +44,9 @@ class FilePublicController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        $ret['categories'] = $categories;
+        return view('file_publics.create', $ret);
     }
 
     /**
@@ -72,9 +77,15 @@ class FilePublicController extends Controller
 
             $file_upload = $this->upload_file_to_s3($file, $custom_name, $description, $category_id);
     
-            return $file_upload;
+            return redirect()->route('file_publics.index');
         } catch (\Exception $e) {
-            dd($e);
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
+                return abort(404);
+            }
+            if ("The payload is invalid." == $e->getMessage()) {
+                return abort(404);
+            }
+            return abort(500);
         }
     }
 
@@ -97,7 +108,17 @@ class FilePublicController extends Controller
      */
     public function edit($id)
     {
-        //
+        try {
+            $decrypted_id = decrypt($id);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        $file_public = FilePublic::where('id', $decrypted_id)->firstOrFail();
+        $categories = Category::all();
+
+        $ret['file_public'] = $file_public;
+        $ret['categories'] = $categories;
+        return view('file_publics.edit', $ret);
     }
 
     /**
@@ -155,7 +176,7 @@ class FilePublicController extends Controller
                 $old_file->save();
             }
     
-            return "update success";
+            return redirect()->route('file_publics.index');
 
         } catch (\Exception $e) {
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
@@ -186,7 +207,7 @@ class FilePublicController extends Controller
             $old_file = FilePublic::findOrFail($decrypted_id);
             $old_file->delete();
     
-            return "delete success";
+            return redirect()->route('file_publics.index');
 
         } catch (\Exception $e) {
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {

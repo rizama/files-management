@@ -13,9 +13,9 @@
     </title>
     <!-- Icons -->
     <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
-    <link rel="shortcut icon" href="{{ asset('media/favicons/favicon.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('media/favicons/favicon-192x192.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('media/favicons/apple-touch-icon-180x180.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/icon_1.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('img/icon_1.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/icon_1.png') }}">
     <!-- END Icons -->
 
 
@@ -36,14 +36,15 @@
 </head>
 
 <body>
-    <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed main-content-narrow page-header-dark">
+    <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed main-content-narrow page-header-dark sidebar-mini">
         <nav id="sidebar" aria-label="Main Navigation">
             <!-- Side Header -->
             <div class="content-header bg-white-5">
                 <!-- Logo -->
                 <a class="font-w600 text-dual" href="{{ url('/dashboard') }}">
-                    <span class="smini-visible">
-                        <i class="fa fa-circle-notch text-primary"></i>
+                    <span class="smini-visible" style="margin-left: -8px;">
+                        <img src="{{ asset('img/icon_light.png') }}" style="width: 32px" />
+                        {{-- <i class="fa fa-circle-notch text-primary"></i> --}}
                     </span>
                     <span class="smini-hide font-size-h5 tracking-wider">
                         <span class="font-w900">{{ env('APP_NAME') }}</span> 
@@ -78,30 +79,48 @@
                                 </a>
                             </li>
                         @else
-                            <li class="nav-main-item">
-                                <a class="nav-main-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('/dashboard') }}">
-                                    <i class="nav-main-link-icon si si-speedometer"></i>
-                                    <span class="nav-main-link-name">Beranda</span>
-                                </a>
-                            </li>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link {{ Request::is('tasks*') ? 'active' : '' }}" href="{{ url('/tasks') }}">
-                                    <i class="nav-main-link-icon si si-briefcase"></i>
-                                    <span class="nav-main-link-name">Tugas</span>
-                                </a>
-                            </li>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link {{ Request::is('mytasks*') ? 'active' : '' }}" href="{{ route('tasks.my_task') }}">
-                                    <i class="nav-main-link-icon fa fa-tasks"></i>
-                                    <span class="nav-main-link-name">Tugas Saya</span>
-                                </a>
-                            </li>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link {{ Request::is('search*') ? 'active' : '' }}" href="{{ url('/search') }}">
-                                    <i class="nav-main-link-icon si si-magnifier"></i>
-                                    <span class="nav-main-link-name">Pencarian</span>
-                                </a>
-                            </li>
+                            @if (Auth::user()->role->code == 'level_1' || Auth::user()->role->code == 'level_2')
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('/dashboard') }}">
+                                        <i class="nav-main-link-icon si si-speedometer"></i>
+                                        <span class="nav-main-link-name">Beranda</span>
+                                    </a>
+                                </li>
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link {{ Request::is('tasks*') ? 'active' : '' }}" href="{{ url('/tasks') }}">
+                                        <i class="nav-main-link-icon si si-briefcase"></i>
+                                        <span class="nav-main-link-name">Tugas</span>
+                                    </a>
+                                </li>
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link {{ Request::is('mytasks*') ? 'active' : '' }}" href="{{ route('tasks.my_task') }}">
+                                        <i class="nav-main-link-icon fa fa-tasks"></i>
+                                        <span class="nav-main-link-name">Tugas Saya</span>
+                                    </a>
+                                </li>
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link {{ Request::is('search*') ? 'active' : '' }}" href="{{ url('/search') }}">
+                                        <i class="nav-main-link-icon si si-magnifier"></i>
+                                        <span class="nav-main-link-name">Pencarian</span>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (Auth::user()->role->code == 'guest')
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link {{ Request::is('search*') ? 'active' : '' }}" href="{{ url('/search-public') }}">
+                                        <i class="nav-main-link-icon si si-magnifier"></i>
+                                        <span class="nav-main-link-name">Pencarian</span>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (Auth::user()->role->code == 'level_1')
+                                <li class="nav-main-item">
+                                    <a class="nav-main-link {{ Request::is('file_publics*') ? 'active' : '' }}" href="{{ url('/file_publics') }}">
+                                        <i class="nav-main-link-icon si si-notebook"></i>
+                                        <span class="nav-main-link-name">Dokumen Umum</span>
+                                    </a>
+                                </li>
+                            @endif
                         @endif
                         {{-- <li class="nav-main-item">
                             <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">

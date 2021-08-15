@@ -68,11 +68,43 @@ class HomeController extends Controller
                 $q->with('task')->where('is_default', 0)->orderBy('created_at', 'desc');
             }])
             ->whereHas('role', function($query){
-                $query->where('code', '!=', 'superadmin')->where('code', '!=', 'level_1');
+                $query->where('code', '!=', 'superadmin')
+                    ->where('code', '!=', 'level_1')
+                    ->where('code', '!=', 'guest');
             })
             ->get();
+        
+        $task_general = Task::where('assign_to', '[]')->get();
+
+        $data_task_person = [];
+        foreach ($users as $index => $user) {
+            $data_task_person[$user->name] = $user->responsible_tasks;
+            foreach ($task_general as $key => $general) {
+                $data_task_person[$user->name][] = $general;
+            }
+        }
+
+        $data_task = [];
+        foreach ($data_task_person as $name => $tasks) {
+            $total = count($data_task_person[$name]);
+            $finish = 0;
+            $progres = 0;
+            foreach ($tasks as $key_task => $task_person) {
+                if ($task_person->status == 1) {
+                    $progres++;
+                } else if ($task_person->status == 3) {
+                    $finish++;
+                }
+            }
+            $data_task[$name] = [
+                "total" => $total,
+                "finish" => $finish,
+                "progres" => $progres,
+            ];
+        }
 
         $res['task_total'] = count($tasks);
+        $res['data_task'] = $data_task;
         $res['task_done'] = $done;
         $res['task_waiting'] = $waiting;
         $res['task_progress'] = $progress;

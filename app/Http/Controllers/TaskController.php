@@ -57,7 +57,9 @@ class TaskController extends Controller
     {
         try {
             $users = User::with(['role'])->whereHas('role', function($q){
-                $q->where('code', '!=', 'superadmin');
+                $q->where('code', '!=', 'superadmin')
+                ->where('code', '!=', 'guest')
+                ->where('code', '!=', 'level_1');
             })->get();
 
             $categories = Category::all();
@@ -196,7 +198,9 @@ class TaskController extends Controller
             $q->where('is_default', 1)->with('user', 'status')->orderBy('created_at', 'desc');
         }])->where('id', $decrypted_id)->firstOrFail();
         $users = User::with(['role'])->whereHas('role', function($q){
-            $q->where('code', '!=', 'superadmin');
+            $q->where('code', '!=', 'superadmin')
+            ->where('code', '!=', 'guest')
+            ->where('code', '!=', 'level_1');
         })->get();
         $categories = Category::all();
 
@@ -253,7 +257,10 @@ class TaskController extends Controller
 
             if ($request->hasFile('default_file')) {
                 if (!$request->is_history_active) {
-
+                    
+                    // Remove Selected 
+                    $task->default_file_id = null;
+                    
                     // Delete Old File
                     $old_file = $task->files->last();
                     if ($old_file) {
@@ -280,30 +287,45 @@ class TaskController extends Controller
 
             $task->name = $request->name;
             $task->category_id = $request->category_id;
-            $task->default_file_id = $request->file_id;
+
+            if ($request->file_id) {
+                $task->default_file_id = $request->file_id;
+            }
+            
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
             $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
             $task->save();
 
             $responsible_person = TaskUser::where('task_id', $task->id)->get();
+
+            if ($request->responsible_person) {
+                $responsible_ids = count($request->responsible_person) ? $request->responsible_person : [];
             
-            $responsible_ids = $request->responsible_person ?? [];
-            $existing_responsibles = [];
-            foreach ($responsible_person as $index => $person) {
-                $existing_responsibles[] = $person['user_id'];
-            }
+                if (count($responsible_person)) {
+                    $existing_responsibles = [];
+                    foreach ($responsible_person as $index => $person) {
+                        $existing_responsibles[] = $person['user_id'];
+                    }
 
-            $responsible_diff = array_diff($existing_responsibles, $responsible_ids);
-
-            if (count($responsible_diff)) {
-                # delete old
+                    $responsible_diff = array_diff($existing_responsibles, $responsible_ids);
+                    // dd($responsible_person, count($existing_responsibles), $responsible_diff, count($responsible_ids));
+                    if (count($existing_responsibles) != count($responsible_ids)) {
+                        # delete old
+                        $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
+                        $responsible_person_will_delete->delete();
+        
+                        # save new
+                        $task->responsible_person()->attach($responsible_ids);
+                    }
+                } else {
+                    $task->responsible_person()->attach($responsible_ids);
+                }
+            } else {
                 $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
                 $responsible_person_will_delete->delete();
-
-                # save new
-                $task->responsible_person()->attach($responsible_ids);
             }
+            
 
             DB::commit();
 
@@ -338,6 +360,7 @@ class TaskController extends Controller
             }
 
             $task = Task::findOrFail($decrypted_id);
+            $task->responsible_person()->detach();
 
             $files = File::where('task_id', $task->id)->get();
 
@@ -589,9 +612,20 @@ class TaskController extends Controller
             DB::beginTransaction();
             $decrypted_id = decrypt($id);
 
-            $task = Task::findOrFail($decrypted_id);
+            $task = Task::with(['files' => function($q){
+                $q->orderBy('created_at', 'desc');
+            }])->findOrFail($decrypted_id);
 
             $STATUS_APPROVE = 3; // approved
+
+            if (count($task->files)) {
+                $file_id = $task->files[0]['id'];               
+                $file = File::where('id', $file_id)->first();
+                if ($file) {
+                    $file->status_approve = $STATUS_APPROVE;
+                    $file->save();
+                }
+            }
 
             $task->status = $STATUS_APPROVE; 
             $task->verified_by = Auth::id();
@@ -603,6 +637,7 @@ class TaskController extends Controller
             return redirect()->route('tasks.show', encrypt($task->id));
 
         } catch (\Exception $e) {
+            dd($e);
             DB::rollback();
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
@@ -620,7 +655,7 @@ class TaskController extends Controller
             $user_id = Auth::id(); 
             $user = User::with('responsible_tasks.category', 'responsible_tasks.status_task')->where('id', $user_id)->first();
             $ret['user'] = $user;
-            // dd($user);
+
             return view('mytasks.index', $ret);
 
         } catch (\Exception $e) {
