@@ -42,8 +42,8 @@
             <div class="content-header bg-white-5">
                 <!-- Logo -->
                 <a class="font-w600 text-dual" href="{{ url('/dashboard') }}">
-                    <span class="smini-visible" style="margin-left: -12px;">
-                        <img src="{{ asset('img/icon_1.png') }}" style="width: 32px" />
+                    <span class="smini-visible" style="margin-left: -8px;">
+                        <img src="{{ asset('img/icon_light.png') }}" style="width: 32px" />
                         {{-- <i class="fa fa-circle-notch text-primary"></i> --}}
                     </span>
                     <span class="smini-hide font-size-h5 tracking-wider">
