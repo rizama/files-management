@@ -28,6 +28,14 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" id="css-main" href="{{ asset('css/oneui.min.css') }}">
 
+    <style>
+        body {
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-image: url({{ asset('img/bg_office.jpg') }});
+        }
+    </style>
+
     <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
     <!-- END Stylesheets -->
 </head>
@@ -45,7 +53,7 @@
                     <div class="bg-white">
                         <div class="content content-full">
                             <div class="row justify-content-center">
-                                <div class="col-md-8 col-lg-6 col-xl-4 py-4">
+                                <div class="col-md-8 col-lg-6 col-xl-4 pt-4">
                                     <!-- Header -->
                                     <div class="text-center">
                                         <img src="{{ asset('img/main_logo_color.png') }}" class="img-fluid"/>
@@ -114,20 +122,20 @@
                                         </div>
                                     </form>
                                     <!-- END Sign In Form -->
+                                    
+                                    <!-- Footer -->
+                                    <div class="font-size-sm text-center text-muted pt-3 mt-4">
+                                        <img src="{{ asset('img/pemprov.png') }}" class="img-fluid mr-2" style="height: 50px;"/>
+                                        <img src="{{ asset('img/disbun.png') }}" class="img-fluid" style="height: 50px;"/>
+                                        {{-- <strong>Dinas Perkebunan - Perencanaan</strong> &copy; <span data-toggle="year-copy"></span> --}}
+                                        <div>&copy; <span data-toggle="year-copy"></span></div>
+                                    </div>
+                                    <!-- END Footer -->
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- END Sign In Section -->
-
-                    <!-- Footer -->
-                    <div class="font-size-sm text-center text-muted py-3">
-                        <img src="{{ asset('img/pemprov.png') }}" class="img-fluid mr-2" style="height: 50px;"/>
-                        <img src="{{ asset('img/disbun.png') }}" class="img-fluid" style="height: 50px;"/>
-                        {{-- <strong>Dinas Perkebunan - Perencanaan</strong> &copy; <span data-toggle="year-copy"></span> --}}
-                        <div>&copy; <span data-toggle="year-copy"></span></div>
-                    </div>
-                    <!-- END Footer -->
                 </div>
             </div>
             <!-- END Page Content -->
