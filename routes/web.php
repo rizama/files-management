@@ -78,6 +78,7 @@ Route::group(
 
         //Searches
         Route::get('/search', 'SearchController@index')->name('search.index');
+        Route::get('/search-public', 'SearchController@public')->name('search.public');
         // Route::get('/search', 'SearchController@search')->name('do.search');  
         
         // File
