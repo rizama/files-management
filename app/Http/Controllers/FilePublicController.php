@@ -235,11 +235,9 @@ class FilePublicController extends Controller
             return view('searches.public', $ret);
         }
 
-        $files = File::with('task', 'user')->where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->limit(10)->get();
-        $tasks = Task::with(['responsible_person', 'user'])->orderBy('updated_at', 'desc')->limit(10)->get();
+        $files = FilePublic::orderBy('updated_at', 'desc')->limit(10)->get();
 
         $ret['files'] = $files;
-        $ret['tasks'] = $tasks;
         return view('searches.public', $ret);
     }
 
