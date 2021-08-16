@@ -39,6 +39,7 @@ class HomeController extends Controller
             $q->where('is_default', 0)->orderBy('updated_at', 'desc');
         }])->get();
 
+        $total_task = count($tasks);
         $done = 0;
         $waiting = 0;
         $progress = 0;
@@ -103,7 +104,7 @@ class HomeController extends Controller
             ];
         }
 
-        $res['task_total'] = count($tasks);
+        $res['task_total'] = $total_task;
         $res['data_task'] = $data_task;
         $res['task_done'] = $done;
         $res['task_waiting'] = $waiting;
