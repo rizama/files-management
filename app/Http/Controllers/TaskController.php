@@ -21,7 +21,7 @@ class TaskController extends Controller
         $this->middleware('auth');
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
-            if ($this->user->role->code == 'superadmin') {
+            if ($this->user->role->code == 'superadmin' || $this->user->role->code == 'guest') {
                 abort(404);
             }
             return $next($request);

@@ -20,7 +20,7 @@ class HomeController extends Controller
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
 
-            if ($this->user->role->code == 'superadmin') {
+            if ($this->user->role->code == 'superadmin' || $this->user->role->code == 'guest') {
                 abort(404);
             }
 

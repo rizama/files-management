@@ -7,8 +7,23 @@ use App\Models\Task;
 use App\User;
 use Illuminate\Http\Request;
 
+use Auth;
+
 class SearchController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            if ($this->user->role->code != 'level_2') {
+                abort(404);
+            }
+            return $next($request);
+        })->except('search');
+
+        $this->bucket_folder = config('app.bucket_aws');
+    }
+
     public function index(Request $request)
     {
         $keyword = $request->q;
@@ -39,38 +54,6 @@ class SearchController extends Controller
         $ret['files'] = $files;
         $ret['tasks'] = $tasks;
         return view('searches.index', $ret);
-    }
-
-    public function public(Request $request)
-    {
-        $keyword = $request->q;
-        if ($keyword) {
-
-            $files = File::where('original_name', 'LIKE', "%$keyword%")
-                ->orWhereHas('user', function($query) use($keyword){
-                    $query->where('name', 'LIKE', "%$keyword%");
-                })->orWhereHas('task', function($query) use($keyword){
-                    $query->where('name', 'LIKE', "%$keyword%")->where('status', 1);
-                })->with('task', 'user')->orderBy('updated_at', 'desc')->where('status_approve', 3)->get();
-
-            $tasks = Task::with(['responsible_person', 'user'])
-                ->whereHas('responsible_person', function($q) use($keyword){
-                    $q->where('name', 'LIKE', "%$keyword%");
-                })
-                ->orWhere('name', 'LIKE', "%$keyword%")->orderBy('updated_at', 'desc')->get();
-
-            $ret['files'] = $files;
-            $ret['tasks'] = $tasks;
-
-            return view('searches.public', $ret);
-        }
-
-        $files = File::with('task', 'user')->where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->limit(10)->get();
-        $tasks = Task::with(['responsible_person', 'user'])->orderBy('updated_at', 'desc')->limit(10)->get();
-
-        $ret['files'] = $files;
-        $ret['tasks'] = $tasks;
-        return view('searches.public', $ret);
     }
 
     public function search(Request $request)
