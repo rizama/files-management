@@ -91,7 +91,7 @@
                             </td>
                             <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y') }}</td>
                             <td>
-                                <span class="badge badge-{{ $task->status === 3 ? 'success' : 'warning' }}">{{ $task->status === 3 ? 'Disetujui' : 'On Progress' }}</span>
+                                <span class="badge badge-{{ $task->status == 3 ? 'success' : 'warning' }}">{{ $task->status == 3 ? 'Disetujui' : 'On Progress' }}</span>
                             </td>
                             <td>
                                 <div class="btn-group">
