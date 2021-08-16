@@ -78,11 +78,10 @@ Route::group(
 
         //Searches
         Route::get('/search', 'SearchController@index')->name('search.index');
-        Route::get('/search-public', 'SearchController@public')->name('search.public');
         // Route::get('/search', 'SearchController@search')->name('do.search');  
         
         // File
-        Route::get('/download', 'FileController@download_file')->name('download');  
+        Route::get('/download', 'FileController@download_file')->name('download');
         
         // Categories
         Route::get('categories', 'CategoryController@index')->name('categories.index');
@@ -93,11 +92,13 @@ Route::group(
         Route::get('categories/{id}', 'CategoryController@destroy')->name('categories.destroy');
 
         // File Public
+        Route::get('file_publics/search', 'FilePublicController@search')->name('search.public');
+        Route::get('file_publics/download', 'FilePublicController@download_file')->name('download.public');
         Route::get('file_publics', 'FilePublicController@index')->name('file_publics.index');
         Route::get('file_publics/create', 'FilePublicController@create')->name('file_publics.create');
         Route::post('file_publics', 'FilePublicController@store')->name('file_publics.store');
-        Route::get('categories/edit/{id}', 'CategoryController@edit')->name('categories.edit');
         Route::get('file_publics/edit/{id}', 'FilePublicController@edit')->name('file_publics.edit');
         Route::put('file_publics/{id}', 'FilePublicController@update')->name('file_publics.update');
         Route::get('file_publics/{id}', 'FilePublicController@destroy')->name('file_publics.destroy');
+
 });
