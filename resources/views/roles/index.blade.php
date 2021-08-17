@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Role Manajemen - {{ env('APP_NAME') }}
+    Manajemen Role - {{ env('APP_NAME') }}
 @endsection
 
 @section('page-title')
