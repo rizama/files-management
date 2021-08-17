@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-User Manajemen - {{ env('APP_NAME') }}
+    Manajemen Pengguna - {{ env('APP_NAME') }}
 @endsection
 
 @section('page-title')

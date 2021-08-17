@@ -17,12 +17,12 @@
                         <h3 class="block-title">
                             <p class="clamp-1 mb-0" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $task->name }}">{{ $task->name }}</p>
                             <small class="d-block">Kategori: {{ $task->category['name'] ?? '-' }}</small>
-                            <span class="badge badge-{{ $task->status_task['code'] === 'progress' ? 'warning' : 'success' }}">{{ $task->status_task['name'] }}</span>
+                            <span class="badge badge-{{ $task->status_task['code'] == 'progress' ? 'warning' : 'success' }}">{{ $task->status_task['name'] }}</span>
                         </h3>
                     </div>
                     <div class="block-content">
                         <h4 class="font-w300 block-title">Deskripsi</h4>
-                        <p class="clamp-2 mb-2" style="height: 50px;" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $task->description }}">{{ $task->description === "" ? '-' : $task->description }}</p>
+                        <p class="clamp-2 mb-2" style="height: 50px;" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $task->description }}">{{ $task->description == "" ? '-' : $task->description }}</p>
                         <a class="btn btn-sm bg-info-light text-info btn-block mb-2" href="{{ url('/tasks/show/').'/'.encrypt($task->id) }}" style="white-space: nowrap;">Lihat tugas <i class="fa fa-arrow-right ml-1"></i> </a>
                     </div>
                 </div>

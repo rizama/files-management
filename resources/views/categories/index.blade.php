@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Kategori Manajemen - {{ env('APP_NAME') }}
+    Manajemen Kategori - {{ env('APP_NAME') }}
 @endsection
 
 @section('css')

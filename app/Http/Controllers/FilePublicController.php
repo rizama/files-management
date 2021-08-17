@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\FilePublic;
 use App\Models\Category;
+use App\Models\File;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -14,13 +16,13 @@ class FilePublicController extends Controller
 {
     public function __construct()
     {
-        // $this->middleware(function ($request, $next) {
-        //     $this->user = Auth::user();
-        //     if ($this->user->role->code == 'superadmin') {
-        //         abort(404);
-        //     }
-        //     return $next($request);
-        // });
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            if ($this->user->role->code != 'level_1') {
+                abort(403);
+            }
+            return $next($request);
+        })->except('search', 'download_file');
 
         $this->bucket_folder = config('app.bucket_aws');
     }
@@ -220,6 +222,25 @@ class FilePublicController extends Controller
         }
     }
 
+    public function search(Request $request)
+    {
+        $keyword = $request->q;
+        if ($keyword) {
+
+            $files = FilePublic::where('original_name', 'LIKE', "%$keyword%")
+                ->orWhere('description', 'LIKE', "%$keyword%")->orderBy('updated_at', 'desc')->get();
+            
+            $ret['files'] = $files;
+
+            return view('searches.public', $ret);
+        }
+
+        $files = FilePublic::orderBy('updated_at', 'desc')->limit(10)->get();
+
+        $ret['files'] = $files;
+        return view('searches.public', $ret);
+    }
+
     public function upload_file_to_s3($file, $custom_name, $description, $category_id)
     {
         $filename = $file->getClientOriginalName();
@@ -249,5 +270,40 @@ class FilePublicController extends Controller
         $file_upload->save();
 
         return $file_upload->id;
+    }
+
+    public function download_file(Request $request)
+    {
+        try {
+            
+            try {
+                $decrypted_id = decrypt($request->file);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
+
+            $type = $request->type;
+            
+            $id = $decrypted_id;
+            $file = FilePublic::findOrFail($id);
+            $extension = pathinfo($file->new_name, PATHINFO_EXTENSION);
+            $filename = $file->original_name.".".$extension;
+
+            if ($type == 'download') {
+                return Storage::disk('s3')->download($file['path'], $filename);
+            } else if($type == 'url') {
+                return Storage::disk('s3')->url($file['path']);
+            } else {
+                return redirect()->back();
+            }
+
+
+        } catch (\Exception $e) {
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
+                return abort(404);
+            }
+            return abort(500);
+            dd($e);
+        }
     }
 }

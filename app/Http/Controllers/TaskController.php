@@ -18,11 +18,10 @@ class TaskController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
-            if ($this->user->role->code == 'superadmin') {
-                abort(404);
+            if ($this->user->role->code == 'superadmin' || $this->user->role->code == 'guest') {
+                abort(403);
             }
             return $next($request);
         });
@@ -117,6 +116,8 @@ class TaskController extends Controller
 
             if ($request->hasFile('default_file')) {
                 $file_id = $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
+            } else {
+                $file_id = null;
             }
 
             if ($request->existing_file == "on") {
@@ -133,8 +134,8 @@ class TaskController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            dd($e);
             return abort(500);
+            dd($e);
         }
     }
 
@@ -165,14 +166,19 @@ class TaskController extends Controller
             $file['file_url'] = $this->generate_url($file->id);
         }
 
-        if (count($default_file->files) >= 0) {
+        if (count($default_file->files) > 0) {
             if ($task->default_file) {
                 $default = $task->default_file;
             } else {
                 $default = $default_file->files[0];
             }
         } else {
-            $default = $default_file->files[0];
+            if ($task->default_file_id) {
+                $default = $default_file->files[0];
+            } else {
+                $default = null;
+            }
+            
         }
         $ret['task'] = $task;
         $ret['default_file'] = $default;
@@ -209,7 +215,12 @@ class TaskController extends Controller
         if ($task->default_file) {
             $default_file_id = $task->default_file->id;
         } else {
-            $default_file_id = $task->files[0]->id;
+            if ($task->default_file_id) {
+                $default_file_id = $task->files[0]->id;
+            } else {
+                $default_file_id = null;
+            }
+            
         }
 
         $ret['files'] = $files;

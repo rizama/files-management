@@ -53,6 +53,9 @@ class LoginController extends Controller
         if (Auth::user()->role->code == 'superadmin') {
             return redirect()->route('users.index');
         }
+        if (Auth::user()->role->code == 'guest') {
+            return redirect()->route('search.public');
+        }
         return redirect()->intended($this->redirectPath());
     }
 }

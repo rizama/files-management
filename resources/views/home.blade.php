@@ -70,7 +70,7 @@
 
 <!-- Table Sections (.js-table-sections class is initialized in Helpers.tableToolsSections()) -->
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-12 col-xxl-6">
         <div class="block block-rounded">
             <div class="block-content">
                 <div class="table-responsive">
@@ -136,7 +136,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-12 col-xxl-6">
         <div class="block block-rounded">
             <div class="block-content">
                 <div class="table-responsive">
