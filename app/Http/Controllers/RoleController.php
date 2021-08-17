@@ -11,12 +11,11 @@ class RoleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
 
             if ($this->user->role->code != 'superadmin') {
-                abort(404);
+                abort(403);
             }
             return $next($request);
         });

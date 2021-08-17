@@ -19,7 +19,7 @@ class FilePublicController extends Controller
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
             if ($this->user->role->code != 'level_1') {
-                abort(404);
+                abort(403);
             }
             return $next($request);
         })->except('search', 'download_file');

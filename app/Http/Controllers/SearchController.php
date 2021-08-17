@@ -15,11 +15,11 @@ class SearchController extends Controller
     {
         $this->middleware(function ($request, $next) {
             $this->user = Auth::user();
-            if ($this->user->role->code != 'level_2') {
-                abort(404);
+            if ($this->user->role->code == 'guest') {
+                abort(403);
             }
             return $next($request);
-        })->except('search');
+        });
 
         $this->bucket_folder = config('app.bucket_aws');
     }
