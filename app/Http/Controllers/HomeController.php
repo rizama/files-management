@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use App\Models\Task;
 use App\User;
 use Illuminate\Http\Request;
@@ -102,6 +103,8 @@ class HomeController extends Controller
                 "progres" => $progres,
             ];
         }
+        
+        $files = File::with('task', 'user')->where('status_approve', 3)->orderBy('created_at', 'desc')->get();
 
         $res['task_total'] = $total_task;
         $res['data_task'] = $data_task;
@@ -109,6 +112,7 @@ class HomeController extends Controller
         $res['task_waiting'] = $waiting;
         $res['task_progress'] = $progress;
         $res['users'] = $users;
+        $res['files'] = $files;
         return view('home', $res);
     }
 }

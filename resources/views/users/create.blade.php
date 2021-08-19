@@ -30,9 +30,18 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="email">Email <span class="text-danger">*</span></label></label>
-                        <input type="email" class="form-control @error('password') is-invalid @enderror" id="email" name="email" placeholder="Masukan Emai" required autocomplete="off" value="{{ old('email') }}">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="(Optional) Masukan Email / Kosongkan jika tidak perlu" autocomplete="off" value="{{ old('email') }}">
                         @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username <span class="text-danger">*</span></label></label>
+                        <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username" placeholder="Masukan Username" autocomplete="off" value="{{ old('username') }}">
+                        @error('username')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -41,7 +50,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label for="role_id">Role <span class="text-danger">*</span></label></label>
+                        <label for="role_id">Pilih Role <span class="text-danger">*</span></label></label>
                         <select class="form-control" id="role_id" name="role_id" required>
                             <option value="" disabled selected>Pilih Role</option>
                             @foreach ($roles as $key => $role)

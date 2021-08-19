@@ -64,7 +64,7 @@
                 <thead>
                     <tr>
                         {{-- <th class="text-center" style="width: 80px;">No</th> --}}
-                        <th>Nama</th>
+                        <th>Nama Tugas</th>
                         <th>Kategori</th>
                         <th>Petugas</th>
                         <th>Tanggal</th>

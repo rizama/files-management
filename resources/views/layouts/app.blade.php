@@ -171,7 +171,7 @@
                     </button>
                     <!-- END Toggle Mini Sidebar -->
                     <a class="navbar-brand text-light font-weight-bold" href="{{ url('/') }}">
-                        Sistem Operasi Manajemen Kerja dan Perencaan
+                        Sistem Operasional Manajemen Kerja di Perencanaan
                     </a>
                 </div>
                 <!-- Right Section -->
@@ -180,7 +180,7 @@
                     <div class="dropdown d-inline-block ml-2">
                         <button type="button" class="btn btn-sm btn-dual d-flex align-items-center" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="rounded-circle" src="{{ asset('media/avatars/avatar10.jpg') }}" alt="Header Avatar" style="width: 21px;">
-                            <span class="d-none d-sm-inline-block ml-2">{{ Auth::user()->email }}</span>
+                            <span class="d-none d-sm-inline-block ml-2">{{ Auth::user()->username }}</span>
                             <i class="fa fa-fw fa-angle-down d-none d-sm-inline-block ml-1 mt-1"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-md dropdown-menu-right p-0 border-0" aria-labelledby="page-header-user-dropdown">

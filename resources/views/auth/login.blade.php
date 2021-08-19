@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <meta name="description"
-        content="Sistem Operasi Manajemen Kerja dan Perencaan">
+        content="Sistem Operasional Manajemen Kerja dan Perencaan">
     <meta name="author" content="pixelcave">
     <meta name="robots" content="noindex, nofollow">
 
@@ -72,13 +72,25 @@
                                     <form method="POST" action="{{ route('login') }}">
                                         @csrf
                                         <div class="py-3">
-                                            <div class="form-group">
+                                            {{-- <div class="form-group">
                                                 <input type="email"
                                                     class="form-control form-control-lg form-control-alt @error('email') is-invalid @enderror"
                                                     id="email" name="email" placeholder="e-mail"
                                                     value="{{ old('email') }}" required autocomplete="email"
                                                     autofocus>
                                                 @error('email')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div> --}}
+                                            <div class="form-group">
+                                                <input type="text"
+                                                    class="form-control form-control-lg form-control-alt @error('username') is-invalid @enderror"
+                                                    id="username" name="username" placeholder="username atau email"
+                                                    value="{{ old('username') }}" required autocomplete="username"
+                                                    autofocus>
+                                                @error('username')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
                                                     </span>
