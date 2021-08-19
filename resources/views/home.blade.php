@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ asset('js/plugins/datatables/dataTables.bootstrap4.css') }}">
+    <link rel="stylesheet" href="{{ asset('js/plugins/datatables/buttons-bs4/buttons.bootstrap4.min.css') }}">
 @endsection
 
 @section('content')
@@ -18,53 +20,105 @@
     Beranda
 @endsection
 <div class="row">
-    <div class="col-6 col-lg-3">
-        <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
-            <div class="block-content block-content-full">
-                <div class="font-size-h2 text-primary">{{ $task_total }}</div>
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-6 col-lg-3">
+                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+                    <div class="block-content block-content-full">
+                        <div class="font-size-h2 text-primary">{{ $task_total }}</div>
+                    </div>
+                    <div class="block-content py-2 bg-body-light">
+                        <p class="font-w600 font-size-sm text-muted mb-0">
+                            Total Tugas
+                        </p>
+                    </div>
+                </a>
             </div>
-            <div class="block-content py-2 bg-body-light">
-                <p class="font-w600 font-size-sm text-muted mb-0">
-                    Total Tugas
-                </p>
+            <div class="col-6 col-lg-3">
+                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+                    <div class="block-content block-content-full">
+                        <div class="font-size-h2 text-success">{{ $task_done }}</div>
+                    </div>
+                    <div class="block-content py-2 bg-body-light">
+                        <p class="font-w600 font-size-sm text-muted mb-0">
+                            Tugas Selesai
+                        </p>
+                    </div>
+                </a>
             </div>
-        </a>
+            <div class="col-6 col-lg-3">
+                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+                    <div class="block-content block-content-full">
+                        <div class="font-size-h2 text-warning">{{ $task_progress }}</div>
+                    </div>
+                    <div class="block-content py-2 bg-body-light">
+                        <p class="font-w600 font-size-sm text-muted mb-0">
+                            Tugas Sedang Diproses
+                        </p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-lg-3">
+                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+                    <div class="block-content block-content-full">
+                        <div class="font-size-h2 text-dark">{{ $task_waiting }}</div>
+                    </div>
+                    <div class="block-content py-2 bg-body-light">
+                        <p class="font-w600 font-size-sm text-muted mb-0">
+                            Dokumen Menunggu
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="col-6 col-lg-3">
-        <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
-            <div class="block-content block-content-full">
-                <div class="font-size-h2 text-success">{{ $task_done }}</div>
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-12">
+                <div class="block block-rounded">
+                    <div class="block-header">
+                        <h3 class="block-title">
+                            Dokumen Terbaru
+                        </h3>
+                    </div>
+                    <div class="block-content pt-0">
+                        <div class="table-responsive">
+                            @if (count($files))
+                            <table class="table table-striped table-vcenter js-dataTable-full-with-default">
+                                <thead>
+                                    <tr>
+                                        <th class="d-none d-lg-table-cell text-center">Dokumen</th>
+                                        <th class="defaultSort d-none d-lg-table-cell text-center">Tanggal</th>
+                                        <th class="d-none d-lg-table-cell text-center">Pengunggah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($files as $file)
+                                        <tr>
+                                            <td>
+                                                <h4 class="h5 mt-0 mb-0">
+                                                    <i class="far fa-file"></i>
+                                                    <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download">{{ $file->original_name }}</a>
+                                                </h4>
+                                            </td>
+                                            <td class="d-none d-lg-table-cell text-center" data-order="{{strtotime($file->created_at)}}">
+                                                {{ \Carbon\Carbon::parse($file->created_at)->isoFormat('D MMMM YYYY') }}
+                                            </td>
+                                            <td class="d-none d-lg-table-cell font-size-xl text-center font-w600">{{ $file->user->name }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            @else
+                                <div class="mb-3">
+                                    <center>Tidak ada dokumen yang diunggah</center>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="block-content py-2 bg-body-light">
-                <p class="font-w600 font-size-sm text-muted mb-0">
-                    Tugas Selesai
-                </p>
-            </div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
-            <div class="block-content block-content-full">
-                <div class="font-size-h2 text-warning">{{ $task_progress }}</div>
-            </div>
-            <div class="block-content py-2 bg-body-light">
-                <p class="font-w600 font-size-sm text-muted mb-0">
-                    Tugas Sedang Diproses
-                </p>
-            </div>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3">
-        <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
-            <div class="block-content block-content-full">
-                <div class="font-size-h2 text-dark">{{ $task_waiting }}</div>
-            </div>
-            <div class="block-content py-2 bg-body-light">
-                <p class="font-w600 font-size-sm text-muted mb-0">
-                    Dokumen Menunggu
-                </p>
-            </div>
-        </a>
+        </div>
     </div>
 </div>
 
@@ -72,7 +126,12 @@
 <div class="row">
     <div class="col-12 col-xxl-6">
         <div class="block block-rounded">
-            <div class="block-content">
+            <div class="block-header">
+                <h3 class="block-title">
+                    Perkembangan Status Dokumen
+                </h3>
+            </div>
+            <div class="block-content pt-0">
                 <div class="table-responsive">
                     <table class="js-table-sections table table-hover table-vcenter">
                         <thead>
@@ -138,7 +197,12 @@
     </div>
     <div class="col-12 col-xxl-6">
         <div class="block block-rounded">
-            <div class="block-content">
+            <div class="block-header">
+                <h3 class="block-title">
+                    Perkembangan Status Penugasan
+                </h3>
+            </div>
+            <div class="block-content pt-0">
                 <div class="table-responsive">
                     <table class="js-table-sections table table-hover table-vcenter">
                         <thead>
@@ -186,8 +250,12 @@
 @endsection
 
 @section('js_after')
-<!-- Page JS Helpers (Table Tools helpers) -->
-<script>
-    jQuery(function () { One.helpers(['table-tools-checkable', 'table-tools-sections']); });
-</script>
+    <!-- Page JS Helpers (Table Tools helpers) -->
+    <script src="{{ asset('js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datatables/buttons/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('js/pages/tables_datatables.js') }}"></script>
+    <script>
+        jQuery(function () { One.helpers(['table-tools-checkable', 'table-tools-sections']); });
+    </script>
 @endsection
