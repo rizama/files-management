@@ -104,7 +104,7 @@ class HomeController extends Controller
             ];
         }
         
-        $files = File::with('task', 'user')->where('status_approve', 3)->orWhere('is_default', 1)->orderBy('created_at', 'desc')->limit(15)->get();
+        $files = File::with('task', 'user')->where('status_approve', 3)->orderBy('created_at', 'desc')->get();
 
         $res['task_total'] = $total_task;
         $res['data_task'] = $data_task;
