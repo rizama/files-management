@@ -28,7 +28,9 @@
                 </div>
             </div>
         @empty
-            <p>Saat ini tidak ada tugas yang dibebankan kepada anda</p>
+            <div class="col-md">
+                <p class="p-2 bg-primary-light text-white text-center"><strong>Saat ini tidak ada tugas yang dibebankan kepada anda</strong></p>
+            </div>
         @endforelse
     </div>
 @endsection
