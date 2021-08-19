@@ -48,13 +48,16 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
+            $faker = \Faker\Factory::create();
+
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
-                'email' => 'required|string|unique:users',
+                'email' => 'nullable|string|unique:users',
+                'username' => 'required|string|unique:users',
                 'password' => 'required|string|min:5',
                 'role_id' => 'required',
             ]);
-    
+
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator->errors());
             }
@@ -62,7 +65,12 @@ class UserController extends Controller
             $user = new User;
             $user->role_id = $request->role_id;
             $user->name = $request->name;
-            $user->email = $request->email;
+            if ($request->email) {
+                $user->email = $request->email;
+            } else {
+                $user->email = $faker->unique()->safeEmail;
+            }
+            $user->username = $request->username;
             $user->password = Hash::make($request->password);
             $user->save();
 
@@ -108,10 +116,16 @@ class UserController extends Controller
 
             $validator = Validator::make($data, [
                 'name' => 'required|string',
+                'password' => 'nullable|string',
                 'email' => [
-                    'required',
+                    'nullable',
                     'string',
                     Rule::unique('users', 'email')->ignore($decrypted_id),
+                ],
+                'username' => [
+                    'required',
+                    'string',
+                    Rule::unique('users', 'username')->ignore($decrypted_id),
                 ],
                 'role_id' => 'required',
             ]);
@@ -124,6 +138,7 @@ class UserController extends Controller
 
             $user->name = $data['name'];
             $user->email = $data['email'];
+            $user->username = $data['username'];
             if ($data['password']) {
                 $user->password = Hash::make($data['password']);
             }

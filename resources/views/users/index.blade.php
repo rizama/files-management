@@ -64,6 +64,7 @@
                         <th class="text-center" style="width: 80px;">No</th>
                         <th>Nama</th>
                         <th>Email</th>
+                        <th>Username</th>
                         <th>Role</th>
                         <th class="disable-sorting">Aksi</th>
                     </tr>
@@ -77,6 +78,9 @@
                             </td>
                             <td class="d-none d-sm-table-cell font-size-sm">
                                 {{ $user->email }}
+                            </td>
+                            <td class="d-none d-sm-table-cell font-size-sm">
+                                {{ $user->username }}
                             </td>
                             <td>
                                 {{ $user->role->name }}
