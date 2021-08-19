@@ -137,7 +137,9 @@ class UserController extends Controller
             $user = User::findOrFail($decrypted_id);
 
             $user->name = $data['name'];
-            $user->email = $data['email'];
+            if ($data['email']) {
+                $user->email = $data['email'];
+            }
             $user->username = $data['username'];
             if ($data['password']) {
                 $user->password = Hash::make($data['password']);
