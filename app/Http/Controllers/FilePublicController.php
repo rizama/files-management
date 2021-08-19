@@ -34,7 +34,7 @@ class FilePublicController extends Controller
      */
     public function index()
     {
-        $file_publics = FilePublic::all();
+        $file_publics = FilePublic::with('user')->get();
         $ret['file_publics'] = $file_publics;
         return view('file_publics.index', $ret);
     }
@@ -68,8 +68,7 @@ class FilePublicController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 400);
-                // return redirect()->back()->withErrors($validator->errors());
+                return redirect()->back()->withErrors($validator->errors());
             }
 
             $custom_name = $request->custom_name;

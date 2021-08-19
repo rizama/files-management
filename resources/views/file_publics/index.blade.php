@@ -80,7 +80,7 @@
                                 {{ $file_public->description }}
                             </td>
                             <td>
-                                {{ $file_public->created_by }}
+                                {{ $file_public->user->name }}
                             </td>
                             <td class="font-size-sm">{{ \Carbon\Carbon::parse($file_public->created_at)->isoFormat('D MMMM Y') }}</td>
                             <td>
