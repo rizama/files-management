@@ -89,7 +89,6 @@ class TaskController extends Controller
                 'category_id' => 'nullable',
                 'description' => 'nullable|string',
                 'is_history_active' => 'required',
-                'assign_to' => 'nullable',
                 'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
@@ -108,11 +107,17 @@ class TaskController extends Controller
             $task->description = $request->description ?? '';
             $task->status = $ON_PROGRESS;
             $task->is_history_file_active = (int)$request->is_history_active;
-            $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
+            if ($request->responsible_person) {
+                $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
+            }
             $task->save();
 
-            $responsible_ids = $request->responsible_person;
-            $task->responsible_person()->attach($responsible_ids);
+            if ($request->responsible_person) {
+                if (is_array($request->responsible_person)) {
+                    $responsible_ids = $request->responsible_person;
+                    $task->responsible_person()->attach($responsible_ids);
+                }
+            }
 
             if ($request->hasFile('default_file')) {
                 $file_id = $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
