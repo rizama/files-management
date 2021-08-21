@@ -157,7 +157,7 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
-        $task = Task::with(['responsible_person','files' => function($q) {
+        $task = Task::with(['user','responsible_person','files' => function($q) {
                 $q->where('is_default', 0)->with('user', 'status')->orderBy('created_at', 'desc');
             }, 'default_file'])
             ->where('id', $decrypted_id)->firstOrFail();
@@ -259,7 +259,6 @@ class TaskController extends Controller
                 'category_id' => 'nullable',
                 'description' => 'nullable|string',
                 'is_history_active' => 'required',
-                'assign_to' => 'nullable|string',
                 'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
@@ -337,13 +336,15 @@ class TaskController extends Controller
                     } else {
                         $task->responsible_person()->attach($responsible_ids);
                     }
+                } else {
+                    $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
+                    $responsible_person_will_delete->delete();
                 }
             } else {
                 $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
                 $responsible_person_will_delete->delete();
             }
-            
-            
+
             DB::commit();
 
             $request->session()->flash('task.updated', 'Tugas telah diubah!');
