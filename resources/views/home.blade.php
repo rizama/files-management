@@ -10,7 +10,7 @@
     <style>
         body {
             background-repeat: no-repeat;
-            background-size: contain;
+            background-size: cover;
             background-attachment: fixed;
             background-image: url({{ asset("img/bg-dashboard.jpg") }});
         }
