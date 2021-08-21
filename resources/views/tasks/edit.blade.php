@@ -17,7 +17,7 @@
 @endsection
 
 @section('content')
-{{-- {{ dd($default_file_id == $files[0]->id) }} --}}
+
 <div class="block block-rounded">
     <div class="block-header">
         <h3 class="block-title">Ubah Tugas</h3>
@@ -123,9 +123,9 @@
                             <div class="custom-control custom-checkbox ml-2 d-inline">
                                 <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)" {{ $task->assign_to == 'all' ? 'checked' : '' }} value="{{ $task->assign_to == 'all' ? 'all' : '' }}">
                                 <label class="custom-control-label" for="responsible_person_all">Pilih Semua Staf</label>
-                                @if($task->assign_to == 'all')
+                                {{-- @if($task->assign_to == 'all')
                                     <input type="hidden" name="responsible_person" id="responsible_person_all" value="all">
-                                @endif
+                                @endif --}}
                             </div>
                         </label>
                         <select class="js-select2 form-control responsible_person" id="example-select2-multiple" name="responsible_person[]" style="width: 100%;" data-placeholder="Pilih Staff" multiple {{ $task->assign_to == 'all' ? 'disabled' : '' }}>
