@@ -94,4 +94,24 @@ class FileController extends Controller
             dd($e);
         }
     }
+
+    public function destroy(Request $request, $id)
+    {
+        try {
+            try {
+                $decrypted_id = decrypt($id);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
+            
+            $file = File::findOrFail($decrypted_id);
+            $task_id = encrypt($file->task_id);
+            $file->delete();
+
+            $request->session()->flash('file.deleted', 'Dokumen telah dihapus!');
+            return redirect()->route('tasks.show', $task_id);
+        } catch (\Exception $e) {
+            dd($e);
+        }
+    }
 }
