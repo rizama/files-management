@@ -162,7 +162,7 @@
         }
 
         function toggleAllStaff(e){
-            $('.responsible_person').empty().trigger('change');
+            $('.responsible_person').val(null).trigger('change');
             if (e.checked) {
                 $('.responsible_person').prop('disabled', true);
                 $('.responsible_person').val('all');
