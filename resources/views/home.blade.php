@@ -6,6 +6,17 @@
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables/buttons-bs4/buttons.bootstrap4.min.css') }}">
 @endsection
 
+@section('css_custom')
+    <style>
+        body {
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-attachment: fixed;
+            background-image: url({{ asset("img/bg-dashboard.jpg") }});
+        }
+    </style>
+@endsection
+
 @section('content')
 @if (session()->has('flash_notification.success'))
 <div class="alert alert-success alert-dismissable" role="alert">
@@ -84,7 +95,7 @@
                     <div class="block-content pt-0">
                         <div class="table-responsive">
                             @if (count($files))
-                            <table class="table table-striped table-vcenter js-dataTable-full-with-default">
+                            <table class="table table-striped table-vcenter js-dataTable-full">
                                 <thead>
                                     <tr>
                                         <th class="d-none d-lg-table-cell text-center">Dokumen</th>

@@ -257,7 +257,7 @@ class TaskController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
                 'category_id' => 'nullable',
-                'description' => 'required|string',
+                'description' => 'nullable|string',
                 'is_history_active' => 'required',
                 'assign_to' => 'nullable|string',
                 'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
@@ -343,7 +343,7 @@ class TaskController extends Controller
                 $responsible_person_will_delete->delete();
             }
             
-
+            
             DB::commit();
 
             $request->session()->flash('task.updated', 'Tugas telah diubah!');

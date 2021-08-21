@@ -31,6 +31,7 @@
 
     <!-- Custom Styles -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    @yield('css_custom')
 
     @yield('js_before')
 </head>
@@ -207,7 +208,7 @@
 
         <!-- Main Container -->
         <main id="main-container">
-            <div class="bg-body-light">
+            <div class="bg-body-light-transparent">
                 <div class="content content-full">
                     <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
                         <h1 class="flex-sm-fill h3 my-2">
@@ -240,7 +241,7 @@
         </main>
 
         <!-- Footer -->
-        <footer id="page-footer" class="bg-body-light">
+        <footer id="page-footer" class="bg-body-light-transparent">
             <div class="content py-3">
                 <div class="row font-size-sm">
                     <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-left">

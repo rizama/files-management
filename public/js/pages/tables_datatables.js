@@ -39,15 +39,7 @@ class pageTablesDatatables {
             pageLength: 10,
             lengthMenu: [[1, 5, 10, 15, 20], [1, 5, 10, 15, 20]],
             autoWidth: false,
-            "columnDefs": [{ targets: 'disable-sorting', orderable: false }]
-        });
-
-        // Init full DataTable
-        jQuery('.js-dataTable-full-with-default').dataTable({
-            pageLength: 10,
-            lengthMenu: [[1, 5, 10, 15, 20], [1, 5, 10, 15, 20]],
-            autoWidth: false,
-            order: [ [ $('th.defaultSort').index(),  'desc' ] ],
+            order: [ [ $('th.defaultSort').length > 0 ? $('th.defaultSort').index() : 0,  'desc' ] ],
             "columnDefs": [{ targets: 'disable-sorting', orderable: false }]
         });
 

@@ -50,7 +50,7 @@
             <div class="hero-static d-flex align-items-center">
                 <div class="w-100">
                     <!-- Sign In Section -->
-                    <div class="bg-white">
+                    <div style="background-color: #ffffffd6">
                         <div class="content content-full">
                             <div class="row justify-content-center">
                                 <div class="col-md-8 col-lg-6 col-xl-4 pt-4">

@@ -58,7 +58,7 @@
                                 <tr>
                                     <th style="width: 50%;">Tugas</th>
                                     <th class="d-none d-lg-table-cell text-center" style="width: 15%;">Pembuat</th>
-                                    <th class="text-center" style="width: 20%;">Petugas</th>
+                                    <th class="text-center" style="width: 20%;">Staf</th>
                                     <th class="d-none d-lg-table-cell text-center" style="width: 15%;">Status</th>
                                 </tr>
                             </thead>
@@ -162,7 +162,7 @@
                                             <i class="far fa-file"></i>
                                             <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download">{{ $file->original_name }}</a>
                                         </h4>
-                                        <p class="d-none d-sm-block text-muted">
+                                        <p class="d-none d-sm-block text-muted clamp-2" data-toggle="tooltip" data-original-title="{{ $file->description }}">
                                             {{ $file->description }}
                                         </p>
                                     </td>
