@@ -179,7 +179,8 @@ class TaskController extends Controller
             }
         } else {
             if ($task->default_file_id) {
-                $default = $default_file->files[0];
+                $file_default = File::where('id', $task->default_file_id)->first();
+                $default = $file_default;
             } else {
                 $default = null;
             }
@@ -672,7 +673,15 @@ class TaskController extends Controller
         try {
             $user_id = Auth::id(); 
             $user = User::with('responsible_tasks.category', 'responsible_tasks.status_task')->where('id', $user_id)->first();
-            // dd($user);
+
+            $tasks_general = Task::where('assign_to', 'all')->get();
+            
+            foreach ($tasks_general as $key => $general) {
+                $user->responsible_tasks[] = $general;
+            }
+
+            $ordered = $user->responsible_tasks->sortByDesc('created_at');
+            $user->responsible_tasks = $ordered;
             $ret['user'] = $user;
 
             return view('mytasks.index', $ret);
