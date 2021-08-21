@@ -147,6 +147,7 @@ class pageDialogs {
                 icon: 'info',
                 showCancelButton: true,
                 customClass: {
+                    content: 'clamp clamp-5',
                     confirmButton: type === 'reject' ? 'btn btn-danger m-1' : 'btn btn-success m-1',
                     cancelButton: 'btn btn-secondary m-1'
                 },
