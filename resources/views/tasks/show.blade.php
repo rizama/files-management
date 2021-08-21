@@ -14,11 +14,6 @@
 
 @section('child-breadcrumb')
     {{ $task->name }}
-    <div>
-        @section('info-page-title')
-            Deskripsi : {{ $task->description ?? '-' }} 
-        @endsection
-    </div>
 @endsection
 
 @section('content')
@@ -51,8 +46,25 @@
 
 <div class="row push">
     <div class="col-lg-8">
-        <a href="{{ url()->previous() }}" class="btn btn-alt-secondary mb-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
-        @if($task->status != 3 && (in_array(Auth::user()->id, json_decode($task->assign_to)) || json_decode($task->assign_to) == []))
+        <div class="block block-rounded">
+            <div class="block-header">
+                <a href="{{ url()->previous() }}" class="btn btn-alt-secondary mr-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+                <h3 class="block-title text-right">
+                    Info
+                </h3>
+            </div>
+            <div class="block-content tab-content pt-2">
+                <div class="form-group mb-0">
+                    <label>Pengunggah</label>
+                    <p>Rizky</p>
+                </div>
+                <div class="form-group mb-0">
+                    <label>Deskripsi</label>
+                    <p>{{ $task->description ?? '-' }}</p>
+                </div>
+            </div>
+        </div>
+        @if($task->status != 3 && ( $task->assign_to == 'all' || (in_array(Auth::user()->id, json_decode($task->assign_to)) || json_decode($task->assign_to) == [])))
             <div class="block block-rounded">
                 <ul class="nav nav-tabs nav-tabs-block align-items-center" data-toggle="tabs" role="tablist">
                     <li class="nav-item">
@@ -78,16 +90,16 @@
                             <div class="block-content block-content-full">
                                 <div class="col-lg-12">
                                     <div class="form-group row">
-                                        <label class="col-lg-3 col-form-label">File</label>
+                                        <label class="col-lg-3 col-form-label">Dokumen</label>
                                         <div class="custom-file col-lg-9">
-                                            <!-- Populating custom file input label with the selected filename (data-toggle="custom-file-input" is initialized in Helpers.coreBootstrapCustomFileInput()) -->
+                                            <!-- Populating custom dokumen input label with the selected filename (data-toggle="custom-file-input" is initialized in Helpers.coreBootstrapCustomFileInput()) -->
                                             <input type="file" class="custom-file-input @error('task_file') is-invalid @enderror" data-toggle="custom-file-input" id="task_file" name="task_file" lang="id" accept="{{ config('app.accept_file_fe') }}">
                                             <label class="custom-file-label" for="task_file"></label>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="custom_name" class="col-lg-3 col-form-label">Ubah Nama File</label>
-                                        <input type="text" class="form-control col-lg-9 @error('custom_name') is-invalid @enderror" id="custom_name" name="custom_name" placeholder="Masukan Nama File" disabled>
+                                        <label for="custom_name" class="col-lg-3 col-form-label">Ubah Nama Dokumen</label>
+                                        <input type="text" class="form-control col-lg-9 @error('custom_name') is-invalid @enderror" id="custom_name" name="custom_name" placeholder="Masukan Nama Dokumen" disabled>
                                         @error('custom_name')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -128,7 +140,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label for="note_name" class="col-form-label">Nama Catatan</label>
-                                        <input type="text" class="form-control @error('note_name') is-invalid @enderror" id="note_name" name="note_name" placeholder="Masukan Nama File">
+                                        <input type="text" class="form-control @error('note_name') is-invalid @enderror" id="note_name" name="note_name" placeholder="Masukan Nama Dokumen">
                                         @error('note_name')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -158,7 +170,7 @@
         @endif
         <div class="block block-rounded">
             <div class="block-header">
-                <h3 class="block-title">Riwayat File</h3>
+                <h3 class="block-title">Riwayat Dokumen</h3>
             </div>
             <div class="block-content block-content-full">
                 <ul class="timeline timeline-alt py-0 timeline-file">
@@ -171,21 +183,32 @@
                             <div class="block-header">
                                 <h3 class="block-title"><small>Pengunggah </small>{{ $file->user['name']}}</h3>
                                 <div class="block-options">
-                                    <div class="timeline-event-time block-options-item font-size-sm">
+                                    <div class="timeline-event-time block-options-item font-size-sm text-bold">
                                         {{ \Carbon\Carbon::parse($file['created_at'])->diffForHumans() }}
                                     </div>
                                 </div>
                             </div>
                             <div class="block-content pt-0">
-                                <p class="block-title">
+                                <p class="block-title clamp clamp-5">
                                     <small>Deskripsi</small>{{ $file['description'] ?? '-' }}
                                 </p>
-                                <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" target="_blank" class="btn btn-secondary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}">Unduh File</a>
+                                <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" target="_blank" class="btn btn-secondary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}">Unduh Dokumen</a>
                                 @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp', 'txt']))
                                     <button type="button" class="btn btn-alt-primary push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" data-ext="{{App\Http\Controllers\TaskController::mime2ext($file->mime_type)}}" id="preview-btn-modal">Pratinjau Dokumen</button>
                                 @endif
 
-                                @if ($file->status['code'] == 'waiting' && $task->status != 3 && $key == 0)
+                                @if ($file->status['code'] == 'waiting' && $task->status != 3 && $key == 0 && Auth::user()->id == $task->created_by)
+                                    <form action="" method="POST" id="delete_file">
+                                        <a
+                                            class="btn btn-danger reject-file js-swal-confirm-with-form"
+                                            data-type_button="reject"
+                                            href="{{ route('tasks.reject', encrypt($file->id)) }}"
+                                            title="Apakah anda yakin untuk menghapus dokumen ini ?"
+                                            data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
+                                            data-form_id="delete_file"
+                                            data-success_text="Dokumen Berhasil Ditolak"
+                                        >Hapus Dokumen</a>
+                                    </form>
                                     @if (Auth::user()->role->code == 'level_1')
                                     <div class="accordion mt-2" id="accordionExample">
                                         <div class="card">
@@ -215,19 +238,19 @@
                                                                     class="btn btn-success approve-file js-swal-confirm-with-form"
                                                                     data-type_button="approve"
                                                                     href="{{ route('tasks.approve', encrypt($file->id)) }}"
-                                                                    title="Apakah anda yakin untuk menyetujui file ini ?"
+                                                                    title="Apakah anda yakin untuk menyetujui dokumen ini ?"
                                                                     data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }} {{$file->description ? ', Deskripsi: '.$file->description : ''}}"
                                                                     data-form_id="verification"
-                                                                    data-success_text="File Berhasil Disetujui"
+                                                                    data-success_text="Dokumen Berhasil Disetujui"
                                                                 >Setujui</a>
                                                                 <a
                                                                     class="btn btn-danger reject-file js-swal-confirm-with-form"
                                                                     data-type_button="reject"
                                                                     href="{{ route('tasks.reject', encrypt($file->id)) }}"
-                                                                    title="Apakah anda yakin untuk menolak file ini ?"
+                                                                    title="Apakah anda yakin untuk menolak dokumen ini ?"
                                                                     data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
                                                                     data-form_id="verification"
-                                                                    data-success_text="File Berhasil Ditolak"
+                                                                    data-success_text="Dokumen Berhasil Ditolak"
                                                                 >Tolak</a>
                                                             </div>
                                                         </div>
@@ -289,7 +312,7 @@
     </div>
     <div class="col-lg-4">
         <div class="side-container">
-            @if(Auth::user()->role->code == 'level_1' && $task->status != 3)
+            @if(Auth::user()->id == $task->created_by && $task->status != 3)
                 <a
                     href="{{ url('/tasks/'.encrypt($task->id).'/approve/task') }}"
                     class="btn btn-success btn-block mb-2 js-swal-confirm-href"
@@ -311,7 +334,7 @@
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group mb-0">
-                                <label>Riwayat File</label>
+                                <label>Riwayat Dokumen</label>
                                 <span class="badge {{ $task->is_history_file_active == 1 ? 'badge-success' : 'badge-danger' }} float-right">{{ $task->is_history_file_active == 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
                             </div>
                         </div>
@@ -320,12 +343,12 @@
                     <div class="row push mb-0">
                         <div class="col-lg-12">
                             <div class="form-group mb-0">
-                                <label>Nama File</label>
+                                <label>Nama Dokumen</label>
                                 <span class="float-right">{{ $default_file->original_name }}</span>
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <a href="{{ route('download') }}?file={{ encrypt($default_file->id) }}&type=download" target="_blank" class="btn btn-info btn-block">Unduh Contoh File</a>
+                            <a href="{{ route('download') }}?file={{ encrypt($default_file->id) }}&type=download" target="_blank" class="btn btn-info btn-block">Unduh Contoh Dokumen</a>
                         </div>
                     </div>
                     @else
@@ -335,7 +358,7 @@
             </div>
             <div class="block block-rounded block-assign">
                 <div class="block-header">
-                    <h3 class="block-title">Petugas</h3>
+                    <h3 class="block-title">Staf</h3>
                 </div>
                 <div class="block-content block-content-full pt-0">
                     <ul style="padding-left: 20px" class="mb-0">
