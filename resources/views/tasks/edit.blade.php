@@ -62,7 +62,7 @@
                 <div class="col-lg-12">
                     <div class="form-group">
                         <label for="description">Deskripsi</label></label>
-                        <textarea class="form-control" id="description" name="description"
+                        <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
                             placeholder="Masukan Deskripsi Tugas" >{{old('description', $task->description)}}</textarea>
                         @error('description')
                             <span class="invalid-feedback" role="alert">
@@ -119,10 +119,16 @@
                 </div>
                 <div class="col-lg-12">
                     <div class="form-group">
-                        <label for="responsible_person">Petugas</label>
-                        <select class="js-select2 form-control" id="example-select2-multiple" name="responsible_person[]" style="width: 100%;" data-placeholder="" multiple>
+                        <label for="responsible_person">Staf
+                            <div class="custom-control custom-checkbox ml-2 d-inline">
+                                <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)" {{ $task->assign_to == 'all' ? 'checked' : '' }} value="{{ $task->assign_to == 'all' ? 'all' : '' }}">
+                                <label class="custom-control-label" for="responsible_person_all">Pilih Semua Staf</label>
+                                <input type="hidden" name="responsible_person" id="responsible_person_all" value="{{old('responsible_person', $task->assign_to)}}">
+                            </div>
+                        </label>
+                        <select class="js-select2 form-control responsible_person" id="example-select2-multiple" name="responsible_person[]" style="width: 100%;" data-placeholder="Pilih Staff" multiple {{ $task->assign_to == 'all' ? 'disabled' : '' }}>
                             @foreach ($users as $key => $user)
-                                <option value="{{ $user->id }}" {{ in_array($user->id, json_decode($task->assign_to)) ? 'selected' : '' }}>{{ $user->name }}</option>
+                                <option value="{{ $user->id }}" {{ is_array(json_decode($task->assign_to)) && in_array($user->id, json_decode($task->assign_to)) ? 'selected' : '' }}>{{ $user->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -158,6 +164,19 @@
                 $('.container-default_file').removeClass('d-none');
                 $('.container-existing_file').addClass('d-none');
                 $('#select2-files').val(null);
+            }
+        }
+
+        function toggleAllStaff(e){
+            $('.responsible_person').empty().trigger('change');
+            if (e.checked) {
+                $('.responsible_person').prop('disabled', true);
+                $('.responsible_person').val('all');
+                $(e).val('all');
+            } else {
+                $('.responsible_person').prop('disabled', false);
+                $('.responsible_person').val(null);
+                $('.responsible_person').select2('val', '');
             }
         }
     </script>
