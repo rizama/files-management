@@ -310,32 +310,33 @@ class TaskController extends Controller
             
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
-            $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
+            $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
             $task->save();
 
             $responsible_person = TaskUser::where('task_id', $task->id)->get();
 
             if ($request->responsible_person) {
-                $responsible_ids = count($request->responsible_person) ? $request->responsible_person : [];
+                if (is_array($request->responsible_person)) {
+                    $responsible_ids = count($request->responsible_person) ? $request->responsible_person : [];
             
-                if (count($responsible_person)) {
-                    $existing_responsibles = [];
-                    foreach ($responsible_person as $index => $person) {
-                        $existing_responsibles[] = $person['user_id'];
-                    }
+                    if (count($responsible_person)) {
+                        $existing_responsibles = [];
+                        foreach ($responsible_person as $index => $person) {
+                            $existing_responsibles[] = $person['user_id'];
+                        }
 
-                    $responsible_diff = array_diff($existing_responsibles, $responsible_ids);
-                    // dd($responsible_person, count($existing_responsibles), $responsible_diff, count($responsible_ids));
-                    if (count($existing_responsibles) != count($responsible_ids)) {
-                        # delete old
-                        $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
-                        $responsible_person_will_delete->delete();
-        
-                        # save new
+                        $responsible_diff = array_diff($responsible_ids, $existing_responsibles);
+                        if (count($responsible_diff)) {
+                            # delete old
+                            $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
+                            $responsible_person_will_delete->delete();
+
+                            # save new
+                            $task->responsible_person()->attach($responsible_ids);
+                        }
+                    } else {
                         $task->responsible_person()->attach($responsible_ids);
                     }
-                } else {
-                    $task->responsible_person()->attach($responsible_ids);
                 }
             } else {
                 $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
