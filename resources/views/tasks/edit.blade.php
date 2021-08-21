@@ -123,7 +123,9 @@
                             <div class="custom-control custom-checkbox ml-2 d-inline">
                                 <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)" {{ $task->assign_to == 'all' ? 'checked' : '' }} value="{{ $task->assign_to == 'all' ? 'all' : '' }}">
                                 <label class="custom-control-label" for="responsible_person_all">Pilih Semua Staf</label>
-                                <input type="hidden" name="responsible_person" id="responsible_person_all" value="{{old('responsible_person', $task->assign_to)}}">
+                                @if($task->assign_to == 'all')
+                                    <input type="hidden" name="responsible_person" id="responsible_person_all" value="all">
+                                @endif
                             </div>
                         </label>
                         <select class="js-select2 form-control responsible_person" id="example-select2-multiple" name="responsible_person[]" style="width: 100%;" data-placeholder="Pilih Staff" multiple {{ $task->assign_to == 'all' ? 'disabled' : '' }}>
@@ -168,7 +170,7 @@
         }
 
         function toggleAllStaff(e){
-            $('.responsible_person').empty().trigger('change');
+            $('.responsible_person').val(null).trigger('change');
             if (e.checked) {
                 $('.responsible_person').prop('disabled', true);
                 $('.responsible_person').val('all');
