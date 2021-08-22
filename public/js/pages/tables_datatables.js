@@ -37,17 +37,9 @@ class pageTablesDatatables {
         // Init full DataTable
         jQuery('.js-dataTable-full').dataTable({
             pageLength: 10,
-            lengthMenu: [[1, 5, 10, 15, 20], [1, 5, 10, 15, 20]],
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
             autoWidth: false,
-            "columnDefs": [{ targets: 'disable-sorting', orderable: false }]
-        });
-
-        // Init full DataTable
-        jQuery('.js-dataTable-full-with-default').dataTable({
-            pageLength: 10,
-            lengthMenu: [[1, 5, 10, 15, 20], [1, 5, 10, 15, 20]],
-            autoWidth: false,
-            order: [ [ $('th.defaultSort').index(),  'desc' ] ],
+            order: [ [ $('th.defaultSort').length > 0 ? $('th.defaultSort').index() : 0,  'desc' ] ],
             "columnDefs": [{ targets: 'disable-sorting', orderable: false }]
         });
 
@@ -67,6 +59,18 @@ class pageTablesDatatables {
             autoWidth: false,
             dom: "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-6'i><'col-sm-6'p>>"
+        });
+        
+        // Init simple DataTable
+        jQuery('.mytask-card-dataTable').dataTable({
+            pageLength: 12,
+            lengthMenu: false,
+            searching: true,
+            autoWidth: false,
+            "bLengthChange" : false,
+            order: [],
+            // dom: "<'row'<'col-sm-12'tr>>" +
+                // "<'row'<'col-sm-6'i><'col-sm-6'p>>"
         });
 
         // Init DataTable with Buttons

@@ -89,7 +89,6 @@ class TaskController extends Controller
                 'category_id' => 'nullable',
                 'description' => 'nullable|string',
                 'is_history_active' => 'required',
-                'assign_to' => 'nullable',
                 'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
@@ -108,11 +107,17 @@ class TaskController extends Controller
             $task->description = $request->description ?? '';
             $task->status = $ON_PROGRESS;
             $task->is_history_file_active = (int)$request->is_history_active;
-            $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
+            if ($request->responsible_person) {
+                $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
+            }
             $task->save();
 
-            $responsible_ids = $request->responsible_person;
-            $task->responsible_person()->attach($responsible_ids);
+            if ($request->responsible_person) {
+                if (is_array($request->responsible_person)) {
+                    $responsible_ids = $request->responsible_person;
+                    $task->responsible_person()->attach($responsible_ids);
+                }
+            }
 
             if ($request->hasFile('default_file')) {
                 $file_id = $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
@@ -152,7 +157,7 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
-        $task = Task::with(['responsible_person','files' => function($q) {
+        $task = Task::with(['user','responsible_person','files' => function($q) {
                 $q->where('is_default', 0)->with('user', 'status')->orderBy('created_at', 'desc');
             }, 'default_file'])
             ->where('id', $decrypted_id)->firstOrFail();
@@ -174,7 +179,8 @@ class TaskController extends Controller
             }
         } else {
             if ($task->default_file_id) {
-                $default = $default_file->files[0];
+                $file_default = File::where('id', $task->default_file_id)->first();
+                $default = $file_default;
             } else {
                 $default = null;
             }
@@ -252,9 +258,8 @@ class TaskController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
                 'category_id' => 'nullable',
-                'description' => 'required|string',
+                'description' => 'nullable|string',
                 'is_history_active' => 'required',
-                'assign_to' => 'nullable|string',
                 'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string'
@@ -305,38 +310,41 @@ class TaskController extends Controller
             
             $task->description = $request->description;
             $task->is_history_file_active = $request->is_history_active;
-            $task->assign_to = $request->responsible_person == null ? json_encode([]) : json_encode($request->responsible_person);
+            $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
             $task->save();
 
             $responsible_person = TaskUser::where('task_id', $task->id)->get();
 
             if ($request->responsible_person) {
-                $responsible_ids = count($request->responsible_person) ? $request->responsible_person : [];
+                if (is_array($request->responsible_person)) {
+                    $responsible_ids = count($request->responsible_person) ? $request->responsible_person : [];
             
-                if (count($responsible_person)) {
-                    $existing_responsibles = [];
-                    foreach ($responsible_person as $index => $person) {
-                        $existing_responsibles[] = $person['user_id'];
-                    }
+                    if (count($responsible_person)) {
+                        $existing_responsibles = [];
+                        foreach ($responsible_person as $index => $person) {
+                            $existing_responsibles[] = $person['user_id'];
+                        }
 
-                    $responsible_diff = array_diff($existing_responsibles, $responsible_ids);
-                    // dd($responsible_person, count($existing_responsibles), $responsible_diff, count($responsible_ids));
-                    if (count($existing_responsibles) != count($responsible_ids)) {
-                        # delete old
-                        $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
-                        $responsible_person_will_delete->delete();
-        
-                        # save new
+                        $responsible_diff = array_diff($responsible_ids, $existing_responsibles);
+                        if (count($responsible_diff)) {
+                            # delete old
+                            $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
+                            $responsible_person_will_delete->delete();
+
+                            # save new
+                            $task->responsible_person()->attach($responsible_ids);
+                        }
+                    } else {
                         $task->responsible_person()->attach($responsible_ids);
                     }
                 } else {
-                    $task->responsible_person()->attach($responsible_ids);
+                    $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
+                    $responsible_person_will_delete->delete();
                 }
             } else {
                 $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
                 $responsible_person_will_delete->delete();
             }
-            
 
             DB::commit();
 
@@ -665,7 +673,15 @@ class TaskController extends Controller
         try {
             $user_id = Auth::id(); 
             $user = User::with('responsible_tasks.category', 'responsible_tasks.status_task')->where('id', $user_id)->first();
-            // dd($user);
+
+            $tasks_general = Task::where('assign_to', 'all')->get();
+            
+            foreach ($tasks_general as $key => $general) {
+                $user->responsible_tasks[] = $general;
+            }
+
+            $ordered = $user->responsible_tasks->sortByDesc('created_at');
+            $user->responsible_tasks = $ordered;
             $ret['user'] = $user;
 
             return view('mytasks.index', $ret);

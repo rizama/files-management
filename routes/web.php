@@ -82,6 +82,7 @@ Route::group(
         
         // File
         Route::get('/download', 'FileController@download_file')->name('download');
+        Route::get('/files/delete/{id}', 'FileController@destroy')->name('file.delete');
         
         // Categories
         Route::get('categories', 'CategoryController@index')->name('categories.index');

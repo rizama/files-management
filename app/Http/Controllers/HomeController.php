@@ -75,7 +75,7 @@ class HomeController extends Controller
             })
             ->get();
         
-        $task_general = Task::where('assign_to', '[]')->get();
+        $task_general = Task::where('assign_to', 'all')->get();
 
         $data_task_person = [];
         foreach ($users as $index => $user) {

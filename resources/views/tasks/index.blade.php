@@ -66,10 +66,10 @@
                         {{-- <th class="text-center" style="width: 80px;">No</th> --}}
                         <th>Nama Tugas</th>
                         <th>Kategori</th>
-                        <th>Petugas</th>
-                        <th>Tanggal</th>
+                        <th>Staf</th>
+                        <th class="defaultSort">Tanggal</th>
                         <th>Status</th>
-                        <th class="disable-sorting">Aksi</th>
+                        <th class="disable-sorting text-center" style="width: 110px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,13 +83,19 @@
                                 {{ $task->category->name ?? '-' }}
                             </td>
                             <td class="font-w600 font-size-sm">
-                                @forelse ($task->responsible_person as $responsible_person)
-                                    {{ $responsible_person->name }}{{ $loop->last ? '' : ', ' }}
-                                @empty
+                                @if($task->assign_to == 'all')
                                     Semua Staf
-                                @endforelse
+                                @elseif( $task->assign_to == null)
+                                    -
+                                @else
+                                    @forelse ($task->responsible_person as $responsible_person)
+                                        {{ $responsible_person->name }}{{ $loop->last ? '' : ', ' }}
+                                    @empty
+                                        -
+                                    @endforelse
+                                @endif
                             </td>
-                            <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y') }}</td>
+                            <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH mm') }}</td>
                             <td>
                                 <span class="badge badge-{{ $task->status == 3 ? 'success' : 'warning' }}">{{ $task->status == 3 ? 'Disetujui' : 'On Progress' }}</span>
                             </td>

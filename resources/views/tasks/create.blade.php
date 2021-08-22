@@ -117,8 +117,13 @@
                 </div>
                 <div class="col-lg-12">
                     <div class="form-group">
-                        <label for="responsible_person">Petugas</label>
-                        <select class="js-select2 form-control" id="example-select2-multiple" name="responsible_person[]" style="width: 100%;" data-placeholder="" multiple>
+                        <label for="responsible_person">Staf
+                            <div class="custom-control custom-checkbox ml-2 d-inline">
+                                <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)">
+                                <label class="custom-control-label" for="responsible_person_all">Pilih Semua Staf</label>
+                            </div>
+                        </label>
+                        <select class="js-select2 form-control responsible_person" id="example-select2-multiple" name="responsible_person[]" style="width: 100%;" data-placeholder="Pilih Staf" multiple>
                             @foreach ($users as $key => $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
                             @endforeach
@@ -153,6 +158,19 @@
                 $('.container-default_file').removeClass('d-none');
                 $('.container-existing_file').addClass('d-none');
                 $('#select2-files').val(null);
+            }
+        }
+
+        function toggleAllStaff(e){
+            $('.responsible_person').val(null).trigger('change');
+            if (e.checked) {
+                $('.responsible_person').prop('disabled', true);
+                $('.responsible_person').val('all');
+                $(e).val('all');
+            } else {
+                $('.responsible_person').prop('disabled', false);
+                $('.responsible_person').val(null);
+                $('.responsible_person').select2('val', '');
             }
         }
     </script>
