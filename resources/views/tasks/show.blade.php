@@ -203,13 +203,13 @@
                                 <p class="block-title clamp clamp-5">
                                     <small>Deskripsi</small>{{ $file['description'] ?? '-' }}
                                 </p>
-                                <div class="col-lg-12 text-right">
+                                <div class="col-lg-12">
                                     <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" class="btn btn-outline-primary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}"><i class="fa fa-download"></i> Unduh</a>
                                     @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp', 'txt']))
                                         <button type="button" class="btn btn-outline-info push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" data-ext="{{App\Http\Controllers\TaskController::mime2ext($file->mime_type)}}" id="preview-btn-modal"><i class="fa fa-eye"></i> Pratinjau</button>
                                     @endif
                                     @if ($file->status['code'] == 'waiting' && $task->status != 3 && $key == 0 && Auth::user()->id == $task->created_by)
-                                        <form action="" method="GET" id="delete_file">    
+                                        <form action="" method="GET" id="delete_file" style="display: inline-block; float: right;">    
                                             <a
                                                 class="btn btn-outline-danger reject-file js-swal-confirm-with-form push mb-2"
                                                 data-type_button="reject"
@@ -222,6 +222,7 @@
                                         <form>
                                     @endif
                                 </div>
+                                <div class="clearfix"></div>
                                 @if ($file->status['code'] == 'waiting' && $task->status != 3 && $key == 0 && Auth::user()->id == $task->created_by)
                                     @if (Auth::user()->role->code == 'level_1')
                                     <div class="accordion mt-2" id="accordionExample">
