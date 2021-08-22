@@ -61,7 +61,7 @@
             <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
                 <thead>
                     <tr>
-                        <th class="text-center" style="width: 80px;">No</th>
+                        {{-- <th class="text-center" style="width: 80px;">No</th> --}}
                         <th>Nama</th>
                         <th>Email</th>
                         <th>Username</th>
@@ -72,7 +72,7 @@
                 <tbody>
                     @foreach ($users as $user)
                         <tr>
-                            <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td>
+                            {{-- <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td> --}}
                             <td class="font-w600 font-size-sm">
                                 {{ $user->name }}
                             </td>

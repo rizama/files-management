@@ -38,6 +38,7 @@ body {
 /* Data Table container */
 .dataTables_wrapper {
   overflow: auto;
+  width: 100%;
 }
 
 .dataTables_wrapper > * {

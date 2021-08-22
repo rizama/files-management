@@ -60,6 +60,18 @@ class pageTablesDatatables {
             dom: "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-6'i><'col-sm-6'p>>"
         });
+        
+        // Init simple DataTable
+        jQuery('.mytask-card-dataTable').dataTable({
+            pageLength: 12,
+            lengthMenu: false,
+            searching: true,
+            autoWidth: false,
+            "bLengthChange" : false,
+            order: [],
+            // dom: "<'row'<'col-sm-12'tr>>" +
+                // "<'row'<'col-sm-6'i><'col-sm-6'p>>"
+        });
 
         // Init DataTable with Buttons
         jQuery('.js-dataTable-buttons').dataTable({
