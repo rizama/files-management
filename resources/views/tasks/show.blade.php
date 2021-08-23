@@ -187,9 +187,43 @@
                 <ul class="timeline timeline-alt py-0 timeline-file">
                     @forelse ($task->files as $key => $file)
                     <li class="timeline-event">
-                        <div class="timeline-event-icon bg-default">
-                            <i class="fa fa-file-alt"></i>
-                        </div>
+                        {{-- <div class="timeline-event-icon bg-default"> --}}
+                            @if (App\Http\Controllers\TaskController::mime2ext($file->mime_type) == 'pdf')
+                            <div class="timeline-event-icon bg-danger">
+                                <i class="fa fa-file-pdf"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['txt', 'rtf']))
+                            <div class="timeline-event-icon bg-default">    
+                                <i class="fa fa-file-alt"></i>
+                            </div>
+                            @elseif(App\Http\Controllers\TaskController::mime2ext($file->mime_type) == 'csv')   
+                            <div class="timeline-event-icon bg-success">    
+                                <i class="fa fa-file-csv"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['xls', 'xlsx']))
+                            <div class="timeline-event-icon bg-success">    
+                                <i class="fa fa-file-excel"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'bmp']))
+                            <div class="timeline-event-icon bg-amethyst-light">    
+                                <i class="fa fa-file-image"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['docx', 'doc']))
+                            <div class="timeline-event-icon bg-default">    
+                                <i class="fa fa-file-word"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['ppt', 'pptx']))
+                            <div class="timeline-event-icon bg-warning">    
+                                <i class="fa fa-file-powerpoint"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['rar', 'zip']))
+                            <div class="timeline-event-icon bg-city-light">    
+                                <i class="fa fa-file-archive"></i>
+                            </div>
+                            @else
+                                <i class="fa fa-file"></i>
+                            @endif
+                        {{-- </div> --}}
                         <div class="timeline-event-block block invisible" data-toggle="appear">
                             <div class="block-header">
                                 <h3 class="block-title"><small>Pengunggah </small>{{ $file->user['name']}}</h3>
