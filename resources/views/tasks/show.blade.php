@@ -242,7 +242,7 @@
                                     @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp', 'txt']))
                                         <button type="button" class="btn btn-outline-info push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" data-ext="{{App\Http\Controllers\TaskController::mime2ext($file->mime_type)}}" id="preview-btn-modal"><i class="fa fa-eye"></i> Pratinjau</button>
                                     @endif
-                                    @if ($file->status['code'] == 'waiting' && $task->status != 3 && $key == 0 && Auth::user()->id == $task->created_by)
+                                    @if ($file->status['code'] == 'waiting' && $task->status != 3 && Auth::user()->id == $file->created_by)
                                         <form action="" method="GET" id="delete_file" style="display: inline-block; float: right;">    
                                             <a
                                                 class="btn btn-outline-danger reject-file js-swal-confirm-with-form push mb-2"
