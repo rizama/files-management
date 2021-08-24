@@ -162,16 +162,22 @@
         }
 
         function toggleAllStaff(e){
-            $('.responsible_person').val(null).trigger('change');
+            // $('.responsible_person').val(null).trigger('change');
             if (e.checked) {
-                $('.responsible_person').prop('disabled', true);
-                $('.responsible_person').val('all');
-                $(e).val('all');
-            } else {
-                $('.responsible_person').prop('disabled', false);
-                $('.responsible_person').val(null);
-                $('.responsible_person').select2('val', '');
+                // $('.responsible_person').prop('disabled', true);
+                // $('.responsible_person').val('all');
+                // $(e).val('all');
+                
+                $(".responsible_person > option").prop("selected","selected");
+                $(".responsible_person").trigger("change");
+            // } else {
+            //     $('.responsible_person').prop('disabled', false);
+            //     $('.responsible_person').val(null);
+            //     $('.responsible_person').select2('val', '');
             }
         }
+        $('.responsible_person').on('select2:unselect', function (e) {
+            $('#responsible_person_all').prop('checked', false);
+        });
     </script>
 @endsection

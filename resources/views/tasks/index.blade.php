@@ -99,7 +99,7 @@
                             <td>
                                 <span class="badge badge-{{ $task->status == 3 ? 'success' : 'warning' }}">{{ $task->status == 3 ? 'Disetujui' : 'On Progress' }}</span>
                             </td>
-                            <td>
+                            <td style="text-align: center;">
                                 <div class="btn-group">
                                     <a class="btn btn-sm btn-primary"
                                         href="{{ url('/tasks/show/').'/'.encrypt($task->id) }}"
@@ -110,16 +110,14 @@
                                         <i class="fa fa-fw fa-eye"></i>
                                     </a>
                                     @if($task->created_by == $user->id)
-                                    <a class="btn btn-sm btn-warning"
-                                        href="{{ url('/tasks/edit/').'/'.encrypt($task->id) }}"
-                                        data-animation="true" data-toggle="tooltip"
-                                        title="Ubah Tugas" data-original-title="Ubah Tugas"
-                                        style="margin-right: 3px"
-                                    >
-                                        <i class="fa fa-fw fa-pencil-alt"></i>
-                                    </a>
-                                    @endif
-                                    @if($task->created_by == $user->id)
+                                        <a class="btn btn-sm btn-warning"
+                                            href="{{ url('/tasks/edit/').'/'.encrypt($task->id) }}"
+                                            data-animation="true" data-toggle="tooltip"
+                                            title="Ubah Tugas" data-original-title="Ubah Tugas"
+                                            style="margin-right: 3px"
+                                        >
+                                            <i class="fa fa-fw fa-pencil-alt"></i>
+                                        </a>
                                         <a class="btn btn-sm btn-danger js-swal-confirm"
                                             href="{{ route('tasks.destroy', encrypt($task->id)) }}"
                                             data-toggle="tooltip" title="" data-original-title="Hapus Tugas">

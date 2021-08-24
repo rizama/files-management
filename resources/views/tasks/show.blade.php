@@ -242,18 +242,17 @@
                                     @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp', 'txt']))
                                         <button type="button" class="btn btn-outline-info push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" data-ext="{{App\Http\Controllers\TaskController::mime2ext($file->mime_type)}}" id="preview-btn-modal"><i class="fa fa-eye"></i> Pratinjau</button>
                                     @endif
-                                    @if ($file->status['code'] == 'waiting' && $task->status != 3 && Auth::user()->id == $file->created_by)
-                                        <form action="" method="GET" id="delete_file" style="display: inline-block; float: right;">    
-                                            <a
-                                                class="btn btn-outline-danger reject-file js-swal-confirm-with-form push mb-2"
-                                                data-type_button="reject"
-                                                href="{{ route('file.delete', encrypt($file->id)) }}"
-                                                title="Apakah anda yakin untuk menghapus dokumen ini ?"
-                                                data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
-                                                data-form_id="delete_file"
-                                                data-success_text="Dokumen Berhasil Dihapus"
-                                            ><i class="fa fa-trash"></i> Hapus</a>
-                                        <form>
+                                    @if ($file->status['code'] == 'waiting' && $task->status != 3 && (Auth::user()->id == $file->created_by || Auth::user()->id == $task->created_by))
+                                        <a
+                                            class="btn btn-outline-danger reject-file js-swal-confirm-with-form push mb-2"
+                                            style="float: right;"
+                                            data-type_button="reject"
+                                            href="{{ route('file.delete', encrypt($file->id)) }}"
+                                            title="Apakah anda yakin untuk menghapus dokumen ini ?"
+                                            data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
+                                            data-form_id="delete_file"
+                                            data-success_text="Dokumen Berhasil Dihapus"
+                                        ><i class="fa fa-trash"></i> Hapus</a>
                                     @endif
                                 </div>
                                 <div class="clearfix"></div>
@@ -466,6 +465,9 @@
     @csrf
     <input type="submit" style="display: none;">
 </form>
+
+<form action="" method="GET" id="delete_file" style="display: inline-block; float: right;"><form>
+
 @endsection
 
 @section('js_after')
