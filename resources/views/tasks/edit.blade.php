@@ -119,7 +119,7 @@
                 </div>
                 <div class="col-lg-12">
                     <div class="form-group">
-                        <label for="responsible_person">Staf
+                        <label for="responsible_person">Staf Penanggung Jawab
                             <div class="custom-control custom-checkbox ml-2 d-inline">
                                 {{-- <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)" {{ $task->assign_to == 'all' ? 'checked' : '' }} value="{{ $task->assign_to == 'all' ? 'all' : '' }}"> --}}
                                 <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)">
@@ -171,7 +171,6 @@
         }
 
         function toggleAllStaff(e){
-            // $('.responsible_person').val(null).trigger('change');
             if (e.checked) {
                 // $('.responsible_person').prop('disabled', true);
                 // $('.responsible_person').val('all');
@@ -179,7 +178,8 @@
                 
                 $(".responsible_person > option").prop("selected","selected");
                 $(".responsible_person").trigger("change");
-            // } else {
+            } else {
+                $('.responsible_person').val(null).trigger('change');
             //     $('.responsible_person').prop('disabled', false);
             //     $('.responsible_person').val(null);
             //     $('.responsible_person').select2('val', '');
