@@ -121,7 +121,8 @@
                     <div class="form-group">
                         <label for="responsible_person">Staf
                             <div class="custom-control custom-checkbox ml-2 d-inline">
-                                <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)" {{ $task->assign_to == 'all' ? 'checked' : '' }} value="{{ $task->assign_to == 'all' ? 'all' : '' }}">
+                                {{-- <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)" {{ $task->assign_to == 'all' ? 'checked' : '' }} value="{{ $task->assign_to == 'all' ? 'all' : '' }}"> --}}
+                                <input type="checkbox" class="custom-control-input" id="responsible_person_all" name="responsible_person" onclick="toggleAllStaff(this)">
                                 <label class="custom-control-label" for="responsible_person_all">Pilih Semua Staf</label>
                                 {{-- @if($task->assign_to == 'all')
                                     <input type="hidden" name="responsible_person" id="responsible_person_all" value="all">
@@ -170,16 +171,22 @@
         }
 
         function toggleAllStaff(e){
-            $('.responsible_person').val(null).trigger('change');
+            // $('.responsible_person').val(null).trigger('change');
             if (e.checked) {
-                $('.responsible_person').prop('disabled', true);
-                $('.responsible_person').val('all');
-                $(e).val('all');
-            } else {
-                $('.responsible_person').prop('disabled', false);
-                $('.responsible_person').val(null);
-                $('.responsible_person').select2('val', '');
+                // $('.responsible_person').prop('disabled', true);
+                // $('.responsible_person').val('all');
+                // $(e).val('all');
+                
+                $(".responsible_person > option").prop("selected","selected");
+                $(".responsible_person").trigger("change");
+            // } else {
+            //     $('.responsible_person').prop('disabled', false);
+            //     $('.responsible_person').val(null);
+            //     $('.responsible_person').select2('val', '');
             }
         }
+        $('.responsible_person').on('select2:unselect', function (e) {
+            $('#responsible_person_all').prop('checked', false);
+        });
     </script>
 @endsection
