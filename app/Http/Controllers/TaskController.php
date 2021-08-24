@@ -91,7 +91,9 @@ class TaskController extends Controller
                 'is_history_active' => 'required',
                 'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
                 'responsible_person' => 'nullable',
-                'custom_name' => 'nullable|string'
+                'custom_name' => 'nullable|string',
+                'due_date' => 'nullable',
+                'is_confirm_all' => 'required',
             ]);
     
             if ($validator->fails()) {
@@ -106,6 +108,8 @@ class TaskController extends Controller
             $task->category_id = $request->category_id;
             $task->description = $request->description ?? '';
             $task->status = $ON_PROGRESS;
+            $task->due_date = $request->due_date;
+            $task->is_confirm_all = $request->is_confirm_all;
             $task->is_history_file_active = (int)$request->is_history_active;
             if ($request->responsible_person) {
                 $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
@@ -309,6 +313,8 @@ class TaskController extends Controller
             }
             
             $task->description = $request->description;
+            $task->due_date = $request->due_date;
+            $task->is_confirm_all = $request->is_confirm_all;
             $task->is_history_file_active = $request->is_history_active;
             $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
             $task->save();
@@ -670,6 +676,10 @@ class TaskController extends Controller
 
     public function my_task(Request $request)
     {
+        if (Auth::user()->role->code == 'level_1') {
+            abort(403);
+        }
+
         try {
             $user_id = Auth::id(); 
             $user = User::with('responsible_tasks.category', 'responsible_tasks.status_task')->where('id', $user_id)->first();
@@ -677,7 +687,9 @@ class TaskController extends Controller
             $tasks_general = Task::where('assign_to', 'all')->get();
             
             foreach ($tasks_general as $key => $general) {
-                $user->responsible_tasks[] = $general;
+                if ($user->role->code != 'level_1') {
+                    $user->responsible_tasks[] = $general;
+                }
             }
 
             $ordered = $user->responsible_tasks->sortByDesc('created_at');
