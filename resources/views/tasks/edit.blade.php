@@ -6,6 +6,7 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('js/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('js/plugins/flatpickr/flatpickr.min.css') }}">
 @endsection
 
 @section('page-title')
@@ -44,12 +45,17 @@
                             <label class="custom-control-label" for="checkbox_history_active">Aktifkan Riwayat Dokumen</label>
                             <input type="hidden" name="is_history_active" id="is_history_active" value="{{old('is_history_active', $task->is_history_file_active)}}">
                         </div>
+                        <div class="custom-control custom-switch mb-1">
+                            <input type="hidden" name="is_confirm_all" value="{{old('is_confirm_all', $task->is_confirm_all)}}">
+                            <input type="checkbox" class="custom-control-input" id="is_confirm_all" name="is_confirm_all" {{ $task->is_confirm_all == 1 ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="is_confirm_all">Konfirmasi Seluruh Dokumen</label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="responsible_person">Kategori</label>
-                        <select class="js-select2-clear form-control" id="example-select2" name="category_id" style="width: 100%;" data-placeholder="Pilih Kategori Tugas" data-allow-clear="true" value={{ $task->category_id }}>
+                        <select class="js-select2 form-control" id="example-select2" name="category_id" style="width: 100%;" data-placeholder="Pilih Kategori Tugas" data-allow-clear="true" value={{ $task->category_id }}>
                             <option></option>
                             @foreach ($categories as $key => $category)
                                 <option value="{{ $category->id }}" {{ $category->id == $task->category_id ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -58,6 +64,10 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="due_date">Batas Waktu Pengerjaan</label>
+                        <input type="text" class="js-flatpickr form-control bg-white" id="due_date" name="due_date" data-enable-time="true" data-time_24hr="true" data-min-date="{{ date('Y-m-d').'T'.date('H:i:s') }}" data-default-date={{old('due_date', $task->due_date)}} value="{{old('due_date', $task->due_date)}}">
+                    </div>
                 </div>
                 <div class="col-lg-12">
                     <div class="form-group">
@@ -145,7 +155,9 @@
 
 @section('js_after')
     <script src="{{ asset('js/plugins/select2/js/select2.full.min.js') }}"></script>
-    <script>jQuery(function () { One.helpers(['select2']);  });</script>
+    <script src="{{ asset('js/plugins/flatpickr/flatpickr.min.js') }}"></script>
+
+    <script>jQuery(function () { One.helpers(['select2', 'flatpickr']);  });</script>
     <script>
         $('#default_file').change(function() {
             if($(this)[0]) $('#custom_name').prop('disabled', false);
@@ -153,8 +165,8 @@
         $('#checkbox_history_active').click(function() {
             $('#is_history_active').val(this.checked ? 1 : 0);
         });
-        $(".js-select2-clear").select2({
-            allowClear: true
+        $('#is_confirm_all').click(function() {
+            $(this).val(this.checked ? 1 : 0);
         });
         
         function toggleExistingFile(e){

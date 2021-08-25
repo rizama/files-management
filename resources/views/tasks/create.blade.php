@@ -6,6 +6,7 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('js/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('js/plugins/flatpickr/flatpickr.min.css') }}">
 @endsection
 
 @section('page-title')
@@ -36,11 +37,16 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label for="name"></label>
+                        <label for="name" class="d-none d-lg-inline-block"></label>
                         <div class="custom-control custom-switch mb-1">
                             <input type="hidden" name="is_history_active" value="0">
                             <input type="checkbox" class="custom-control-input" id="is_history_active" name="is_history_active">
-                            <label class="custom-control-label" for="is_history_active">Aktifkan Riwayat File</label>
+                            <label class="custom-control-label" for="is_history_active">Aktifkan Riwayat Dokumen</label>
+                        </div>
+                        <div class="custom-control custom-switch mb-1">
+                            <input type="hidden" name="is_confirm_all" value="0">
+                            <input type="checkbox" class="custom-control-input" id="is_confirm_all" name="is_confirm_all">
+                            <label class="custom-control-label" for="is_confirm_all">Konfirmasi Seluruh Dokumen</label>
                         </div>
                     </div>
                 </div>
@@ -56,6 +62,10 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="due_date">Batas Waktu Pengerjaan</label>
+                        <input type="text" class="js-flatpickr form-control bg-white" id="due_date" name="due_date" data-enable-time="true" data-time_24hr="true" data-min-date="{{ date('Y-m-d').'T'.date('H:i:s') }}">
+                    </div>
                 </div>
                 <div class="col-lg-12">
                     <div class="form-group">
@@ -139,12 +149,17 @@
 
 @section('js_after')
     <script src="{{ asset('js/plugins/select2/js/select2.full.min.js') }}"></script>
-    <script>jQuery(function () { One.helpers(['select2']);  });</script>
+    <script src="{{ asset('js/plugins/flatpickr/flatpickr.min.js') }}"></script>
+
+    <script>jQuery(function () { One.helpers(['select2', 'flatpickr']);  });</script>
     <script>
         $('#default_file').change(function() {
             if($(this)[0]) $('#custom_name').prop('disabled', false);
         });
         $('#is_history_active').click(function() {
+            $(this).val(this.checked ? 1 : 0);
+        });
+        $('#is_confirm_all').click(function() {
             $(this).val(this.checked ? 1 : 0);
         });
 
