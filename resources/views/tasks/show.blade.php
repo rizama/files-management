@@ -71,6 +71,10 @@
                     <label>Deskripsi</label>
                     <p>{{ $task->description ?? '-' }}</p>
                 </div>
+                <div class="form-group mb-0">
+                    <label>Tenggat Waktu</label>
+                    <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm') : '-' }}</p>
+                </div>
             </div>
         </div>
         @if ($task->assign_to)
