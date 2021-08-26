@@ -257,7 +257,8 @@
 
     {{-- JS Section --}}
     <!-- OneUI Core JS -->
-    <script src="{{ asset('js/oneui.app.js') }}"></script>
+    <script src="{{ asset('js/oneui.core.min.js') }}"></script>
+    <script src="{{ asset('js/oneui.app.min.js') }}"></script>
 
     <!-- Scripts -->
     {{-- <script src="{{ asset('js/app.js') }}" defer></script> --}}
