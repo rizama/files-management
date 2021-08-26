@@ -37,13 +37,13 @@ Route::get('/decrypt', function (Request $request) {
 
 Auth::routes();
 
-Route::get('/dashboard', 'HomeController@index')->name('dashboard');
-
 Route::group(
     [
         'middleware' => 'auth'
     ],
     function () {
+        Route::get('/dashboard', 'HomeController@index')->name('dashboard');
+
         // User Route
         Route::get('/users', 'UserController@index')->name('users.index');
         Route::get('/users/create', 'UserController@create')->name('users.create');
