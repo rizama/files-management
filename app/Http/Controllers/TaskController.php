@@ -93,10 +93,11 @@ class TaskController extends Controller
                 'responsible_person' => 'nullable',
                 'custom_name' => 'nullable|string',
                 'due_date' => 'nullable',
-                'is_confirm_all' => 'required',
+                'is_confirm_all' => 'nullable',
             ]);
     
             if ($validator->fails()) {
+                dd($validator->errors());
                 return redirect()->back()->withErrors($validator->errors());
             }
 
