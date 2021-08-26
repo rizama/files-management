@@ -254,6 +254,7 @@ class TaskController extends Controller
         try {
             DB::beginTransaction();
             $data = $request->except('_method','_token','submit');
+            // dd($data);
             try {
                 $decrypted_id = decrypt($id);
             } catch (\Exception $e) {
@@ -315,7 +316,7 @@ class TaskController extends Controller
             
             $task->description = $request->description;
             $task->due_date = $request->due_date;
-            $task->is_confirm_all = $request->is_confirm_all;
+            $task->is_confirm_all = $request->is_confirm_all ? $request->is_confirm_all : 0;
             $task->is_history_file_active = $request->is_history_active;
             $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
             $task->save();
