@@ -20,10 +20,29 @@ class NotifComposer
                 }])->where('created_by', $id)->get();
 
                 $notif_count = 0;
+                $notif_content = [];
                 foreach ($notif_tasks as $notif_key => $notif) {
                     $notif_count = $notif_count + count($notif->files);
+                    foreach ($notif->files as $key => $file) {
+                        $notif_content[] = $file->load('user');
+                    }
                 }
+                
+                $contents = [];
+                foreach ($notif_content as $key => $content) {
+                    $temp = [
+                        "id" => $content->id,
+                        "file" => $content->original_name,
+                        "created_at" => $content->created_at,
+                        "user" => $content->user->name,
+                        "task_id" => $content->task->id,
+                    ];
+
+                    $contents[] = $temp;
+                }
+
                 $view->with('notif_count', $notif_count);
+                $view->with('notif_content', $contents);
             } else {
                 $id = Auth::id();
                 $individu_task = Task::with(['responsible_person'])
@@ -33,8 +52,35 @@ class NotifComposer
                     ->get();
                 
                 $general_task = Task::where('assign_to', 'all')->where('status', 1)->get();
+                if (Auth::user()->role->code == 'superadmin') {
+                    $general_task = [];
+                }
                 $notif_count = count($individu_task) + count($general_task);
+
+                $merged = $individu_task->merge($general_task);
+                $merged->load('user', 'files');
+
+                $contents = [];
+                foreach ($merged as $key_content => $content) {
+                    $uploader = [];
+                    foreach ($content->files as $key => $file_) {
+                        $uploader[] = $file_->created_by;
+                    }
+
+                    if (!in_array(Auth::id(), $uploader)) {
+                        $temp = [
+                            "id" => $content->id,
+                            "task" => $content->name,
+                            "created_at" => $content->created_at,
+                            "creator" => $content->user->name,
+                            "task_id" => $content->id,
+                        ];
+                        $contents[] = $temp;
+                    }
+                }
+
                 $view->with('notif_count', $notif_count);
+                $view->with('notif_content', $contents);
             }
         }
     }

@@ -196,7 +196,7 @@
                                         $status = ['danger', 'Ditolak'];
                                     }
                                 @endphp
-                                <td colspan="6" class="font-w600 font-size-sm"><a href="{{ route('tasks.show', encrypt($file->task->id)) }}"><span class="mr-2 badge badge-{{ $status[0] }}">{{ $status[1] }}</span> {{ $file->task->name }}</a></td>
+                                <td colspan="6" class="font-w600 font-size-sm"><a href="{{ route('tasks.show', encrypt($file->task->id)) }}"><span class="mr-2 badge badge-{{ $status[0] }}">{{ $status[1] }}</span> {{ $file->original_name }}</a></td>
                             </tr>
                             @endforeach
                         </tbody>
