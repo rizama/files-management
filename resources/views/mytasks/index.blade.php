@@ -38,15 +38,34 @@
             </thead>
             <tbody class="row">
                 @forelse ($user->responsible_tasks as $task)
+                    @php
+                        if ($task->status != 3 && $task->due_date && \Carbon\Carbon::parse($task->due_date) < \Carbon\Carbon::now()){
+                            $dueDateClass = 'bg-alt-danger';
+                        } else {
+                            $dueDateClass = '';
+                        }
+
+                        if ($task->status == 3){
+                            $color = 'success';
+                            $status= 'Selesai';
+                        } elseif (count($task->files) > 0) {
+                            $color = 'warning';
+                            $status= 'Sedang Dikerjakan';
+                        } else {
+                            $color = 'secondary';
+                            $status= 'Belum Dikerjakan';
+                        }
+                    @endphp
                     <tr class="col-sm-6 col-md-4 col-lg-4 col-xl-3">
                         <td>
                             {{-- <div class="col-12"> --}}
                                 <div class="block block-rounded mb-0">
-                                    <div class="block-header block-header-default">
+                                    <div class="block-header block-header-default {{ $dueDateClass }}">
                                         <h3 class="block-title">
                                             <p class="clamp-1 mb-0" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $task->name }}">{{ $task->name }}</p>
                                             <small class="d-block">Kategori: {{ $task->category['name'] ?? '-' }}</small>
-                                            <span class="badge badge-{{ $task->status_task['code'] == 'progress' ? 'warning' : 'success' }}">{{ $task->status_task['name'] }}</span>
+                                            <span class="badge badge-{{ $color }}">{{ $status }}</span>
+                                            <small class="d-block">Batas Waktu: {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH mm') : '-' }}</small>
                                         </h3>
                                     </div>
                                     <div class="block-content">
