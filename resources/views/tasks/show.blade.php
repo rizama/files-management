@@ -16,6 +16,10 @@
     {{ $task->name }}
 @endsection
 
+@section('breadcrumb-url')
+    {{ url('/tasks') }}
+@endsection
+
 @section('content')
 @if (session()->has('task.file_uploaded'))
 <div class="alert alert-success alert-dismissable" role="alert">
@@ -57,7 +61,7 @@
     <div class="col-lg-8">
         <div class="block block-rounded">
             <div class="block-header">
-                <a href="{{ url()->previous() }}" class="btn btn-alt-secondary mr-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+                <a href="{{ url('/tasks') }}" class="btn btn-alt-secondary mr-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
                 <h3 class="block-title text-right text-bold">
                     Detail
                 </h3>
@@ -335,6 +339,15 @@
                                             } else {
                                                 $status = 'info';
                                             }
+                                            if ($task->due_date) {
+                                                if (\Carbon\Carbon::parse($file->created_at) < \Carbon\Carbon::parse($task->due_date)) {
+                                                    $lateStatus = 'Tepat Waktu';
+                                                } else {
+                                                    $lateStatus = 'Terlambat';
+                                                }
+                                            } else {
+                                                $lateStatus = '-';
+                                            }
                                         @endphp
                                         <div>
                                             <table>
@@ -347,6 +360,11 @@
                                                     <td><b>Catatan</b></td>
                                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                                     <td>{{ $file['notes'] ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Status Keterlambata</b></td>
+                                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td>{{ $lateStatus }}</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -379,15 +397,21 @@
                 <div class="block-content block-content-full pt-0">
                     <div class="row push mb-0">
                         <div class="col-lg-12">
-                            <div class="form-group mb-0">
+                            <div class="form-group mb-0 justify-content-between align-items-center d-flex">
                                 <label>Kategori</label>
                                 <span class="float-right">{{ $task->category->name ?? '-' }}</span>
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <div class="form-group mb-0">
+                            <div class="form-group mb-0 justify-content-between align-items-center d-flex">
                                 <label>Riwayat Dokumen</label>
-                                <span class="badge {{ $task->is_history_file_active == 1 ? 'badge-success' : 'badge-danger' }} float-right">{{ $task->is_history_file_active == 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
+                                <span class="badge {{ $task->is_history_file_active == 1 ? 'badge-success' : 'badge-danger' }}">{{ $task->is_history_file_active == 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group mb-0 justify-content-between align-items-center d-flex">
+                                <label>Konfirmasi Semua Dokumen</label>
+                                <span class="badge {{ $task->is_confirm_all == 1 ? 'badge-success' : 'badge-danger' }}">{{ $task->is_confirm_all == 1 ? 'Ya' : 'Tidak' }}</span>
                             </div>
                         </div>
                     </div>

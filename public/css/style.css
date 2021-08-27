@@ -12,7 +12,7 @@ body {
 }
 
 .custom-file-label::after {
-  content: 'Pilih File';
+  content: 'Pilih Dokumen';
 }
 
 /* .block-file, .block-assign {
@@ -119,4 +119,8 @@ body {
 /* Helper */
 .text-bold {
   font-weight: bold;
+}
+
+.bg-alt-danger {
+  background-color: #f4bebe;
 }

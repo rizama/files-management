@@ -60,7 +60,7 @@
             @endif
         </div>
         <div class="block-content block-content-full">
-            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+            <table class="table table-bordered table-vcenter js-dataTable-full">
                 <thead>
                     <tr>
                         {{-- <th class="text-center" style="width: 80px;">No</th> --}}
@@ -75,7 +75,14 @@
                 </thead>
                 <tbody>
                     @foreach ($tasks as $task)
-                        <tr>
+                        @php
+                            if ($task->status != 3 && $task->due_date && \Carbon\Carbon::parse($task->due_date) < \Carbon\Carbon::now()){
+                                $dueDateClass = 'bg-alt-danger';
+                            } else {
+                                $dueDateClass = '';
+                            }
+                        @endphp
+                        <tr class="{{ $dueDateClass }}">
                             {{-- <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td> --}}
                             <td class="font-w600 font-size-sm">
                                 {{ $task->name }}
@@ -98,8 +105,21 @@
                             </td>
                             <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH mm') }}</td>
                             <td class="font-size-sm" data-order="{{strtotime($task->due_date)}}">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH mm') : '-' }}</td>
+                            
+                            @php
+                                if ($task->status == 3){
+                                    $color = 'success';
+                                    $status= 'Selesai';
+                                } elseif (count($task->files) > 0) {
+                                    $color = 'warning';
+                                    $status= 'Sedang Dikerjakan';
+                                } else {
+                                    $color = 'secondary';
+                                    $status= 'Belum Dikerjakan';
+                                }
+                            @endphp
                             <td>
-                                <span class="badge badge-{{ $task->status == 3 ? 'success' : 'warning' }}">{{ $task->status == 3 ? 'Disetujui' : 'On Progress' }}</span>
+                                <span class="badge badge-{{ $color }}">{{ $status }}</span>
                             </td>
                             <td style="text-align: center;">
                                 <div class="btn-group">
