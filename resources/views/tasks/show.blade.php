@@ -260,7 +260,7 @@
                                     @endif
                                 </div>
                                 <div class="clearfix"></div>
-                                @if ($file->status['code'] == 'waiting' && $task->status != 3 && $key == 0 && Auth::user()->id == $task->created_by)
+                                @if ($file->status['code'] == 'waiting' && $task->status != 3 && ($key == 0 || $task->is_confirm_all) && Auth::user()->id == $task->created_by)
                                     @if (Auth::user()->role->code == 'level_1')
                                     <div class="accordion mt-2" id="accordionExample">
                                         <div class="card">
