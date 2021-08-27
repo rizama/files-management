@@ -39,14 +39,14 @@
                     <div class="form-group">
                         <label for="name" class="d-none d-lg-inline-block"></label>
                         <div class="custom-control custom-switch mb-1">
-                            <input type="hidden" name="is_history_active" value="0">
-                            <input type="checkbox" class="custom-control-input" id="is_history_active" name="is_history_active">
-                            <label class="custom-control-label" for="is_history_active">Aktifkan Riwayat Dokumen</label>
+                            <input type="checkbox" class="custom-control-input" id="checkbox_history_active" name="checkbox_history_active" value="">
+                            <label class="custom-control-label" for="checkbox_history_active">Aktifkan Riwayat Dokumen</label>
+                            <input type="hidden" name="is_history_active" id="is_history_active" value="0">
                         </div>
                         <div class="custom-control custom-switch mb-1">
-                            <input type="hidden" name="is_confirm_all" value="0">
-                            <input type="checkbox" class="custom-control-input" id="is_confirm_all" name="is_confirm_all">
-                            <label class="custom-control-label" for="is_confirm_all">Konfirmasi Seluruh Dokumen</label>
+                            <input type="checkbox" class="custom-control-input" id="checkbox_confirm_all">
+                            <label class="custom-control-label" for="checkbox_confirm_all">Konfirmasi Seluruh Dokumen</label>
+                            <input type="hidden" name="is_confirm_all" id="is_confirm_all" value="0">
                         </div>
                     </div>
                 </div>
@@ -156,11 +156,11 @@
         $('#default_file').change(function() {
             if($(this)[0]) $('#custom_name').prop('disabled', false);
         });
-        $('#is_history_active').click(function() {
-            $(this).val(this.checked ? 1 : 0);
+        $('#checkbox_history_active').click(function() {
+            $('#is_history_active').val(this.checked ? 1 : 0);
         });
-        $('#is_confirm_all').click(function() {
-            $(this).val(this.checked ? 1 : 0);
+        $('#checkbox_confirm_all').click(function() {
+            $('#is_confirm_all').val(this.checked ? 1 : 0);
         });
 
         function toggleExistingFile(e){

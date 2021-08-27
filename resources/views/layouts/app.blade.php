@@ -174,22 +174,54 @@
                     </button>
                     <!-- END Toggle Mini Sidebar -->
                     <a class="navbar-brand text-light font-weight-bold" href="{{ url('/') }}">
-                        Sistem Operasional Manajemen Kerja di Perencanaan
+                        Sistem Operasional Manajemen Kerja dan Perencanaan
                     </a>
                 </div>
                 <!-- Right Section -->
                 <div class="d-flex align-items-center">
+                    <!-- Notifications Dropdown -->
+                    <div class="dropdown d-inline-block ml-2">
+                        <button type="button" class="btn btn-sm btn-dual" id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-fw fa-bell"></i>
+                            <span class="badge badge-pill bg-gray-light text-gray-darker">{{ $notif_count }}</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="page-header-notifications-dropdown">
+                            <div class="p-2 bg-primary-dark text-center rounded-top">
+                                <h5 class="dropdown-header text-uppercase text-white">Notifikasi</h5>
+                            </div>
+                            <ul class="nav-items mb-0">
+                                <li>
+                                    <a class="text-dark media py-2" href="javascript:void(0)">
+                                        <div class="mr-2 ml-3">
+                                            <i class="fa fa-fw fa-check-circle text-success"></i>
+                                        </div>
+                                        <div class="media-body pr-2">
+                                            <div class="font-w600">You have a new follower</div>
+                                            <span class="font-w500 text-muted">15 min ago</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="p-2 border-top">
+                                <a class="btn btn-sm btn-light btn-block text-center" href="javascript:void(0)">
+                                    <i class="fa fa-fw fa-arrow-down mr-1"></i> Lihat Semua
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END Notifications Dropdown -->
+
                     <!-- User Dropdown -->
                     <div class="dropdown d-inline-block ml-2">
                         <button type="button" class="btn btn-sm btn-dual d-flex align-items-center" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="rounded-circle" src="{{ asset('media/avatars/avatar10.jpg') }}" alt="Header Avatar" style="width: 21px;">
-                            <span class="d-none d-sm-inline-block ml-2">{{ $notif_count }} - {{ Auth::user()->username }}</span>
+                            <span class="d-none d-sm-inline-block ml-2">{{ $notif_count }} - {{ Auth::user()->name }}</span>
                             <i class="fa fa-fw fa-angle-down d-none d-sm-inline-block ml-1 mt-1"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-md dropdown-menu-right p-0 border-0" aria-labelledby="page-header-user-dropdown">
                             <div class="p-3 text-center bg-primary-dark rounded-top">
                                 <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('media/avatars/avatar10.jpg') }}" alt="">
-                                <p class="mt-2 mb-0 text-white font-w500">{{ Auth::user()->name }}</p>
+                                <p class="mt-2 mb-0 text-white font-w500">{{ Auth::user()->username }}</p>
                                 {{-- <p class="mb-0 text-white-50 font-size-sm">Web Developer</p> --}}
                             </div>
                             <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('logout') }}" onclick="event.preventDefault();
@@ -201,8 +233,8 @@
                             </form>
                         </div>
                     </div>
+                    <!-- END User Dropdown -->
                 </div>
-                <!-- END User Dropdown -->
             </div>
             <!-- END Right Section -->
         </header>

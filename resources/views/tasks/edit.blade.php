@@ -46,9 +46,9 @@
                             <input type="hidden" name="is_history_active" id="is_history_active" value="{{old('is_history_active', $task->is_history_file_active)}}">
                         </div>
                         <div class="custom-control custom-switch mb-1">
-                            <input type="hidden" name="is_confirm_all" value="{{old('is_confirm_all', $task->is_confirm_all)}}">
-                            <input type="checkbox" class="custom-control-input" id="is_confirm_all" name="is_confirm_all" {{ $task->is_confirm_all == 1 ? 'checked' : '' }}>
-                            <label class="custom-control-label" for="is_confirm_all">Konfirmasi Seluruh Dokumen</label>
+                            <input type="checkbox" class="custom-control-input" id="checkbox_confirm_all" {{ $task->is_confirm_all == 1 ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="checkbox_confirm_all">Konfirmasi Seluruh Dokumen</label>
+                            <input type="hidden" name="is_confirm_all" id="is_confirm_all" value="{{old('is_confirm_all', $task->is_confirm_all)}}">
                         </div>
                     </div>
                 </div>
@@ -165,8 +165,8 @@
         $('#checkbox_history_active').click(function() {
             $('#is_history_active').val(this.checked ? 1 : 0);
         });
-        $('#is_confirm_all').click(function() {
-            $(this).val(this.checked ? 1 : 0);
+        $('#checkbox_confirm_all').click(function() {
+            $('#is_confirm_all').val(this.checked ? 1 : 0);
         });
         
         function toggleExistingFile(e){
