@@ -97,7 +97,6 @@ class TaskController extends Controller
             ]);
     
             if ($validator->fails()) {
-                dd($validator->errors());
                 return redirect()->back()->withErrors($validator->errors());
             }
 
@@ -581,13 +580,23 @@ class TaskController extends Controller
 
             $file = File::with('task')->findOrFail($decrypted_id);
 
-            // Update Files
             $STATUS_APPROVE = 3; // approved
 
-            $file->status_approve = $STATUS_APPROVE; 
-            $file->notes = $request->notes; 
-            $file->verified_by = Auth::id();
-            $file->save();
+            if ($file->task->is_confirm_all == 0) {
+                $task = Task::with('files')->where('id', $file->task->id)->firstorFail();
+                foreach ($task->files as $key => $file_to_approve) {
+                    $file_to_approve->status_approve = $STATUS_APPROVE;
+                    $file_to_approve->notes = $request->notes; 
+                    $file_to_approve->verified_by = Auth::id();
+                    $file_to_approve->save();
+                }
+            } else {
+                // Update Files
+                $file->status_approve = $STATUS_APPROVE; 
+                $file->notes = $request->notes; 
+                $file->verified_by = Auth::id();
+                $file->save();
+            }
 
             DB::commit();
             $request->session()->flash('file.approved', 'Dokumen disetujui!');
