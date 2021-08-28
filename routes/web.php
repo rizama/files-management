@@ -71,6 +71,7 @@ Route::group(
         Route::post('/tasks/{id}/approve/file', 'TaskController@approve')->name('tasks.approve');
         Route::post('/tasks/{id}/reject/file', 'TaskController@reject')->name('tasks.reject');
         Route::get('/tasks/{id}/approve/task', 'TaskController@approve_task')->name('tasks.approve_task');
+        Route::get('notifications', 'TaskController@notif')->name('tasks.notif');
 
         // Files Route
         Route::get('/files/get-local', 'FileController@get_local_file');

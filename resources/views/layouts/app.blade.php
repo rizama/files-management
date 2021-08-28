@@ -183,30 +183,43 @@
                     <div class="dropdown d-inline-block ml-2">
                         <button type="button" class="btn btn-sm btn-dual" id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-fw fa-bell"></i>
-                            <span class="badge badge-pill bg-gray-light text-gray-darker">{{ $notif_count }}</span>
+                            <span class="badge badge-pill badge-danger text-white">{{ $notif_count }}</span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="page-header-notifications-dropdown">
                             <div class="p-2 bg-primary-dark text-center rounded-top">
                                 <h5 class="dropdown-header text-uppercase text-white">Notifikasi</h5>
                             </div>
                             <ul class="nav-items mb-0">
-                                <li>
-                                    <a class="text-dark media py-2" href="javascript:void(0)">
-                                        <div class="mr-2 ml-3">
-                                            <i class="fa fa-fw fa-check-circle text-success"></i>
+                                @forelse ($notif_content as $notif)
+                                    <li>
+                                        <a class="text-dark media py-2" href="{{ url('/tasks/show/').'/'.encrypt($notif['task_id']) }}">
+                                            <div class="mr-2 ml-3 align-self-center">
+                                                <i class="fa fa-fw fa-file-alt text-primary"></i>
+                                            </div>
+                                            <div class="media-body pr-2">
+                                                <div class="font-w600 clamp-1">{{ $notif['user'] }}</div>
+                                                <div class="font-w500 text-muted clamp-1 break-all" title="{{ $notif['file'] }}">{{ $notif['file'] }}</div>
+                                                <span class="font-w400 text-muted">{{ \Carbon\Carbon::parse($notif['created_at'])->diffForHumans() }}</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                @empty
+                                    <li>
+                                        <div class="text-dark media py-2">
+                                            <div class="media-body mx-2">
+                                                <span class="font-w500 text-muted clamp-1">Tidak ada Dokumen yang menunggu persetujuan</span>
+                                            </div>
                                         </div>
-                                        <div class="media-body pr-2">
-                                            <div class="font-w600">You have a new follower</div>
-                                            <span class="font-w500 text-muted">15 min ago</span>
-                                        </div>
-                                    </a>
-                                </li>
+                                    </li>
+                                @endforelse
                             </ul>
-                            <div class="p-2 border-top">
-                                <a class="btn btn-sm btn-light btn-block text-center" href="javascript:void(0)">
-                                    <i class="fa fa-fw fa-arrow-down mr-1"></i> Lihat Semua
-                                </a>
-                            </div>
+                            @if (count($notif_content) > 0)
+                                <div class="p-2 border-top">
+                                    <a class="btn btn-sm btn-light btn-block text-center"  href="{{ route('tasks.notif')}}">
+                                        <i class="fa fa-fw fa-arrow-down mr-1"></i> Lihat Semua
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <!-- END Notifications Dropdown -->

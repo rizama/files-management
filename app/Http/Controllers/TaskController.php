@@ -720,6 +720,14 @@ class TaskController extends Controller
         }
     }
 
+    public function notif()
+    {
+        $user = Auth::user();
+
+        $ret['user'] = $user;
+        return view('notifications.index', $ret);
+    }
+
     public function upload_to_local($task, $file, $custom_name, $category_id)
     {
         $filename = $file->getClientOriginalName();
