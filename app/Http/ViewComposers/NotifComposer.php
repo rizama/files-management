@@ -31,6 +31,7 @@ class NotifComposer
                 $contents = [];
                 foreach ($notif_content as $key => $content) {
                     $temp = [
+                        "info" => "Dokumen Belum Dikonfirmasi",
                         "id" => $content->id,
                         "file" => $content->original_name,
                         "created_at" => $content->created_at,
@@ -69,6 +70,7 @@ class NotifComposer
 
                     if (!in_array(Auth::id(), $uploader)) {
                         $temp = [
+                            "info" => "Task Belum Dikerjakan",
                             "id" => $content->id,
                             "task" => $content->name,
                             "created_at" => $content->created_at,
@@ -78,8 +80,8 @@ class NotifComposer
                         $contents[] = $temp;
                     }
                 }
-
-                $view->with('notif_count', $notif_count);
+                // dd($notif_count);
+                $view->with('notif_count', count($contents));
                 $view->with('notif_content', $contents);
             }
         }
