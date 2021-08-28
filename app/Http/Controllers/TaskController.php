@@ -693,7 +693,7 @@ class TaskController extends Controller
 
         try {
             $user_id = Auth::id(); 
-            $user = User::with('responsible_tasks.category', 'responsible_tasks.status_task')->where('id', $user_id)->first();
+            $user = User::with('responsible_tasks.category', 'responsible_tasks.files', 'responsible_tasks.status_task')->where('id', $user_id)->first();
 
             $tasks_general = Task::where('assign_to', 'all')->get();
             
