@@ -191,23 +191,48 @@
                             </div>
                             <ul class="nav-items mb-0">
                                 @forelse ($notif_content as $notif)
+                                    @if (Auth::user()->role->code == 'level_1')
                                     <li>
                                         <a class="text-dark media py-2" href="{{ url('/tasks/show/').'/'.encrypt($notif['task_id']) }}">
                                             <div class="mr-2 ml-3 align-self-center">
                                                 <i class="fa fa-fw fa-file-alt text-primary"></i>
                                             </div>
                                             <div class="media-body pr-2">
-                                                <div class="font-w600 clamp-1">{{ $notif['user'] }}</div>
-                                                <div class="font-w500 text-muted clamp-1 break-all" title="{{ $notif['file'] }}">{{ $notif['file'] }}</div>
+                                                <div class="font-w600 clamp-1">{{ $notif['info'] }}</div>
+                                                <div class="font-w500 text-muted" title="{{ $notif['file'] }}">
+                                                    {{ $notif['user'] }}
+                                                    <footer class="blockquote-footer">{{ $notif['file'] }}</footer>
+                                                </div>
                                                 <span class="font-w400 text-muted">{{ \Carbon\Carbon::parse($notif['created_at'])->diffForHumans() }}</span>
                                             </div>
                                         </a>
                                     </li>
+                                    @elseif(Auth::user()->role->code == 'level_2')
+                                    <li>
+                                        <a class="text-dark media py-2" href="{{ url('/tasks/show/').'/'.encrypt($notif['task_id']) }}">
+                                            <div class="mr-2 ml-3 align-self-center">
+                                                <i class="fa fa-fw fa-file-alt text-primary"></i>
+                                            </div>
+                                            <div class="media-body pr-2">
+                                                <div class="font-w600 clamp-1">{{ $notif['info'] }}</div>
+                                                <div class="font-w500 text-muted" title="{{ $notif['task'] }}">
+                                                    {{ $notif['task'] }}
+                                                    <footer class="blockquote-footer">{{ $notif['creator'] }}</footer>
+                                                </div>
+                                                <span class="font-w400 text-muted">{{ \Carbon\Carbon::parse($notif['created_at'])->diffForHumans() }}</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    @endif
                                 @empty
                                     <li>
                                         <div class="text-dark media py-2">
                                             <div class="media-body mx-2">
-                                                <span class="font-w500 text-muted clamp-1">Tidak ada Dokumen yang menunggu persetujuan</span>
+                                                @if (Auth::user()->role->code == 'superadmin')
+                                                    <center><span class="font-w500 text-muted clamp-1">Tidak Ada Notifikasi</span></center>
+                                                @else
+                                                    <span class="font-w500 text-muted clamp-1">Tidak ada Dokumen yang menunggu persetujuan</span>
+                                                @endif
                                             </div>
                                         </div>
                                     </li>
