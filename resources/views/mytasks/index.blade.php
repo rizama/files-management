@@ -45,12 +45,22 @@
                             $dueDateClass = '';
                         }
 
+                        $uploader = [];
+                        foreach ($task->files as $file) {
+                            $uploader[] = $file->created_by;
+                        }
+
                         if ($task->status == 3){
                             $color = 'success';
                             $status= 'Selesai';
                         } elseif (count($task->files) > 0) {
-                            $color = 'warning';
-                            $status= 'Sedang Dikerjakan';
+                            if (!in_array(Auth::id(), $uploader)) {
+                                $color = 'secondary';
+                                $status= 'Belum Dikerjakan';
+                            } else {
+                                $color = 'warning';
+                                $status= 'Sedang Dikerjakan';
+                            }
                         } else {
                             $color = 'secondary';
                             $status= 'Belum Dikerjakan';
