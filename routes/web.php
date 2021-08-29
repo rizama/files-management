@@ -71,7 +71,6 @@ Route::group(
         Route::post('/tasks/{id}/approve/file', 'TaskController@approve')->name('tasks.approve');
         Route::post('/tasks/{id}/reject/file', 'TaskController@reject')->name('tasks.reject');
         Route::get('/tasks/{id}/approve/task', 'TaskController@approve_task')->name('tasks.approve_task');
-        Route::get('notifications', 'TaskController@notif')->name('tasks.notif');
 
         // Files Route
         Route::get('/files/get-local', 'FileController@get_local_file');
@@ -102,5 +101,8 @@ Route::group(
         Route::get('file_publics/edit/{id}', 'FilePublicController@edit')->name('file_publics.edit');
         Route::put('file_publics/{id}', 'FilePublicController@update')->name('file_publics.update');
         Route::get('file_publics/{id}', 'FilePublicController@destroy')->name('file_publics.destroy');
+
+        // Notification
+        Route::get('notifications', 'NotifController@index')->name('notifications');
 
 });
