@@ -16,7 +16,7 @@ class NotifComposer
             if (Auth::user()->role->code == 'level_1') {
                 $id = Auth::id();
                 $notif_tasks = Task::with(['files' => function($q){
-                    $q->where('is_default', 0)->where('status_approve', 2);
+                    $q->where('is_default', 0)->where('type', 'internal')->where('status_approve', 2);
                 }])->where('created_by', $id)->get();
 
                 $notif_count = 0;
@@ -80,7 +80,7 @@ class NotifComposer
                         $contents[] = $temp;
                     }
                 }
-                // dd($notif_count);
+
                 $view->with('notif_count', count($contents));
                 $view->with('notif_content', $contents);
             }
