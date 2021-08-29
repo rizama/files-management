@@ -34,7 +34,7 @@
     <div class="col-md-12">
         <div class="row">
             <div class="col-6 col-lg-3">
-                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                     <div class="block-content block-content-full">
                         <div class="font-size-h2 text-primary">{{ $task_total }}</div>
                     </div>
@@ -46,7 +46,7 @@
                 </a>
             </div>
             <div class="col-6 col-lg-3">
-                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                     <div class="block-content block-content-full">
                         <div class="font-size-h2 text-success">{{ $task_done }}</div>
                     </div>
@@ -58,7 +58,7 @@
                 </a>
             </div>
             <div class="col-6 col-lg-3">
-                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                     <div class="block-content block-content-full">
                         <div class="font-size-h2 text-warning">{{ $task_progress }}</div>
                     </div>
@@ -70,7 +70,7 @@
                 </a>
             </div>
             <div class="col-6 col-lg-3">
-                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
+                <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                     <div class="block-content block-content-full">
                         <div class="font-size-h2 text-dark">{{ $task_not_yet }}</div>
                     </div>
@@ -135,11 +135,11 @@
 
 <!-- Table Sections (.js-table-sections class is initialized in Helpers.tableToolsSections()) -->
 <div class="row">
-    <div class="col-12 col-xxl-6">
+    <div class="col-12">
         <div class="block block-rounded">
             <div class="block-header">
                 <h3 class="block-title">
-                    Perkembangan Status Dokumen
+                    Statistik Tugas dan Dokumen
                 </h3>
             </div>
             <div class="block-content pt-0">
@@ -149,13 +149,18 @@
                             <tr>
                                 <th style="width: 30px; border-top-width: 0;" rowspan="2"></th>
                                 <th rowspan="2" style="vertical-align: middle; border-top-width: 0;">Nama</th>
-                                <th colspan="5" class="text-center" style="border-top-width: 0;">Status Dokumen</th>
+                                <th colspan="4" class="text-center" style="border-top-width: 0;">Status Dokumen</th>
+                                <th colspan="3" class="text-center cell-border-left" style="border-top-width: 0;">Status Penugasan</th>
                             </tr>
                             <tr>
-                                <th style="width: 15%;" class="text-center">Disetujui</th>
-                                <th style="width: 15%;" class="text-center">Menunggu</th>
-                                <th style="width: 15%;" class="text-center">Ditolak</th>
-                                <th style="width: 15%;" class="text-center">Total</th>
+                                <th class="text-center">Disetujui</th>
+                                <th class="text-center">Menunggu</th>
+                                <th class="text-center">Ditolak</th>
+                                <th class="text-center">Total</th>
+
+                                <th class="text-center cell-border-left">Disetujui</th>
+                                <th class="text-center">Diproses</th>
+                                <th class="text-center">Total</th>
                             </tr>
                         </thead>
             
@@ -166,7 +171,8 @@
                                     <i class="fa fa-angle-right text-muted"></i>
                                 </td>
                                 <td class="font-w600 font-size-sm">
-                                    <div class="py-1">
+                                    <div class="py-1" style="min-width: max-content;">
+                                        <img class="img-avatar img-avatar48 mr-1" src="{{  asset('media/avatars/avatar1.jpg')  }}" alt="">
                                         {{ $user->name }}
                                     </div>
                                 </td>
@@ -181,6 +187,16 @@
                                 </td>
                                 <td class="text-center" style="font-size: 1.5em;">
                                     <span class="badge badge-pill badge-primary">{{ count($user->files) }}</span>
+                                </td>
+
+                                <td class="text-center cell-border-left" style="font-size: 1.5em;">
+                                    <span class="badge badge-pill badge-success">{{ $user['task_finish'] }}</span>
+                                </td>
+                                <td class="text-center" style="font-size: 1.5em;">
+                                    <span class="badge badge-pill badge-warning">{{ $user['task_progres'] }}</span>
+                                </td>
+                                <td class="text-center" style="font-size: 1.5em;">
+                                    <span class="badge badge-pill badge-primary">{{ $user['task_total'] }}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -206,7 +222,7 @@
             </div>
         </div>
     </div>
-    <div class="col-12 col-xxl-6">
+    {{-- <div class="col-12 col-xxl-6">
         <div class="block block-rounded">
             <div class="block-header">
                 <h3 class="block-title">
@@ -255,7 +271,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 <!-- END Table Sections -->
 @endsection
