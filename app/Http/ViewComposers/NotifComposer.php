@@ -16,15 +16,22 @@ class NotifComposer
             if (Auth::user()->role->code == 'level_1') {
                 $id = Auth::id();
                 $notif_tasks = Task::with(['files' => function($q){
-                    $q->where('is_default', 0)->where('type', 'internal')->where('status_approve', 2);
+                    $q->where('is_default', 0)->where('type', 'internal')->where('status_approve', 2)->orderBy('created_at', 'desc');
                 }])->where('created_by', $id)->get();
 
                 $notif_count = 0;
                 $notif_content = [];
-                foreach ($notif_tasks as $notif_key => $notif) {
-                    $notif_count = $notif_count + count($notif->files);
-                    foreach ($notif->files as $key => $file) {
-                        $notif_content[] = $file->load('user');
+                foreach ($notif_tasks as $notif) {
+                    if (count($notif->files)) {
+                        if ($notif->is_confirm_all == 0) {
+                            $notif_count = $notif_count + 1;
+                            $notif_content[] = $notif->files[0]->load('user', 'task');
+                        } else {
+                            $notif_count = $notif_count + count($notif->files);
+                            foreach ($notif->files as $key => $file) {
+                                $notif_content[] = $file->load('user', 'task');
+                            }
+                        }
                     }
                 }
                 

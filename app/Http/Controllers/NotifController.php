@@ -15,18 +15,23 @@ class NotifController extends Controller
             if (Auth::user()->role->code == 'level_1') {
                 $id = Auth::id();
                 $tasks = Task::with(['files' => function($q){
-                    $q->where('is_default', 0)->where('type', 'internal')->where('status_approve', 2);
+                    $q->where('is_default', 0)->where('type', 'internal')->where('status_approve', 2)->orderBy('created_at', 'desc');
                 }])->where('created_by', $id)->get();
 
                 $contents_count = 0;
                 $contents = [];
-                foreach ($tasks as $notif_key => $notif) {
-                    $contents_count = $contents_count + count($notif->files);
-                    foreach ($notif->files as $key => $file) {
-                        $contents[] = $file->load('user');
+                foreach ($tasks as $task) {
+                    $contents_count = $contents_count + count($task->files);
+                    if (count($task->files)) {
+                        if ($task->is_confirm_all == 0) {
+                            $contents[] = $task->files[0]->load('user', 'task');
+                        } else {
+                            foreach ($task->files as $key => $file) {
+                                $contents[] = $file->load('user', 'task');
+                            }
+                        }
                     }
                 }
-
                 $ret['contents'] = $contents;
                 $ret['contents_count'] = $contents_count;
                 return view('notifications.index', $ret);
