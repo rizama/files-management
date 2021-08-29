@@ -67,17 +67,57 @@
                 </h3>
             </div>
             <div class="block-content tab-content pt-2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-0">
+                            <label>Pemberi Tugas</label>
+                            <p>{{ $task->user->name }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-0">
+                            @php
+                                if(count($task->files) == 0){
+                                    $class_task = "font-size-sm font-w600 px-2 py-1 rounded  bg-primary-dark-op text-white";
+                                    $text = "Belum dikerjakan";
+                                } elseif($task->status_task->code == 'approved'){
+                                    $class_task = "font-size-sm font-w600 px-2 py-1 rounded  bg-success-light text-success";
+                                    $text = "Selesai";
+                                } elseif($task->status_task->code == 'progress'){
+                                    $class_task = "font-size-sm font-w600 px-2 py-1 rounded  bg-warning-light text-warning";
+                                    $text = "Sedang dikerjakan";
+                                }
+                            @endphp
+                            <label>Status Tugas</label>
+                            <p><span class="{{ $class_task }}">{{ count($task->files) ? $text : 'Belum dikerjakan'}}</span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-0">
+                            <label>Dikonfirmasi Oleh</label>
+                            <p>{{ $task->validator ? $task->validator->name : '-' }}</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group mb-0">
-                    <label>Pengunggah</label>
-                    <p>{{ $task->user->name }}</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Tanggal dibuat</label>
+                            <p>{{ $task->created_at ? \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH:mm'). ' WIB' : '-' }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Batas Waktu</label>
+                            <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm'). ' WIB' : '-' }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Tanggal selesai</label>
+                            <p>{{ $task->status_task->code == 'approved' ? \Carbon\Carbon::parse($task->updated_at)->isoFormat('D MMMM Y, HH:mm'). ' WIB' : '-' }}</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group mb-0">
                     <label>Deskripsi</label>
                     <p>{{ $task->description ?? '-' }}</p>
-                </div>
-                <div class="form-group mb-0">
-                    <label>Tenggat Waktu</label>
-                    <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm') : '-' }}</p>
                 </div>
             </div>
         </div>
@@ -245,6 +285,9 @@
                                 <p class="block-title clamp clamp-5">
                                     <small>Deskripsi</small>{{ $file['description'] ?? '-' }}
                                 </p>
+                                <p class="block-title clamp clamp-5">
+                                    <small>Nama File</small>{{ $file['original_name'].".".App\Http\Controllers\TaskController::mime2ext($file->mime_type) ?? '-' }}
+                                </p>
                                 <div class="col-lg-12">
                                     <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" class="btn btn-outline-primary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}"><i class="fa fa-download"></i> Unduh</a>
                                     @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp', 'txt']))
@@ -342,29 +385,32 @@
                                             if ($task->due_date) {
                                                 if (\Carbon\Carbon::parse($file->created_at) < \Carbon\Carbon::parse($task->due_date)) {
                                                     $lateStatus = 'Tepat Waktu';
+                                                    $lateStatusColor = 'info';
                                                 } else {
                                                     $lateStatus = 'Terlambat';
+                                                    $lateStatusColor = 'danger';
                                                 }
                                             } else {
                                                 $lateStatus = '-';
+                                                $lateStatusColor = 'secondary';
                                             }
                                         @endphp
                                         <div>
                                             <table>
                                                 <tr>
-                                                    <td><b>Status</b></td>
+                                                    <td><b>Status Konfirmasi</b></td>
                                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                                     <td> <span class="badge badge-{{ $status }}">{{ $file->status['code'] == 'waiting' && $task->status == 3 ? 'Selesai' : $file->status['name'] }}</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Status Waktu</b></td>
+                                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td><span class="badge badge-{{ $lateStatusColor }}">{{ $lateStatus }}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td><b>Catatan</b></td>
                                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                                     <td>{{ $file['notes'] ?? '-' }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Status Keterlambata</b></td>
-                                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                                    <td>{{ $lateStatus }}</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -415,11 +461,14 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <br>
+
                     @if ($default_file)
                     <div class="row push mb-0">
                         <div class="col-lg-12">
                             <div class="form-group mb-0">
-                                <label>Nama Dokumen</label>
+                                <label>Contoh Dokumen</label>
                                 <span class="float-right">{{ $default_file->original_name }}</span>
                             </div>
                         </div>
@@ -429,6 +478,26 @@
                     </div>
                     @else
                         <b>Tidak Ada Contoh Dokumen</b>
+                    @endif
+                    
+                    <br>
+
+                    <label>Lampiran</label>
+                    @if (count($attachements))
+                        @foreach ($attachements as $attachement)
+                        <div class="row push mb-0">
+                            <div class="col-lg-12">
+                                <div class="form-group mb-0">
+                                    <span class="float-left">{{ $attachement->original_name }}</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <a href="{{ route('download') }}?file={{ encrypt($attachement->id) }}&type=download" class="btn btn-info btn-block">Unduh Lampiran</a>
+                            </div>
+                        </div>
+                        @endforeach
+                    @else
+                        <p>Tidak ada</p>
                     @endif
                 </div>
             </div>
