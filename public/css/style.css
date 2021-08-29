@@ -110,15 +110,23 @@ body {
 
 /* Helper */
 .text-bold {
-  font-weight: bold;
+  font-weight: bold!important;
 }
 
-.bg-alt-danger {
+/* .bg-danger-light {
   background-color: #f4bebe;
-}
+} */
 
 .break-all {
-  word-break: break-all;
+  word-break: break-all!important;
+}
+
+.nowrap {
+  white-space: nowrap!important;
+}
+
+.cell-border-left {
+  border-left: 2px solid #e1e6e9;
 }
 
 /* Handling xxl for temporary */

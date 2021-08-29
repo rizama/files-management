@@ -38,11 +38,20 @@
 
 <body>
     <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed main-content-narrow page-header-dark sidebar-mini">
+        @php
+            if (Auth::user()->role->code == 'superadmin') {
+                $homeURL = url('/users');
+            } else if (Auth::user()->role->code == 'level_1' || Auth::user()->role->code == 'level_2') {
+                $homeURL = url('/dashboard');
+            } else {
+                $homeURL = url('/file_publics/search');
+            }
+        @endphp
         <nav id="sidebar" aria-label="Main Navigation">
             <!-- Side Header -->
             <div class="content-header bg-white-5">
                 <!-- Logo -->
-                <a class="font-w600 text-dual" href="{{ url('/dashboard') }}">
+                <a class="font-w600 text-dual" href="{{ $homeURL }}">
                     <span class="smini-visible" style="margin-left: -8px;">
                         <img src="{{ asset('img/icon_light.png') }}" style="width: 32px" />
                         {{-- <i class="fa fa-circle-notch text-primary"></i> --}}
@@ -128,27 +137,6 @@
                                 </li>
                             @endif
                         @endif
-                        {{-- <li class="nav-main-item">
-                            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
-                                <i class="nav-main-link-icon si si-layers"></i>
-                                <span class="nav-main-link-name">Page Packs</span>
-                            </a>
-                            <ul class="nav-main-submenu">
-                                <li class="nav-main-item">
-                                    <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
-                                        <i class="nav-main-link-icon si si-bag"></i>
-                                        <span class="nav-main-link-name">e-Commerce</span>
-                                    </a>
-                                    <ul class="nav-main-submenu">
-                                        <li class="nav-main-item">
-                                            <a class="nav-main-link" href="be_pages_ecom_dashboard.html">
-                                                <span class="nav-main-link-name">Dashboard</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li> --}}
                     </ul>
                 </div>
                 <!-- END Side Navigation -->
@@ -176,7 +164,7 @@
                         <i class="fa fa-fw fa-ellipsis-v"></i>
                     </button>
                     <!-- END Toggle Mini Sidebar -->
-                    <a class="navbar-brand text-light font-weight-bold" href="{{ url('/') }}">
+                    <a class="navbar-brand text-light font-weight-bold" href="{{ $homeURL }}">
                         Sistem Operasional Manajemen Kerja dan Perencanaan
                     </a>
                 </div>
@@ -184,10 +172,12 @@
                 <div class="d-flex align-items-center">
                     <!-- Notifications Dropdown -->
                     <div class="dropdown d-inline-block ml-2">
-                        <button type="button" class="btn btn-sm btn-dual" id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-fw fa-bell"></i>
-                            <span class="badge badge-pill badge-danger text-white">{{ $notif_count }}</span>
-                        </button>
+                        @if (Auth::user()->role->code == 'level_1' || Auth::user()->role->code == 'level_2')
+                            <button type="button" class="btn btn-sm btn-dual" id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-fw fa-bell"></i>
+                                <span class="badge badge-pill badge-danger text-white">{{ $notif_count }}</span>
+                            </button>
+                        @endif
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="page-header-notifications-dropdown">
                             <div class="p-2 bg-primary-dark text-center rounded-top">
                                 <h5 class="dropdown-header text-uppercase text-white">Notifikasi</h5>
@@ -231,10 +221,10 @@
                                     <li>
                                         <div class="text-dark media py-2">
                                             <div class="media-body mx-2">
-                                                @if (Auth::user()->role->code == 'superadmin')
-                                                    <center><span class="font-w500 text-muted clamp-1">Tidak Ada Notifikasi</span></center>
+                                                @if (Auth::user()->role->code == 'level_1')
+                                                    <center><span class="font-w500 text-muted clamp-1">Tidak ada Dokumen yang menunggu persetujuan</span></center>
                                                 @else
-                                                    <span class="font-w500 text-muted clamp-1">Tidak ada Dokumen yang menunggu persetujuan</span>
+                                                    <span class="font-w500 text-muted clamp-1">Tidak ada Tugas yang belum selesai</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -320,7 +310,7 @@
             <div class="content py-3">
                 <div class="row font-size-sm">
                     <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-left">
-                        <a class="font-w600" href="{{ url('/dashboard') }}">{{ env('APP_NAME') }}</a> &copy; <span data-toggle="year-copy"></span>
+                        <a class="font-w600" href="{{ $homeURL }}">{{ env('APP_NAME') }}</a> &copy; <span data-toggle="year-copy"></span>
                     </div>
                 </div>
             </div>
