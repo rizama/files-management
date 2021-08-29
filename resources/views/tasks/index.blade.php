@@ -103,8 +103,8 @@
                                     @endforelse
                                 @endif
                             </td>
-                            <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH mm') }}</td>
-                            <td class="font-size-sm" data-order="{{strtotime($task->due_date)}}">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH mm') : '-' }}</td>
+                            <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH:mm') }} WIB</td>
+                            <td class="font-size-sm" data-order="{{strtotime($task->due_date)}}">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm').' WIB' : '-' }}</td>
                             
                             @php
                                 if ($task->status == 3){
