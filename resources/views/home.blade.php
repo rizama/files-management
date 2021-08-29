@@ -158,7 +158,7 @@
                                 <th class="text-center">Ditolak</th>
                                 <th class="text-center">Total</th>
 
-                                <th class="text-center cell-border-left">Disetujui</th>
+                                <th class="text-center cell-border-left">Selesai</th>
                                 <th class="text-center">Diproses</th>
                                 <th class="text-center">Total</th>
                             </tr>

@@ -33,7 +33,7 @@
         <div class="col-6 col-lg-3">
             <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                 <div class="block-content block-content-full">
-                    <div class="font-size-h2 text-primary">{{ rand(0,100) }}</div>
+                    <div class="font-size-h2 text-primary">{{ $task_total }}</div>
                 </div>
                 <div class="block-content py-2 bg-body-light">
                     <p class="font-w600 font-size-sm text-muted mb-0">
@@ -45,7 +45,7 @@
         <div class="col-6 col-lg-3">
             <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                 <div class="block-content block-content-full">
-                    <div class="font-size-h2 text-success">{{ rand(0,100) }}</div>
+                    <div class="font-size-h2 text-success">{{ $task_finished }}</div>
                 </div>
                 <div class="block-content py-2 bg-body-light">
                     <p class="font-w600 font-size-sm text-muted mb-0">
@@ -57,7 +57,7 @@
         <div class="col-6 col-lg-3">
             <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                 <div class="block-content block-content-full">
-                    <div class="font-size-h2 text-warning">{{ rand(0,100) }}</div>
+                    <div class="font-size-h2 text-warning">{{ $task_progress }}</div>
                 </div>
                 <div class="block-content py-2 bg-body-light">
                     <p class="font-w600 font-size-sm text-muted mb-0">
@@ -69,7 +69,7 @@
         <div class="col-6 col-lg-3">
             <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                 <div class="block-content block-content-full">
-                    <div class="font-size-h2 text-dark">{{ rand(0,100) }}</div>
+                    <div class="font-size-h2 text-dark">{{ $task_unprogress }}</div>
                 </div>
                 <div class="block-content py-2 bg-body-light">
                     <p class="font-w600 font-size-sm text-muted mb-0">
@@ -83,7 +83,7 @@
         <div class="col-6 col-lg-3">
             <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                 <div class="block-content block-content-full">
-                    <div class="font-size-h2 text-primary">{{ rand(0,100) }}</div>
+                    <div class="font-size-h2 text-primary">{{ $doc_total }}</div>
                 </div>
                 <div class="block-content py-2 bg-body-light">
                     <p class="font-w600 font-size-sm text-muted mb-0">
@@ -95,7 +95,7 @@
         <div class="col-6 col-lg-3">
             <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                 <div class="block-content block-content-full">
-                    <div class="font-size-h2 text-success">{{ rand(0,100) }}</div>
+                    <div class="font-size-h2 text-success">{{ $doc_finished }}</div>
                 </div>
                 <div class="block-content py-2 bg-body-light">
                     <p class="font-w600 font-size-sm text-muted mb-0">
@@ -107,7 +107,7 @@
         <div class="col-6 col-lg-3">
             <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                 <div class="block-content block-content-full">
-                    <div class="font-size-h2 text-danger">{{ rand(0,100) }}</div>
+                    <div class="font-size-h2 text-danger">{{ $doc_reject }}</div>
                 </div>
                 <div class="block-content py-2 bg-body-light">
                     <p class="font-w600 font-size-sm text-muted mb-0">
@@ -119,7 +119,7 @@
         <div class="col-6 col-lg-3">
             <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
                 <div class="block-content block-content-full">
-                    <div class="font-size-h2 text-dark">{{ rand(0,100) }}</div>
+                    <div class="font-size-h2 text-dark">{{ $doc_progress }}</div>
                 </div>
                 <div class="block-content py-2 bg-body-light">
                     <p class="font-w600 font-size-sm text-muted mb-0">
@@ -148,6 +148,7 @@
                         if ($task->status == 3){
                             $color = 'success';
                             $status= 'Selesai';
+                            $dueDateClass = 'bg-success-light';
                         } elseif (count($task->files) > 0) {
                             if (!in_array(Auth::id(), $uploader)) {
                                 $color = 'secondary';
