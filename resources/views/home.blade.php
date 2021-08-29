@@ -40,7 +40,7 @@
                     </div>
                     <div class="block-content py-2 bg-body-light">
                         <p class="font-w600 font-size-sm text-muted mb-0">
-                            Total Tugas
+                            Total tugas
                         </p>
                     </div>
                 </a>
@@ -52,7 +52,7 @@
                     </div>
                     <div class="block-content py-2 bg-body-light">
                         <p class="font-w600 font-size-sm text-muted mb-0">
-                            Tugas Selesai
+                            Tugas selesai
                         </p>
                     </div>
                 </a>
@@ -64,7 +64,7 @@
                     </div>
                     <div class="block-content py-2 bg-body-light">
                         <p class="font-w600 font-size-sm text-muted mb-0">
-                            Tugas Sedang Diproses
+                            Tugas diproses
                         </p>
                     </div>
                 </a>
@@ -72,11 +72,11 @@
             <div class="col-6 col-lg-3">
                 <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)">
                     <div class="block-content block-content-full">
-                        <div class="font-size-h2 text-dark">{{ $task_waiting }}</div>
+                        <div class="font-size-h2 text-dark">{{ $task_not_yet }}</div>
                     </div>
                     <div class="block-content py-2 bg-body-light">
                         <p class="font-w600 font-size-sm text-muted mb-0">
-                            Dokumen Menunggu
+                            Tugas belum dikerjakan
                         </p>
                     </div>
                 </a>
