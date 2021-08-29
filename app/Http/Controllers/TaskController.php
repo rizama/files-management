@@ -781,9 +781,14 @@ class TaskController extends Controller
 
         try {
             $user_id = Auth::id(); 
-            $user = User::with('responsible_tasks.category', 'responsible_tasks.files', 'responsible_tasks.status_task')->where('id', $user_id)->first();
+            $user = User::with(['responsible_tasks.category', 'responsible_tasks.status_task', 'responsible_tasks.files' => function($q) use($user_id){
+                $q->where('is_default', 0)->where('type', 'internal')->where('created_by', $user_id);
+            }])->where('id', $user_id)->first();
 
-            $tasks_general = Task::where('assign_to', 'all')->get();
+            $tasks_general = Task::with(['files' => function($q) use($user_id){
+                $q->where('is_default', 0)->where('type', 'internal')->where('created_by', $user_id);
+            }])->where('assign_to', 'all')->get();
+            // dd($tasks_general);
             
             foreach ($tasks_general as $key => $general) {
                 if ($user->role->code != 'level_1') {
@@ -791,13 +796,52 @@ class TaskController extends Controller
                 }
             }
 
+            $task_total = count($user->responsible_tasks);
+            $task_finished = 0;
+            $task_progress = 0;
+            $task_unprogress = 0;
+            foreach ($user->responsible_tasks as $key => $task) {
+                if ($task->status == 3) {
+                    $task_finished++;
+                } else {
+                    if (count($task->files)) {
+                        $task_progress++;
+                    } else {
+                        $task_unprogress++;
+                    }
+                }
+            }
+
+            $doc_total = 0;
+            $doc_finished = 0;
+            $doc_progress = 0;
+            $doc_reject = 0;
+            foreach ($user->responsible_tasks as $key => $task) {
+                $doc_total = $doc_total + count($task->files);
+                $doc_finished = $doc_finished + count($task->files->where('status_approve', 3));
+                $doc_progress = $doc_progress + count($task->files->where('status_approve', 2));
+                $doc_reject = $doc_reject + count($task->files->where('status_approve', 4));
+            }
+            
             $ordered = $user->responsible_tasks->sortByDesc('created_at');
             $user->responsible_tasks = $ordered;
+            
+            $ret['task_finished'] = $task_finished;
+            $ret['task_progress'] = $task_progress;
+            $ret['task_unprogress'] = $task_unprogress;
+            $ret['task_total'] = $task_total;
+
+            $ret['doc_total'] = $doc_total;
+            $ret['doc_finished'] = $doc_finished;
+            $ret['doc_progress'] = $doc_progress;
+            $ret['doc_reject'] = $doc_reject;
+            
             $ret['user'] = $user;
 
             return view('mytasks.index', $ret);
 
         } catch (\Exception $e) {
+            dd($e);
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
