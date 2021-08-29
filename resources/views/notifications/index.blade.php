@@ -33,60 +33,73 @@
                         </tr>
                     </thead>
                     <tbody>
-                            <tr>
-                                {{-- <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td> --}}
-                                <td class="font-w600 font-size-sm">
-                                    Mochamad
-                                </td>
-                                <td>
-                                    DOkumen .txt
-                                </td>
-                                <td data-order="{{strtotime(\Carbon\Carbon::now())}}">
-                                    {{ \Carbon\Carbon::now()->isoFormat('D MMMM Y, HH mm') }}
-                                </td>
-                                <td>
-                                    Tugas 1
-                                </td>
-                                <td> <span class="badge badge-danger">Terlambat</span> <span class="badge badge-success">Tepat Waktu</span> - </td>
-                                <td style="text-align: center;">
-                                    <div class="btn-group">
-                                        <a
-                                            class="btn btn-sm btn-success approve-file js-swal-confirm-with-form"
-                                            data-type_button="approve"
-                                            href="javascript:void(0)"
-                                            {{-- href="{{ route('tasks.approve', encrypt($file->id)) }}" --}}
-                                            data-title="Apakah anda yakin untuk menyetujui dokumen ini ?"
-                                            {{-- data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }} {{$file->description ? ', Deskripsi: '.$file->description : ''}}" --}}
-                                            data-form_id="verification"
-                                            data-success_text="Dokumen Berhasil Disetujui"
-                                            data-animation="true" data-toggle="tooltip"
-                                            title="Setujui Dokumen"
-                                        ><i class="fa fa-fw fa-check"></i></a>
-                                        <a
-                                            class="btn btn-sm btn-danger reject-file js-swal-confirm-with-form"
-                                            data-type_button="reject"
-                                            href="javascript:void(0)"
-                                            {{-- href="{{ route('tasks.reject', encrypt($file->id)) }}" --}}
-                                            data-title="Apakah anda yakin untuk menolak dokumen ini ?"
-                                            {{-- data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}{{$file->description ? ', Deskripsi: '.$file->description : ''}}" --}}
-                                            data-form_id="verification"
-                                            data-success_text="Dokumen Berhasil Ditolak"
-                                            data-animation="true" data-toggle="tooltip"
-                                            title="Tolak Dokumen"
-                                            style="margin-left: 3px"
-                                        ><i class="fa fa-fw fa-times"></i></a>
-                                        <a class="btn btn-sm btn-primary"
-                                            href="javascript:void(0)"
-                                            {{-- href="{{ url('/tasks/show/').'/'.encrypt($task->id) }}" --}}
-                                            data-animation="true" data-toggle="tooltip"
-                                            title="Lihat Detail Tugas" data-original-title="Lihat Detail Tugas"
-                                            style="margin-left: 10px"
-                                        >
-                                            <i class="fa fa-fw fa-eye"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                        @foreach ($contents as $content)
+                        <tr>
+                            {{-- <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td> --}}
+                            <td class="font-w600 font-size-sm">
+                                {{ $content->user->name }}
+                            </td>
+                            <td>
+                                {{ $content->original_name }}
+                            </td>
+                            <td data-order="{{strtotime(\Carbon\Carbon::now())}}">
+                                {{ \Carbon\Carbon::parse($content->created_at)->isoFormat('D MMMM Y, HH mm') }}
+                            </td>
+                            <td>
+                                {{ $content->task->name }}
+                            </td>
+                            @php
+                                if ($content->task->due_date) {
+                                    if (\Carbon\Carbon::parse($content->created_at) < \Carbon\Carbon::parse($content->task->due_date)) {
+                                        $lateStatus = 'Tepat Waktu';
+                                        $lateStatusColor = 'info';
+                                    } else {
+                                        $lateStatus = 'Terlambat';
+                                        $lateStatusColor = 'danger';
+                                    }
+                                } else {
+                                    $lateStatus = '-';
+                                    $lateStatusColor = 'secondary';
+                                }
+                            @endphp
+                            <td><span class="badge badge-{{ $lateStatusColor }}">{{ $lateStatus }}</span></td>
+                            <td style="text-align: center;">
+                                <div class="btn-group">
+                                    <a
+                                        class="btn btn-sm btn-success approve-file js-swal-confirm-with-form"
+                                        data-type_button="approve"
+                                        href="{{ route('tasks.approve', encrypt($content->id)) }}"
+                                        data-title="Apakah anda yakin untuk menyetujui dokumen ini ?"
+                                        data-caption="{{$content->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($content->mime_type) }} {{$content->description ? ', Deskripsi: '.$content->description : ''}}"
+                                        data-form_id="verification"
+                                        data-success_text="Dokumen Berhasil Disetujui"
+                                        data-animation="true" data-toggle="tooltip"
+                                        title="Setujui Dokumen"
+                                    ><i class="fa fa-fw fa-check"></i></a>
+                                    <a
+                                        class="btn btn-sm btn-danger reject-file js-swal-confirm-with-form"
+                                        data-type_button="reject"
+                                        href="{{ route('tasks.reject', encrypt($content->id)) }}"
+                                        data-title="Apakah anda yakin untuk menolak dokumen ini ?"
+                                        data-caption="{{$content->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($content->mime_type) }}{{$content->description ? ', Deskripsi: '.$content->description : ''}}"
+                                        data-form_id="verification"
+                                        data-success_text="Dokumen Berhasil Ditolak"
+                                        data-animation="true" data-toggle="tooltip"
+                                        title="Tolak Dokumen"
+                                        style="margin-left: 3px"
+                                    ><i class="fa fa-fw fa-times"></i></a>
+                                    <a class="btn btn-sm btn-primary"
+                                        href="{{ url('/tasks/show/').'/'.encrypt($content->task->id) }}"
+                                        data-animation="true" data-toggle="tooltip"
+                                        title="Lihat Detail Tugas" data-original-title="Lihat Detail Tugas"
+                                        style="margin-left: 10px"
+                                    >
+                                        <i class="fa fa-fw fa-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -94,7 +107,6 @@
         <!-- END Dynamic Table Full -->
 
     @else
-
         <!-- Dynamic Table Full -->
         <div class="block block-rounded">
             <div class="block-header">
@@ -141,7 +153,6 @@
                                 <td class="font-size-sm" data-order="{{strtotime($content->due_date)}}">{{ $content->due_date ? \Carbon\Carbon::parse($content->due_date)->isoFormat('D MMMM Y, HH:mm').' WIB' : '-' }}</td>
                                 <td style="text-align: center;">
                                     <a class="btn btn-sm btn-primary"
-                                        href="javascript:void(0)"
                                         href="{{ url('/tasks/show/').'/'.encrypt($content->id) }}"
                                         data-animation="true" data-toggle="tooltip"
                                         title="Lihat Detail Tugas" data-original-title="Lihat Detail Tugas"
