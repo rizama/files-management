@@ -75,7 +75,7 @@
                                             <p class="clamp-1 mb-0" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $task->name }}">{{ $task->name }}</p>
                                             <small class="d-block">Kategori: {{ $task->category['name'] ?? '-' }}</small>
                                             <span class="badge badge-{{ $color }}">{{ $status }}</span>
-                                            <small class="d-block">Batas Waktu: {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH mm') : '-' }}</small>
+                                            <small class="d-block">Batas Waktu: {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm')." WIB" : '-' }}</small>
                                         </h3>
                                     </div>
                                     <div class="block-content">
