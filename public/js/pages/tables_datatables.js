@@ -23,8 +23,10 @@ class pageTablesDatatables {
             language: {
                 lengthMenu: "_MENU_",
                 search: "_INPUT_",
-                searchPlaceholder: "Search..",
-                info: "Page <strong>_PAGE_</strong> of <strong>_PAGES_</strong>",
+                searchPlaceholder: "Cari..",
+                emptyTable: "Tidak ada Data tersedia",
+                info: "Menampilkan <strong>_START_</strong> sampai <strong>_END_</strong> dari <strong>_TOTAL_</strong> data",
+                infoEmpty: "",
                 paginate: {
                     first: '<i class="fa fa-angle-double-left"></i>',
                     previous: '<i class="fa fa-angle-left"></i>',
@@ -39,6 +41,7 @@ class pageTablesDatatables {
             pageLength: 10,
             lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
             autoWidth: false,
+            info: true,
             order: [ [ $('th.defaultSort').length > 0 ? $('th.defaultSort').index() : 0,  'desc' ] ],
             "columnDefs": [{ targets: 'disable-sorting', orderable: false }]
         });
@@ -57,6 +60,7 @@ class pageTablesDatatables {
             lengthMenu: false,
             searching: false,
             autoWidth: false,
+            order: [ [ $('th.defaultSort').length > 0 ? $('th.defaultSort').index() : 0,  'desc' ] ],
             dom: "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-6'i><'col-sm-6'p>>"
         });
