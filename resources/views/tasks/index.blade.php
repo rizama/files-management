@@ -64,11 +64,11 @@
                 <thead>
                     <tr>
                         {{-- <th class="text-center" style="width: 80px;">No</th> --}}
-                        <th>Nama Tugas</th>
+                        <th style="min-width: 150px;">Nama Tugas</th>
                         <th>Kategori</th>
-                        <th>Staf</th>
-                        <th class="defaultSort">Tanggal</th>
-                        <th>Batas Waktu</th>
+                        <th style="min-width: 100px;">Staf</th>
+                        <th class="defaultSort text-center" style="min-width: 220px;">Tanggal</th>
+                        <th class="text-center" style="min-width: 220px;">Batas Waktu</th>
                         <th>Status</th>
                         <th class="disable-sorting text-center" style="width: 110px">Aksi</th>
                     </tr>
@@ -77,7 +77,7 @@
                     @foreach ($tasks as $task)
                         @php
                             if ($task->status != 3 && $task->due_date && \Carbon\Carbon::parse($task->due_date) < \Carbon\Carbon::now()){
-                                $dueDateClass = 'bg-alt-danger';
+                                $dueDateClass = 'bg-danger-light';
                             } else {
                                 $dueDateClass = '';
                             }
@@ -103,8 +103,8 @@
                                     @endforelse
                                 @endif
                             </td>
-                            <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH:mm') }} WIB</td>
-                            <td class="font-size-sm" data-order="{{strtotime($task->due_date)}}">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm').' WIB' : '-' }}</td>
+                            <td class="font-size-sm text-center" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH:mm') }} WIB</td>
+                            <td class="font-size-sm text-center" data-order="{{strtotime($task->due_date)}}">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm').' WIB' : '-' }}</td>
                             
                             @php
                                 if ($task->status == 3){

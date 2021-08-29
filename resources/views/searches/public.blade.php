@@ -51,11 +51,11 @@
                         @endif
 
                         @if (count($files))
-                        <table class="table table-striped table-vcenter">
+                        <table class="table table-striped table-vcenter js-dataTable-simple">
                             <thead>
                                 <tr>
                                     <th class="d-none d-lg-table-cell text-center" style="width: 40%;">File</th>
-                                    <th class="d-none d-lg-table-cell text-center" style="width: 15%;">Tanggal</th>
+                                    <th class="d-none d-lg-table-cell text-center defaultSort" style="width: 15%;">Tanggal</th>
                                     <th class="text-center" style="width: 10%;">Aksi</th>
                                 </tr>
                             </thead>
@@ -71,7 +71,7 @@
                                             {{ $file->description }}
                                         </p>
                                     </td>
-                                    <td class="d-none d-lg-table-cell text-center">
+                                    <td class="d-none d-lg-table-cell text-center" data-order="{{strtotime($file->created_at)}}">
                                         {{ \Carbon\Carbon::parse($file->created_at)->isoFormat('D MMMM YYYY') }}
                                     </td>
                                     <td class="font-size-xl text-center font-w600">
@@ -87,32 +87,6 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        {{-- <nav aria-label="tasks Search Navigation">
-                            <ul class="pagination pagination-sm">
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:void(0)" tabindex="-1" aria-label="Previous">
-                                        Prev
-                                    </a>
-                                </li>
-                                <li class="page-item active">
-                                    <a class="page-link" href="javascript:void(0)">1</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:void(0)">2</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:void(0)">3</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:void(0)">4</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:void(0)" aria-label="Next">
-                                        Next
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav> --}}
                         @else   
                             <div class="mb-3">
                                 <center>Tidak ada hasil pencarian</center>
@@ -131,4 +105,11 @@
     </div>
     <!-- END Page Content -->
 
+@endsection
+
+@section('js_after')
+    <script src="{{ asset('js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datatables/buttons/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('js/pages/tables_datatables.js') }}"></script>
 @endsection
