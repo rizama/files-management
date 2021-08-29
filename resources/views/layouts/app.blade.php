@@ -97,6 +97,9 @@
                                     <li class="nav-main-item">
                                         <a class="nav-main-link {{ Request::is('mytasks*') ? 'active' : '' }}" href="{{ route('tasks.my_task') }}">
                                             <i class="nav-main-link-icon fa fa-tasks"></i>
+                                            @if ($notif_count && $notif_count > 0)
+                                                <span class="badge badge-pill badge-danger text-white" style="left: 25px; top: 22px; position: absolute; font-size: 8px;">{{ $notif_count }}</span>
+                                            @endif
                                             <span class="nav-main-link-name">Tugas Saya</span>
                                         </a>
                                     </li>
@@ -189,7 +192,7 @@
                             <div class="p-2 bg-primary-dark text-center rounded-top">
                                 <h5 class="dropdown-header text-uppercase text-white">Notifikasi</h5>
                             </div>
-                            <ul class="nav-items mb-0">
+                            <ul class="nav-items mb-0" style="max-height: 300px; overflow-y: auto;">
                                 @forelse ($notif_content as $notif)
                                     @if (Auth::user()->role->code == 'level_1')
                                     <li>
@@ -201,7 +204,7 @@
                                                 <div class="font-w600 clamp-1">{{ $notif['info'] }}</div>
                                                 <div class="font-w500 text-muted" title="{{ $notif['file'] }}">
                                                     {{ $notif['user'] }}
-                                                    <footer class="blockquote-footer">{{ $notif['file'] }}</footer>
+                                                    <footer class="blockquote-footer clamp clamp-1 break-all">{{ $notif['file'] }}</footer>
                                                 </div>
                                                 <span class="font-w400 text-muted">{{ \Carbon\Carbon::parse($notif['created_at'])->diffForHumans() }}</span>
                                             </div>
@@ -217,7 +220,7 @@
                                                 <div class="font-w600 clamp-1">{{ $notif['info'] }}</div>
                                                 <div class="font-w500 text-muted" title="{{ $notif['task'] }}">
                                                     {{ $notif['task'] }}
-                                                    <footer class="blockquote-footer">{{ $notif['creator'] }}</footer>
+                                                    <footer class="blockquote-footer clamp clamp-1 break-all">{{ $notif['creator'] }}</footer>
                                                 </div>
                                                 <span class="font-w400 text-muted">{{ \Carbon\Carbon::parse($notif['created_at'])->diffForHumans() }}</span>
                                             </div>
