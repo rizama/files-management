@@ -136,7 +136,7 @@ class pageDialogs {
         jQuery('.js-swal-confirm-with-form').on('click', e => {
             e.preventDefault();
             var link = e.currentTarget.href;
-            var title = e.currentTarget.title;
+            var title = e.currentTarget.title || e.currentTarget.dataset.title;
             var caption = e.currentTarget.dataset.caption;
             var form_id = e.currentTarget.dataset.form_id;
             var success_text = e.currentTarget.dataset.success_text;

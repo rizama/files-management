@@ -1,5 +1,5 @@
 body {
-  background-image: url("../media/farmer/farmer.png");
+  background-image: url("../media/pattern-bg/norwegian.png");
   background-repeat: repeat;
 }
 
@@ -12,7 +12,7 @@ body {
 }
 
 .custom-file-label::after {
-  content: 'Pilih File';
+  content: 'Pilih Dokumen';
 }
 
 /* .block-file, .block-assign {
@@ -107,6 +107,28 @@ body {
   -webkit-line-clamp: 5;
 }
 
+
+/* Helper */
+.text-bold {
+  font-weight: bold!important;
+}
+
+/* .bg-danger-light {
+  background-color: #f4bebe;
+} */
+
+.break-all {
+  word-break: break-all!important;
+}
+
+.nowrap {
+  white-space: nowrap!important;
+}
+
+.cell-border-left {
+  border-left: 2px solid #e1e6e9;
+}
+
 /* Handling xxl for temporary */
 @media (min-width: 1400px) {
   .col-xxl-6 {
@@ -115,8 +137,9 @@ body {
       max-width: 50%;
   }
 }
-
-/* Helper */
-.text-bold {
-  font-weight: bold;
+/* Handling xxl for temporary */
+@media (min-width: 768px) {
+  .dropdown-menu.dropdown-menu-lg {
+    min-width: 350px;
+  }
 }

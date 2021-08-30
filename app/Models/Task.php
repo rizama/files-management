@@ -67,4 +67,14 @@ class Task extends Model
     {
         return $this->hasOne(StatusApprove::class, 'id', 'status');
     }
+
+    /**
+     * Get the user that owns the Task
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function validator()
+    {
+        return $this->belongsTo(User::class, 'verified_by', 'id');
+    }
 }

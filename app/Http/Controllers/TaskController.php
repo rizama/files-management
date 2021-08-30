@@ -37,13 +37,16 @@ class TaskController extends Controller
     public function index()
     {
         try {
-            $tasks = Task::with('responsible_person','files','category')->orderBy('created_at', 'desc')->get();
+            $tasks = Task::with(['responsible_person', 'category', 'files' => function($q){
+                $q->where('is_default', 0)->where('type', 'internal');
+            }])->orderBy('created_at', 'desc')->get();
             $ret['tasks'] = $tasks;
             $ret['user'] = Auth::user();
-    
+
             return view('tasks.index', $ret);
         } catch (\Exception $e) {
             return abort(500);
+            dd($e);
         }
     }
 
@@ -91,7 +94,9 @@ class TaskController extends Controller
                 'is_history_active' => 'required',
                 'default_file' => 'nullable|mimes:'.config('app.accept_file_be'),
                 'responsible_person' => 'nullable',
-                'custom_name' => 'nullable|string'
+                'custom_name' => 'nullable|string',
+                'due_date' => 'nullable',
+                'is_confirm_all' => 'nullable',
             ]);
     
             if ($validator->fails()) {
@@ -106,6 +111,8 @@ class TaskController extends Controller
             $task->category_id = $request->category_id;
             $task->description = $request->description ?? '';
             $task->status = $ON_PROGRESS;
+            $task->due_date = $request->due_date;
+            $task->is_confirm_all = $request->is_confirm_all;
             $task->is_history_file_active = (int)$request->is_history_active;
             if ($request->responsible_person) {
                 $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
@@ -120,9 +127,37 @@ class TaskController extends Controller
             }
 
             if ($request->hasFile('default_file')) {
-                $file_id = $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
+                $config = [
+                    "task" => $task,
+                    "file" => $request->file('default_file'),
+                    "custom_name" => $request->custom_name,
+                    "category_id" => $request->category_id,
+                    "status_approval" => 0,
+                    "is_default_file" => 1,
+                    "type_file" => 'internal',
+                    "description" => 'Default File',
+                ];
+
+                $file_id = $this->upload_file_to_s3($config);
             } else {
                 $file_id = null;
+            }
+
+            if ($request->attachments) {
+                foreach ($request->attachments as $attachement) {
+                    $config = [
+                        "task" => $task,
+                        "file" => $attachement,
+                        "custom_name" => null,
+                        "category_id" => $request->category_id,
+                        "status_approval" => 0,
+                        "is_default_file" => 0,
+                        "type_file" => 'attachment',
+                        "description" => 'Attachment',
+                    ];
+
+                    $this->upload_file_to_s3($config);
+                }
             }
 
             if ($request->existing_file == "on") {
@@ -157,11 +192,13 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
-        $task = Task::with(['user','responsible_person','files' => function($q) {
-                $q->where('is_default', 0)->with('user', 'status')->orderBy('created_at', 'desc');
+        $task = Task::with(['status_task', 'user', 'validator','responsible_person','files' => function($q) {
+                $q->where('is_default', 0)->where('type', 'internal')->with('user', 'status')->orderBy('created_at', 'desc');
             }, 'default_file'])
             ->where('id', $decrypted_id)->firstOrFail();
-        
+
+        $attachements = File::where('task_id', $decrypted_id)->where('is_default', 0)->where('type', 'attachment')->get();
+
         $default_file = Task::with(['files' => function($q) {
             $q->where('is_default', 1)->orderBy('created_at', 'desc')->limit(1);
         }])
@@ -187,8 +224,9 @@ class TaskController extends Controller
             
         }
         $ret['task'] = $task;
+        $ret['attachements'] = $attachements;
         $ret['default_file'] = $default;
-
+        // dd($ret);
         return view('tasks.show', $ret);
         
     }
@@ -226,7 +264,6 @@ class TaskController extends Controller
             } else {
                 $default_file_id = null;
             }
-            
         }
 
         $ret['files'] = $files;
@@ -249,6 +286,7 @@ class TaskController extends Controller
         try {
             DB::beginTransaction();
             $data = $request->except('_method','_token','submit');
+            // dd($data);
             try {
                 $decrypted_id = decrypt($id);
             } catch (\Exception $e) {
@@ -270,8 +308,50 @@ class TaskController extends Controller
             }
 
             $task = Task::with('files')->findOrFail($decrypted_id);
+            $file_attach = File::where('type', 'attachment')->where('task_id', $task->id)->get();
+
+            if ($request->attachments) {
+                if (count($file_attach)) {
+                    // Delete first existing attachment from S3 and Database
+                    foreach ($file_attach as $attach) {
+                        $old_name_file = $attach->new_name;
+                        $exists = Storage::disk('s3')->exists('files/'.$old_name_file);
+                        if ($exists) {
+                            Storage::disk('s3')->delete('files/'.$old_name_file);
+                        }
+                    }
+                    $file_attach->each->delete();
+                }
+
+                // Insert new attachment
+                foreach ($request->attachments as $attachement) {
+                    $config = [
+                        "task" => $task,
+                        "file" => $attachement,
+                        "custom_name" => null,
+                        "category_id" => $request->category_id,
+                        "status_approval" => 0,
+                        "is_default_file" => 0,
+                        "type_file" => 'attachment',
+                        "description" => 'Attachment',
+                    ];
+
+                    $this->upload_file_to_s3($config);
+                }
+            }
 
             if ($request->hasFile('default_file')) {
+                $config = [
+                    "task" => $task,
+                    "file" => $request->file('default_file'),
+                    "custom_name" => $request->custom_name,
+                    "category_id" => $request->category_id,
+                    "status_approval" => 0,
+                    "is_default_file" => 1,
+                    "type_file" => 'internal',
+                    "description" => 'Default File',
+                ];
+
                 if (!$request->is_history_active) {
                     
                     // Remove Selected 
@@ -289,16 +369,18 @@ class TaskController extends Controller
                     }
 
                     // Upload new File
-                    if ($request->hasFile('default_file')) {
-                        $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
+                    if ($request->hasFile('default_file')) {        
+                        $file_id = $this->upload_file_to_s3($config);
                     }
 
                 } else {
                     // Upload new File
                     if ($request->hasFile('default_file')) {
-                        $this->upload_file_default_to_s3($task, $request->file('default_file'), $request->custom_name, $request->category_id);
+                        $file_id = $this->upload_file_to_s3($config);
                     }
                 }
+
+                $task->default_file_id = $file_id;
             }
 
             $task->name = $request->name;
@@ -309,6 +391,8 @@ class TaskController extends Controller
             }
             
             $task->description = $request->description;
+            $task->due_date = $request->due_date;
+            $task->is_confirm_all = $request->is_confirm_all ? $request->is_confirm_all : 0;
             $task->is_history_file_active = $request->is_history_active;
             $task->assign_to = is_array($request->responsible_person) ? json_encode($request->responsible_person) : $request->responsible_person;
             $task->save();
@@ -451,6 +535,17 @@ class TaskController extends Controller
             $description = $request->description;
             $category_id = $request->category_id;
 
+            $config = [
+                "task" => $task,
+                "file" => $request->file('task_file'),
+                "custom_name" => $custom_name,
+                "category_id" => $category_id,
+                "status_approval" => 2,
+                "is_default_file" => 0,
+                "type_file" => 'internal',
+                "description" => $description,
+            ];
+
             if (!$task->is_history_file_active) {
                 // Delete Old File
                 $old_file = $task->files->where('is_default', '!=', 1)->last();
@@ -465,13 +560,13 @@ class TaskController extends Controller
 
                 // Upload new File
                 if ($request->hasFile('task_file')) {
-                    $this->upload_to_s3($task, $request->file('task_file'), $custom_name, $description, $category_id);
+                    $this->upload_file_to_s3($config);
                 }
 
             } else {
                 // Upload new File
                 if ($request->hasFile('task_file')) {
-                    $this->upload_to_s3($task, $request->file('task_file'), $custom_name, $description, $category_id);
+                    $this->upload_file_to_s3($config);
                 }
             }
 
@@ -573,13 +668,23 @@ class TaskController extends Controller
 
             $file = File::with('task')->findOrFail($decrypted_id);
 
-            // Update Files
             $STATUS_APPROVE = 3; // approved
 
-            $file->status_approve = $STATUS_APPROVE; 
-            $file->notes = $request->notes; 
-            $file->verified_by = Auth::id();
-            $file->save();
+            if ($file->task->is_confirm_all == 0) {
+                $task = Task::with('files')->where('id', $file->task->id)->firstorFail();
+                foreach ($task->files as $key => $file_to_approve) {
+                    $file_to_approve->status_approve = $STATUS_APPROVE;
+                    $file_to_approve->notes = $request->notes; 
+                    $file_to_approve->verified_by = Auth::id();
+                    $file_to_approve->save();
+                }
+            } else {
+                // Update Files
+                $file->status_approve = $STATUS_APPROVE; 
+                $file->notes = $request->notes; 
+                $file->verified_by = Auth::id();
+                $file->save();
+            }
 
             DB::commit();
             $request->session()->flash('file.approved', 'Dokumen disetujui!');
@@ -670,23 +775,73 @@ class TaskController extends Controller
 
     public function my_task(Request $request)
     {
+        if (Auth::user()->role->code == 'level_1') {
+            abort(403);
+        }
+
         try {
             $user_id = Auth::id(); 
-            $user = User::with('responsible_tasks.category', 'responsible_tasks.status_task')->where('id', $user_id)->first();
+            $user = User::with(['responsible_tasks.category', 'responsible_tasks.status_task', 'responsible_tasks.files' => function($q) use($user_id){
+                $q->where('is_default', 0)->where('type', 'internal')->where('created_by', $user_id);
+            }])->where('id', $user_id)->first();
 
-            $tasks_general = Task::where('assign_to', 'all')->get();
+            $tasks_general = Task::with(['files' => function($q) use($user_id){
+                $q->where('is_default', 0)->where('type', 'internal')->where('created_by', $user_id);
+            }])->where('assign_to', 'all')->get();
+            // dd($tasks_general);
             
             foreach ($tasks_general as $key => $general) {
-                $user->responsible_tasks[] = $general;
+                if ($user->role->code != 'level_1') {
+                    $user->responsible_tasks[] = $general;
+                }
             }
 
+            $task_total = count($user->responsible_tasks);
+            $task_finished = 0;
+            $task_progress = 0;
+            $task_unprogress = 0;
+            foreach ($user->responsible_tasks as $key => $task) {
+                if ($task->status == 3) {
+                    $task_finished++;
+                } else {
+                    if (count($task->files)) {
+                        $task_progress++;
+                    } else {
+                        $task_unprogress++;
+                    }
+                }
+            }
+
+            $doc_total = 0;
+            $doc_finished = 0;
+            $doc_progress = 0;
+            $doc_reject = 0;
+            foreach ($user->responsible_tasks as $key => $task) {
+                $doc_total = $doc_total + count($task->files);
+                $doc_finished = $doc_finished + count($task->files->where('status_approve', 3));
+                $doc_progress = $doc_progress + count($task->files->where('status_approve', 2));
+                $doc_reject = $doc_reject + count($task->files->where('status_approve', 4));
+            }
+            
             $ordered = $user->responsible_tasks->sortByDesc('created_at');
             $user->responsible_tasks = $ordered;
+            
+            $ret['task_finished'] = $task_finished;
+            $ret['task_progress'] = $task_progress;
+            $ret['task_unprogress'] = $task_unprogress;
+            $ret['task_total'] = $task_total;
+
+            $ret['doc_total'] = $doc_total;
+            $ret['doc_finished'] = $doc_finished;
+            $ret['doc_progress'] = $doc_progress;
+            $ret['doc_reject'] = $doc_reject;
+            
             $ret['user'] = $user;
 
             return view('mytasks.index', $ret);
 
         } catch (\Exception $e) {
+            dd($e);
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
@@ -734,8 +889,17 @@ class TaskController extends Controller
         $file_upload->save();
     }
 
-    public function upload_file_default_to_s3($task, $file, $custom_name, $category_id)
+    public function upload_file_to_s3($config)
     {
+        $task = $config['task'];
+        $file = $config['file'];
+        $custom_name = $config['custom_name'];
+        $category_id = $config['category_id'];
+        $STATUS_APPROVAL = $config['status_approval'];
+        $DEFAULT_FILE = $config['is_default_file'];
+        $TYPE_FILE = $config['type_file'];
+        $description = $config['description'];
+
         $filename = $file->getClientOriginalName();
         if ($custom_name) {
             $original_name = $custom_name;
@@ -748,46 +912,6 @@ class TaskController extends Controller
 
         $path = Storage::disk('s3')->put($this->bucket_folder, $file);
         $new_name = basename($path);
-
-        $STATUS_APPROVAL = 0;
-        $DEFAULT_FILE = 1;
-        $TYPE_FILE = 'internal';
-
-        $file_upload = new File;
-        $file_upload->task_id = $task->id;
-        $file_upload->status_approve = $STATUS_APPROVAL;
-        $file_upload->created_by = Auth::id();
-        $file_upload->category_id = $category_id;
-        $file_upload->original_name = $original_name;
-        $file_upload->description = 'Default File';
-        $file_upload->mime_type = $mime_type;
-        $file_upload->new_name = $new_name;
-        $file_upload->path = $path;
-        $file_upload->is_default = $DEFAULT_FILE;
-        $file_upload->type = $TYPE_FILE;
-        $file_upload->save();
-
-        return $file_upload->id;
-    }
-
-    public function upload_to_s3($task, $file, $custom_name, $description, $category_id)
-    {
-        $filename = $file->getClientOriginalName();
-        if ($custom_name) {
-            $original_name = $custom_name;
-        } else {
-            $original_name = pathinfo($filename, PATHINFO_FILENAME);
-        }
-
-        $mime_type = $file->getMimeType();
-        $extension = $file->getClientOriginalExtension();
-
-        $path = Storage::disk('s3')->put($this->bucket_folder, $file);
-        $new_name = basename($path);
-
-        $STATUS_APPROVAL = 2; // waiting aproval
-        $DEFAULT_FILE = 0;
-        $TYPE_FILE = 'internal';
 
         $file_upload = new File;
         $file_upload->task_id = $task->id;

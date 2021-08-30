@@ -58,8 +58,8 @@ return [
 
     // Custom Variable config
 
-    'accept_file_fe' => '.pdf,.xls,.csv,.doc,.docx,.ppt,.pptx,.rtf,.txt,.xlsx,.jpeg,.png,.bmp,.jpg',
-    'accept_file_be' => 'pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg',
+    'accept_file_fe' => '.pdf,.xls,.csv,.doc,.docx,.ppt,.pptx,.rtf,.txt,.xlsx,.jpeg,.png,.bmp,.jpg,.rar,.zip',
+    'accept_file_be' => 'pdf,xls,csv,doc,docx,ppt,pptx,rtf,txt,xlsx,jpeg,png,bmp,jpg,rar,zip',
     'bucket_aws' => 'files',
 
     /*
@@ -180,6 +180,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\ComposerServiceProvider::class,
 
     ],
 

@@ -16,6 +16,10 @@
     {{ $task->name }}
 @endsection
 
+@section('breadcrumb-url')
+    {{ url('/tasks') }}
+@endsection
+
 @section('content')
 @if (session()->has('task.file_uploaded'))
 <div class="alert alert-success alert-dismissable" role="alert">
@@ -57,15 +61,59 @@
     <div class="col-lg-8">
         <div class="block block-rounded">
             <div class="block-header">
-                <a href="{{ url()->previous() }}" class="btn btn-alt-secondary mr-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+                <a href="{{ url('/tasks') }}" class="btn btn-alt-secondary mr-2"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
                 <h3 class="block-title text-right text-bold">
                     Detail
                 </h3>
             </div>
             <div class="block-content tab-content pt-2">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-0">
+                            <label>Pemberi Tugas</label>
+                            <p>{{ $task->user->name }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-0">
+                            @php
+                                if(count($task->files) == 0){
+                                    $class_task = "font-size-sm font-w600 px-2 py-1 rounded  bg-primary-dark-op text-white";
+                                    $text = "Belum dikerjakan";
+                                } elseif($task->status_task->code == 'approved'){
+                                    $class_task = "font-size-sm font-w600 px-2 py-1 rounded  bg-success-light text-success";
+                                    $text = "Selesai";
+                                } elseif($task->status_task->code == 'progress'){
+                                    $class_task = "font-size-sm font-w600 px-2 py-1 rounded  bg-warning-light text-warning";
+                                    $text = "Sedang dikerjakan";
+                                }
+                            @endphp
+                            <label>Status Tugas</label>
+                            <p><span class="{{ $class_task }}">{{ count($task->files) ? $text : 'Belum dikerjakan'}}</span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-0">
+                            <label>Dikonfirmasi Oleh</label>
+                            <p>{{ $task->validator ? $task->validator->name : '-' }}</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group mb-0">
-                    <label>Pengunggah</label>
-                    <p>{{ $task->user->name }}</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Tanggal dibuat</label>
+                            <p>{{ $task->created_at ? \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH:mm'). ' WIB' : '-' }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Batas Waktu</label>
+                            <p>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm'). ' WIB' : '-' }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Tanggal selesai</label>
+                            <p>{{ $task->status_task->code == 'approved' ? \Carbon\Carbon::parse($task->updated_at)->isoFormat('D MMMM Y, HH:mm'). ' WIB' : '-' }}</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group mb-0">
                     <label>Deskripsi</label>
@@ -187,9 +235,43 @@
                 <ul class="timeline timeline-alt py-0 timeline-file">
                     @forelse ($task->files as $key => $file)
                     <li class="timeline-event">
-                        <div class="timeline-event-icon bg-default">
-                            <i class="fa fa-file-alt"></i>
-                        </div>
+                        {{-- <div class="timeline-event-icon bg-default"> --}}
+                            @if (App\Http\Controllers\TaskController::mime2ext($file->mime_type) == 'pdf')
+                            <div class="timeline-event-icon bg-danger">
+                                <i class="fa fa-file-pdf"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['txt', 'rtf']))
+                            <div class="timeline-event-icon bg-default">    
+                                <i class="fa fa-file-alt"></i>
+                            </div>
+                            @elseif(App\Http\Controllers\TaskController::mime2ext($file->mime_type) == 'csv')   
+                            <div class="timeline-event-icon bg-success">    
+                                <i class="fa fa-file-csv"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['xls', 'xlsx']))
+                            <div class="timeline-event-icon bg-success">    
+                                <i class="fa fa-file-excel"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'bmp']))
+                            <div class="timeline-event-icon bg-amethyst-light">    
+                                <i class="fa fa-file-image"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['docx', 'doc']))
+                            <div class="timeline-event-icon bg-default">    
+                                <i class="fa fa-file-word"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['ppt', 'pptx']))
+                            <div class="timeline-event-icon bg-warning">    
+                                <i class="fa fa-file-powerpoint"></i>
+                            </div>
+                            @elseif(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['rar', 'zip']))
+                            <div class="timeline-event-icon bg-city-light">    
+                                <i class="fa fa-file-archive"></i>
+                            </div>
+                            @else
+                                <i class="fa fa-file"></i>
+                            @endif
+                        {{-- </div> --}}
                         <div class="timeline-event-block block invisible" data-toggle="appear">
                             <div class="block-header">
                                 <h3 class="block-title"><small>Pengunggah </small>{{ $file->user['name']}}</h3>
@@ -203,27 +285,29 @@
                                 <p class="block-title clamp clamp-5">
                                     <small>Deskripsi</small>{{ $file['description'] ?? '-' }}
                                 </p>
+                                <p class="block-title clamp clamp-5">
+                                    <small>Nama File</small>{{ $file['original_name'].".".App\Http\Controllers\TaskController::mime2ext($file->mime_type) ?? '-' }}
+                                </p>
                                 <div class="col-lg-12">
                                     <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" class="btn btn-outline-primary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}"><i class="fa fa-download"></i> Unduh</a>
                                     @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp', 'txt']))
                                         <button type="button" class="btn btn-outline-info push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" data-ext="{{App\Http\Controllers\TaskController::mime2ext($file->mime_type)}}" id="preview-btn-modal"><i class="fa fa-eye"></i> Pratinjau</button>
                                     @endif
-                                    @if ($file->status['code'] == 'waiting' && $task->status != 3 && $key == 0 && Auth::user()->id == $task->created_by)
-                                        <form action="" method="GET" id="delete_file" style="display: inline-block; float: right;">    
-                                            <a
-                                                class="btn btn-outline-danger reject-file js-swal-confirm-with-form push mb-2"
-                                                data-type_button="reject"
-                                                href="{{ route('file.delete', encrypt($file->id)) }}"
-                                                title="Apakah anda yakin untuk menghapus dokumen ini ?"
-                                                data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
-                                                data-form_id="delete_file"
-                                                data-success_text="Dokumen Berhasil Dihapus"
-                                            ><i class="fa fa-trash"></i> Hapus</a>
-                                        <form>
+                                    @if ($file->status['code'] == 'waiting' && $task->status != 3 && (Auth::user()->id == $file->created_by || Auth::user()->id == $task->created_by))
+                                        <a
+                                            class="btn btn-outline-danger reject-file js-swal-confirm-with-form push mb-2"
+                                            style="float: right;"
+                                            data-type_button="reject"
+                                            href="{{ route('file.delete', encrypt($file->id)) }}"
+                                            title="Apakah anda yakin untuk menghapus dokumen ini ?"
+                                            data-caption="{{$file->original_name ?? ''}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}{{$file->description ? ', Deskripsi: '.$file->description : ''}}"
+                                            data-form_id="delete_file"
+                                            data-success_text="Dokumen Berhasil Dihapus"
+                                        ><i class="fa fa-trash"></i> Hapus</a>
                                     @endif
                                 </div>
                                 <div class="clearfix"></div>
-                                @if ($file->status['code'] == 'waiting' && $task->status != 3 && $key == 0 && Auth::user()->id == $task->created_by)
+                                @if ($file->status['code'] == 'waiting' && $task->status != 3 && ($key == 0 || $task->is_confirm_all) && Auth::user()->id == $task->created_by)
                                     @if (Auth::user()->role->code == 'level_1')
                                     <div class="accordion mt-2" id="accordionExample">
                                         <div class="card">
@@ -298,13 +382,30 @@
                                             } else {
                                                 $status = 'info';
                                             }
+                                            if ($task->due_date) {
+                                                if (\Carbon\Carbon::parse($file->created_at) < \Carbon\Carbon::parse($task->due_date)) {
+                                                    $lateStatus = 'Tepat Waktu';
+                                                    $lateStatusColor = 'info';
+                                                } else {
+                                                    $lateStatus = 'Terlambat';
+                                                    $lateStatusColor = 'danger';
+                                                }
+                                            } else {
+                                                $lateStatus = '-';
+                                                $lateStatusColor = 'secondary';
+                                            }
                                         @endphp
                                         <div>
                                             <table>
                                                 <tr>
-                                                    <td><b>Status</b></td>
+                                                    <td><b>Status Konfirmasi</b></td>
                                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                                     <td> <span class="badge badge-{{ $status }}">{{ $file->status['code'] == 'waiting' && $task->status == 3 ? 'Selesai' : $file->status['name'] }}</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Status Waktu</b></td>
+                                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                    <td><span class="badge badge-{{ $lateStatusColor }}">{{ $lateStatus }}</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td><b>Catatan</b></td>
@@ -342,23 +443,32 @@
                 <div class="block-content block-content-full pt-0">
                     <div class="row push mb-0">
                         <div class="col-lg-12">
-                            <div class="form-group mb-0">
+                            <div class="form-group mb-0 justify-content-between align-items-center d-flex">
                                 <label>Kategori</label>
                                 <span class="float-right">{{ $task->category->name ?? '-' }}</span>
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <div class="form-group mb-0">
+                            <div class="form-group mb-0 justify-content-between align-items-center d-flex">
                                 <label>Riwayat Dokumen</label>
-                                <span class="badge {{ $task->is_history_file_active == 1 ? 'badge-success' : 'badge-danger' }} float-right">{{ $task->is_history_file_active == 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
+                                <span class="badge {{ $task->is_history_file_active == 1 ? 'badge-success' : 'badge-danger' }}">{{ $task->is_history_file_active == 1 ? 'Aktif' : 'Tidak Aktif' }}</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group mb-0 justify-content-between align-items-center d-flex">
+                                <label>Konfirmasi Semua Dokumen</label>
+                                <span class="badge {{ $task->is_confirm_all == 1 ? 'badge-success' : 'badge-danger' }}">{{ $task->is_confirm_all == 1 ? 'Ya' : 'Tidak' }}</span>
                             </div>
                         </div>
                     </div>
+                    
+                    <br>
+
                     @if ($default_file)
                     <div class="row push mb-0">
                         <div class="col-lg-12">
                             <div class="form-group mb-0">
-                                <label>Nama Dokumen</label>
+                                <label>Contoh Dokumen</label>
                                 <span class="float-right">{{ $default_file->original_name }}</span>
                             </div>
                         </div>
@@ -368,6 +478,26 @@
                     </div>
                     @else
                         <b>Tidak Ada Contoh Dokumen</b>
+                    @endif
+                    
+                    <br>
+
+                    <label>Lampiran</label>
+                    @if (count($attachements))
+                        @foreach ($attachements as $attachement)
+                        <div class="row push mb-0">
+                            <div class="col-lg-12">
+                                <div class="form-group mb-0">
+                                    <span class="float-left">{{ $attachement->original_name }}</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <a href="{{ route('download') }}?file={{ encrypt($attachement->id) }}&type=download" class="btn btn-info btn-block">Unduh Lampiran</a>
+                            </div>
+                        </div>
+                        @endforeach
+                    @else
+                        <p>Tidak ada</p>
                     @endif
                 </div>
             </div>
@@ -432,6 +562,9 @@
     @csrf
     <input type="submit" style="display: none;">
 </form>
+
+<form action="" method="GET" id="delete_file" style="display: inline-block; float: right;"><form>
+
 @endsection
 
 @section('js_after')

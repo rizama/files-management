@@ -60,21 +60,29 @@
             @endif
         </div>
         <div class="block-content block-content-full">
-            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+            <table class="table table-bordered table-vcenter js-dataTable-full">
                 <thead>
                     <tr>
                         {{-- <th class="text-center" style="width: 80px;">No</th> --}}
-                        <th>Nama Tugas</th>
+                        <th style="min-width: 150px;">Nama Tugas</th>
                         <th>Kategori</th>
-                        <th>Staf</th>
-                        <th class="defaultSort">Tanggal</th>
+                        <th style="min-width: 100px;">Staf</th>
+                        <th class="defaultSort text-center" style="min-width: 220px;">Tanggal</th>
+                        <th class="text-center" style="min-width: 220px;">Batas Waktu</th>
                         <th>Status</th>
                         <th class="disable-sorting text-center" style="width: 110px">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($tasks as $task)
-                        <tr>
+                        @php
+                            if ($task->status != 3 && $task->due_date && \Carbon\Carbon::parse($task->due_date) < \Carbon\Carbon::now()){
+                                $dueDateClass = 'bg-danger-light';
+                            } else {
+                                $dueDateClass = '';
+                            }
+                        @endphp
+                        <tr class="{{ $dueDateClass }}">
                             {{-- <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td> --}}
                             <td class="font-w600 font-size-sm">
                                 {{ $task->name }}
@@ -95,11 +103,25 @@
                                     @endforelse
                                 @endif
                             </td>
-                            <td class="font-size-sm" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH mm') }}</td>
+                            <td class="font-size-sm text-center" data-order="{{strtotime($task->created_at)}}">{{ \Carbon\Carbon::parse($task->created_at)->isoFormat('D MMMM Y, HH:mm') }} WIB</td>
+                            <td class="font-size-sm text-center" data-order="{{strtotime($task->due_date)}}">{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm').' WIB' : '-' }}</td>
+                            
+                            @php
+                                if ($task->status == 3){
+                                    $color = 'success';
+                                    $status= 'Selesai';
+                                } elseif (count($task->files) > 0) {
+                                    $color = 'warning';
+                                    $status= 'Sedang Dikerjakan';
+                                } else {
+                                    $color = 'secondary';
+                                    $status= 'Belum Dikerjakan';
+                                }
+                            @endphp
                             <td>
-                                <span class="badge badge-{{ $task->status == 3 ? 'success' : 'warning' }}">{{ $task->status == 3 ? 'Disetujui' : 'On Progress' }}</span>
+                                <span class="badge badge-{{ $color }}">{{ $status }}</span>
                             </td>
-                            <td>
+                            <td style="text-align: center;">
                                 <div class="btn-group">
                                     <a class="btn btn-sm btn-primary"
                                         href="{{ url('/tasks/show/').'/'.encrypt($task->id) }}"
@@ -110,16 +132,14 @@
                                         <i class="fa fa-fw fa-eye"></i>
                                     </a>
                                     @if($task->created_by == $user->id)
-                                    <a class="btn btn-sm btn-warning"
-                                        href="{{ url('/tasks/edit/').'/'.encrypt($task->id) }}"
-                                        data-animation="true" data-toggle="tooltip"
-                                        title="Ubah Tugas" data-original-title="Ubah Tugas"
-                                        style="margin-right: 3px"
-                                    >
-                                        <i class="fa fa-fw fa-pencil-alt"></i>
-                                    </a>
-                                    @endif
-                                    @if($task->created_by == $user->id)
+                                        <a class="btn btn-sm btn-warning"
+                                            href="{{ url('/tasks/edit/').'/'.encrypt($task->id) }}"
+                                            data-animation="true" data-toggle="tooltip"
+                                            title="Ubah Tugas" data-original-title="Ubah Tugas"
+                                            style="margin-right: 3px"
+                                        >
+                                            <i class="fa fa-fw fa-pencil-alt"></i>
+                                        </a>
                                         <a class="btn btn-sm btn-danger js-swal-confirm"
                                             href="{{ route('tasks.destroy', encrypt($task->id)) }}"
                                             data-toggle="tooltip" title="" data-original-title="Hapus Tugas">

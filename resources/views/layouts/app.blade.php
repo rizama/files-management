@@ -38,11 +38,20 @@
 
 <body>
     <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed main-content-narrow page-header-dark sidebar-mini">
+        @php
+            if (Auth::user()->role->code == 'superadmin') {
+                $homeURL = url('/users');
+            } else if (Auth::user()->role->code == 'level_1' || Auth::user()->role->code == 'level_2') {
+                $homeURL = url('/dashboard');
+            } else {
+                $homeURL = url('/file_publics/search');
+            }
+        @endphp
         <nav id="sidebar" aria-label="Main Navigation">
             <!-- Side Header -->
             <div class="content-header bg-white-5">
                 <!-- Logo -->
-                <a class="font-w600 text-dual" href="{{ url('/dashboard') }}">
+                <a class="font-w600 text-dual" href="{{ $homeURL }}">
                     <span class="smini-visible" style="margin-left: -8px;">
                         <img src="{{ asset('img/icon_light.png') }}" style="width: 32px" />
                         {{-- <i class="fa fa-circle-notch text-primary"></i> --}}
@@ -93,12 +102,17 @@
                                         <span class="nav-main-link-name">Tugas</span>
                                     </a>
                                 </li>
-                                <li class="nav-main-item">
-                                    <a class="nav-main-link {{ Request::is('mytasks*') ? 'active' : '' }}" href="{{ route('tasks.my_task') }}">
-                                        <i class="nav-main-link-icon fa fa-tasks"></i>
-                                        <span class="nav-main-link-name">Tugas Saya</span>
-                                    </a>
-                                </li>
+                                @if (Auth::user()->role->code == 'level_2')
+                                    <li class="nav-main-item">
+                                        <a class="nav-main-link {{ Request::is('mytasks*') ? 'active' : '' }}" href="{{ route('tasks.my_task') }}">
+                                            <i class="nav-main-link-icon fa fa-tasks"></i>
+                                            @if ($notif_count && $notif_count > 0)
+                                                <span class="badge badge-pill badge-danger text-white" style="left: 25px; top: 22px; position: absolute; font-size: 8px;">{{ $notif_count }}</span>
+                                            @endif
+                                            <span class="nav-main-link-name">Tugas Saya</span>
+                                        </a>
+                                    </li>
+                                @endif
                                 <li class="nav-main-item">
                                     <a class="nav-main-link {{ Request::is('search*') ? 'active' : '' }}" href="{{ url('/search') }}">
                                         <i class="nav-main-link-icon si si-magnifier"></i>
@@ -123,27 +137,6 @@
                                 </li>
                             @endif
                         @endif
-                        {{-- <li class="nav-main-item">
-                            <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
-                                <i class="nav-main-link-icon si si-layers"></i>
-                                <span class="nav-main-link-name">Page Packs</span>
-                            </a>
-                            <ul class="nav-main-submenu">
-                                <li class="nav-main-item">
-                                    <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
-                                        <i class="nav-main-link-icon si si-bag"></i>
-                                        <span class="nav-main-link-name">e-Commerce</span>
-                                    </a>
-                                    <ul class="nav-main-submenu">
-                                        <li class="nav-main-item">
-                                            <a class="nav-main-link" href="be_pages_ecom_dashboard.html">
-                                                <span class="nav-main-link-name">Dashboard</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li> --}}
                     </ul>
                 </div>
                 <!-- END Side Navigation -->
@@ -171,23 +164,95 @@
                         <i class="fa fa-fw fa-ellipsis-v"></i>
                     </button>
                     <!-- END Toggle Mini Sidebar -->
-                    <a class="navbar-brand text-light font-weight-bold" href="{{ url('/') }}">
-                        Sistem Operasional Manajemen Kerja di Perencanaan
+                    <a class="navbar-brand text-light font-weight-bold" href="{{ $homeURL }}">
+                        Sistem Operasional Manajemen Kerja dan Perencanaan
                     </a>
                 </div>
                 <!-- Right Section -->
                 <div class="d-flex align-items-center">
+                    <!-- Notifications Dropdown -->
+                    <div class="dropdown d-inline-block ml-2">
+                        @if (Auth::user()->role->code == 'level_1' || Auth::user()->role->code == 'level_2')
+                            <button type="button" class="btn btn-sm btn-dual" id="page-header-notifications-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-fw fa-bell"></i>
+                                <span class="badge badge-pill badge-danger text-white">{{ $notif_count }}</span>
+                            </button>
+                        @endif
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="page-header-notifications-dropdown">
+                            <div class="p-2 bg-primary-dark text-center rounded-top">
+                                <h5 class="dropdown-header text-uppercase text-white">Notifikasi</h5>
+                            </div>
+                            <ul class="nav-items mb-0" style="max-height: 300px; overflow-y: auto;">
+                                @forelse ($notif_content as $notif)
+                                    @if (Auth::user()->role->code == 'level_1')
+                                    <li>
+                                        <a class="text-dark media py-2" href="{{ url('/tasks/show/').'/'.encrypt($notif['task_id']) }}">
+                                            <div class="mr-2 ml-3 align-self-center">
+                                                <i class="fa fa-fw fa-file-alt text-primary"></i>
+                                            </div>
+                                            <div class="media-body pr-2">
+                                                <div class="font-w600 clamp-1">{{ $notif['info'] }}</div>
+                                                <div class="font-w500 text-muted" title="{{ $notif['file'] }}">
+                                                    {{ $notif['user'] }}
+                                                    <footer class="blockquote-footer clamp clamp-1 break-all">{{ $notif['file'] }}</footer>
+                                                </div>
+                                                <span class="font-w400 text-muted">{{ \Carbon\Carbon::parse($notif['created_at'])->diffForHumans() }}</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    @elseif(Auth::user()->role->code == 'level_2')
+                                    <li>
+                                        <a class="text-dark media py-2" href="{{ url('/tasks/show/').'/'.encrypt($notif['task_id']) }}">
+                                            <div class="mr-2 ml-3 align-self-center">
+                                                <i class="fa fa-fw fa-file-alt text-primary"></i>
+                                            </div>
+                                            <div class="media-body pr-2">
+                                                <div class="font-w600 clamp-1">{{ $notif['info'] }}</div>
+                                                <div class="font-w500 text-muted" title="{{ $notif['task'] }}">
+                                                    {{ $notif['task'] }}
+                                                    <footer class="blockquote-footer clamp clamp-1 break-all">{{ $notif['creator'] }}</footer>
+                                                </div>
+                                                <span class="font-w400 text-muted">{{ \Carbon\Carbon::parse($notif['created_at'])->diffForHumans() }}</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    @endif
+                                @empty
+                                    <li>
+                                        <div class="text-dark media py-2">
+                                            <div class="media-body mx-2">
+                                                @if (Auth::user()->role->code == 'level_1')
+                                                    <center><span class="font-w500 text-muted clamp-1">Tidak ada Dokumen yang menunggu persetujuan</span></center>
+                                                @else
+                                                    <span class="font-w500 text-muted clamp-1">Tidak ada Tugas yang belum selesai</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endforelse
+                            </ul>
+                            @if (count($notif_content) > 0)
+                                <div class="p-2 border-top">
+                                    <a class="btn btn-sm btn-light btn-block text-center"  href="{{ route('notifications')}}">
+                                        <i class="fa fa-fw fa-arrow-down mr-1"></i> Lihat Semua
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    <!-- END Notifications Dropdown -->
+
                     <!-- User Dropdown -->
                     <div class="dropdown d-inline-block ml-2">
                         <button type="button" class="btn btn-sm btn-dual d-flex align-items-center" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="rounded-circle" src="{{ asset('media/avatars/avatar10.jpg') }}" alt="Header Avatar" style="width: 21px;">
-                            <span class="d-none d-sm-inline-block ml-2">{{ Auth::user()->username }}</span>
+                            <span class="d-none d-sm-inline-block ml-2">{{ Auth::user()->name }}</span>
                             <i class="fa fa-fw fa-angle-down d-none d-sm-inline-block ml-1 mt-1"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-md dropdown-menu-right p-0 border-0" aria-labelledby="page-header-user-dropdown">
                             <div class="p-3 text-center bg-primary-dark rounded-top">
                                 <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('media/avatars/avatar10.jpg') }}" alt="">
-                                <p class="mt-2 mb-0 text-white font-w500">{{ Auth::user()->name }}</p>
+                                <p class="mt-2 mb-0 text-white font-w500">{{ Auth::user()->username }}</p>
                                 {{-- <p class="mb-0 text-white-50 font-size-sm">Web Developer</p> --}}
                             </div>
                             <a class="dropdown-item d-flex align-items-center justify-content-between" href="{{ route('logout') }}" onclick="event.preventDefault();
@@ -199,8 +264,8 @@
                             </form>
                         </div>
                     </div>
+                    <!-- END User Dropdown -->
                 </div>
-                <!-- END User Dropdown -->
             </div>
             <!-- END Right Section -->
         </header>
@@ -226,7 +291,7 @@
                             <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
                                 <ol class="breadcrumb breadcrumb-alt">
                                     <li class="breadcrumb-item" aria-current="page">
-                                        <a class="link-fx" href="{{ url()->previous() }}">@yield('page-title')</a>
+                                        <a class="link-fx" href="@yield('breadcrumb-url', url()->previous())">@yield('page-title')</a>
                                     </li>
                                     <li class="breadcrumb-item">@yield('child-breadcrumb')</li>
                                 </ol>
@@ -245,7 +310,7 @@
             <div class="content py-3">
                 <div class="row font-size-sm">
                     <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-left">
-                        <a class="font-w600" href="{{ url('/dashboard') }}">{{ env('APP_NAME') }}</a> &copy; <span data-toggle="year-copy"></span>
+                        <a class="font-w600" href="{{ $homeURL }}">{{ env('APP_NAME') }}</a> &copy; <span data-toggle="year-copy"></span>
                     </div>
                 </div>
             </div>
@@ -255,7 +320,8 @@
 
     {{-- JS Section --}}
     <!-- OneUI Core JS -->
-    <script src="{{ asset('js/oneui.app.js') }}"></script>
+    <script src="{{ asset('js/oneui.core.min.js') }}"></script>
+    <script src="{{ asset('js/oneui.app.min.js') }}"></script>
 
     <!-- Scripts -->
     {{-- <script src="{{ asset('js/app.js') }}" defer></script> --}}

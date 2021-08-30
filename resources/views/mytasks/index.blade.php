@@ -29,6 +29,106 @@
 @endsection
 
 @section('content')
+    <div class="row">
+        <div class="col-6 col-lg-3">
+            <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
+                <div class="block-content block-content-full">
+                    <div class="font-size-h2 text-primary">{{ $task_total }}</div>
+                </div>
+                <div class="block-content py-2 bg-body-light">
+                    <p class="font-w600 font-size-sm text-muted mb-0">
+                        Total Tugas
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
+                <div class="block-content block-content-full">
+                    <div class="font-size-h2 text-success">{{ $task_finished }}</div>
+                </div>
+                <div class="block-content py-2 bg-body-light">
+                    <p class="font-w600 font-size-sm text-muted mb-0">
+                        Tugas Selesai
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
+                <div class="block-content block-content-full">
+                    <div class="font-size-h2 text-warning">{{ $task_progress }}</div>
+                </div>
+                <div class="block-content py-2 bg-body-light">
+                    <p class="font-w600 font-size-sm text-muted mb-0">
+                        Tugas Sedang Dikerjakan
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
+                <div class="block-content block-content-full">
+                    <div class="font-size-h2 text-dark">{{ $task_unprogress }}</div>
+                </div>
+                <div class="block-content py-2 bg-body-light">
+                    <p class="font-w600 font-size-sm text-muted mb-0">
+                        Tugas Belum Dikerjakan
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 col-lg-3">
+            <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
+                <div class="block-content block-content-full">
+                    <div class="font-size-h2 text-primary">{{ $doc_total }}</div>
+                </div>
+                <div class="block-content py-2 bg-body-light">
+                    <p class="font-w600 font-size-sm text-muted mb-0">
+                        Total Dokumen
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
+                <div class="block-content block-content-full">
+                    <div class="font-size-h2 text-success">{{ $doc_finished }}</div>
+                </div>
+                <div class="block-content py-2 bg-body-light">
+                    <p class="font-w600 font-size-sm text-muted mb-0">
+                        Dokumen Disetujui
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
+                <div class="block-content block-content-full">
+                    <div class="font-size-h2 text-danger">{{ $doc_reject }}</div>
+                </div>
+                <div class="block-content py-2 bg-body-light">
+                    <p class="font-w600 font-size-sm text-muted mb-0">
+                        Dokumen Ditolak
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="block block-rounded block-link-shadow text-center" href="javascript:void(0)" data-toggle="appear" data-class="animated flipInX">
+                <div class="block-content block-content-full">
+                    <div class="font-size-h2 text-dark">{{ $doc_progress }}</div>
+                </div>
+                <div class="block-content py-2 bg-body-light">
+                    <p class="font-w600 font-size-sm text-muted mb-0">
+                        Dokumen Menunggu
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
     <div class="row mb-2">
         <table class="table mytask-card-dataTable {{ $user->responsible_tasks == [] ? 'd-none' : '' }}">
             <thead class="d-none">
@@ -38,15 +138,51 @@
             </thead>
             <tbody class="row">
                 @forelse ($user->responsible_tasks as $task)
+                    @php
+                        $dueDateClass = '';
+                        $uploader = [];
+                        foreach ($task->files as $file) {
+                            $uploader[] = $file->created_by;
+                        }
+
+                        if ($task->status == 3){
+                            $color = 'success';
+                            $status= 'Selesai';
+                            $dueDateClass = 'bg-success-light';
+                        } elseif (count($task->files) > 0) {
+                            if (!in_array(Auth::id(), $uploader)) {
+                                $color = 'secondary';
+                                $status= 'Belum Dikerjakan';
+                            } else {
+                                $color = 'warning';
+                                $status= 'Sedang Dikerjakan';
+                                $dueDateClass = 'bg-warning-light';
+                            }
+                        } else {
+                            $color = 'secondary';
+                            $status= 'Belum Dikerjakan';
+                        }
+                        
+                        if ($task->status != 3 && $task->due_date && \Carbon\Carbon::parse($task->due_date) < \Carbon\Carbon::now()){
+                            $dueDateClass = 'bg-danger-light';
+                        } else {
+                            $dueDateClass = $dueDateClass;
+                        }
+                    @endphp
                     <tr class="col-sm-6 col-md-4 col-lg-4 col-xl-3">
-                        <td>
+                        <td data-toggle="appear">
                             {{-- <div class="col-12"> --}}
                                 <div class="block block-rounded mb-0">
-                                    <div class="block-header block-header-default">
+                                    <div class="block-header block-header-default {{ $dueDateClass }}">
                                         <h3 class="block-title">
-                                            <p class="clamp-1 mb-0" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $task->name }}">{{ $task->name }}</p>
-                                            <small class="d-block">Kategori: {{ $task->category['name'] ?? '-' }}</small>
-                                            <span class="badge badge-{{ $task->status_task['code'] == 'progress' ? 'warning' : 'success' }}">{{ $task->status_task['name'] }}</span>
+                                            <p class="clamp-1 mb-0 text-black break-all" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $task->name }}">{{ $task->name }}</p>
+                                            <small class="d-block text-black clamp-1 break-all">Kategori: {{ $task->category['name'] ?? '-' }}</small>
+                                            <span class="badge badge-{{ $color }}">{{ $status }}</span>
+                                            @if ($dueDateClass == 'bg-danger-light')
+                                                <span class="badge badge-danger" title="Terlambat" data-toggle="tooltip"><i class="fa fa-hourglass-end"></i></span>
+                                                
+                                            @endif
+                                            <small class="d-block text-black {{ $dueDateClass == 'bg-danger-light' ? 'text-bold' : '' }}">Batas Waktu:</br>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->isoFormat('D MMMM Y, HH:mm')." WIB" : '-' }}</small>
                                         </h3>
                                     </div>
                                     <div class="block-content">

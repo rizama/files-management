@@ -36,37 +36,27 @@ class HomeController extends Controller
     public function index()
     {
         $tasks = Task::with(['files' => function($q){
-            $q->where('is_default', 0)->orderBy('updated_at', 'desc');
+            $q->where('is_default', 0)->where('type', 'internal')->orderBy('updated_at', 'desc');
         }])->get();
-
+        
         $total_task = count($tasks);
-        $done = 0;
-        $waiting = 0;
+        $finished = 0;
+        $not_yet = 0;
         $progress = 0;
         foreach ($tasks as $index => $task) {
             if ($task->status == 3) {
-                $done++;
+                $finished++;
             } else {
                 if (count($task->files)) {
-                    if ($task->files[0]->status_approve == 2) {
-                        $waiting++;
-                    }
-                    if (($task->files[0]->status_approve == 4)) {
-                        $progress++;
-                    }
-                    if (($task->files[0]->status_approve == 3)) {
-                        $progress++;
-                    }
+                    $progress++;
                 } else {
-                    if ($task->status == 1) {
-                        $progress++;
-                    }
+                    $not_yet++;
                 }
             }   
         }
 
         $users = User::with(['responsible_tasks', 'role', 'files' => function($q){
-                $q->with('task')->where('is_default', 0)->orderBy('created_at', 'desc');
+                $q->with('task')->where('is_default', 0)->where('type', 'internal')->orderBy('created_at', 'desc');
             }])
             ->whereHas('role', function($query){
                 $query->where('code', '!=', 'superadmin')
@@ -103,13 +93,20 @@ class HomeController extends Controller
                 "progres" => $progres,
             ];
         }
+
+        foreach ($users as $user) {
+            $his_task = $data_task[$user->name];
+            $user['task_total'] = $his_task['total'];
+            $user['task_finish'] = $his_task['finish'];
+            $user['task_progres'] = $his_task['progres'];
+        }
         
         $files = File::with('task', 'user')->where('status_approve', 3)->orderBy('created_at', 'desc')->get();
 
-        $res['task_total'] = $total_task;
         $res['data_task'] = $data_task;
-        $res['task_done'] = $done;
-        $res['task_waiting'] = $waiting;
+        $res['task_total'] = $total_task;
+        $res['task_done'] = $finished;
+        $res['task_not_yet'] = $not_yet;
         $res['task_progress'] = $progress;
         $res['users'] = $users;
         $res['files'] = $files;
