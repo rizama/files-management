@@ -46,7 +46,6 @@ class TaskController extends Controller
             return view('tasks.index', $ret);
         } catch (\Exception $e) {
             return abort(500);
-            dd($e);
         }
     }
 
@@ -175,7 +174,6 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return abort(500);
-            dd($e);
         }
     }
 
@@ -436,7 +434,6 @@ class TaskController extends Controller
             return redirect()->route('tasks.index');
 
         } catch (\Exception $e) {
-            dd($e);
             DB::rollback();
             if ("The payload is invalid." == $e->getMessage()) {
                 return abort(404);
@@ -484,7 +481,6 @@ class TaskController extends Controller
             return redirect()->route('tasks.index');
         } catch (\Exception $e) {
             DB::rollback();
-            dd($e);
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
@@ -761,7 +757,6 @@ class TaskController extends Controller
             return redirect()->route('tasks.show', encrypt($task->id));
 
         } catch (\Exception $e) {
-            dd($e);
             DB::rollback();
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
@@ -841,7 +836,6 @@ class TaskController extends Controller
             return view('mytasks.index', $ret);
 
         } catch (\Exception $e) {
-            dd($e);
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
@@ -1020,7 +1014,7 @@ class TaskController extends Controller
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
-            dd($e);
+            return abort(500);
         }
     }
 }
