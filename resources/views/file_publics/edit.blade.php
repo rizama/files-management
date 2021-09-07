@@ -38,7 +38,7 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label for="custom_name">Ubah Nama Dokumen</label>
-                        <input type="text" class="form-control @error('custom_name') is-invalid @enderror" id="custom_name" name="custom_name" placeholder="Masukan Nama Dokumen" disabled value="{{old('custom_name', $file_public->original_name)}}">
+                        <input type="text" class="form-control @error('custom_name') is-invalid @enderror" id="custom_name" name="custom_name" placeholder="Masukan Nama Dokumen" value="{{old('custom_name', $file_public->original_name)}}">
                         @error('custom_name')
                             <span style="color: red">{{ $message }}</span>
                         @enderror
@@ -50,9 +50,19 @@
                         <select class="js-select2 form-control" id="select2-categories" name="category_id" data-placeholder="Pilih Kategori Dokumen" data-allow-clear="true" value={{ $file_public->category_id }}>
                             <option></option>
                             @foreach ($categories as $key => $category)
-                                <option value="{{ $category->id }}" {{ $category->id === $file_public->category_id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" {{ $category->id == $file_public->category_id ? 'selected' : '' }}>{{ $category->name }}</option>
                             @endforeach
                         </select>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="type">Tipe</label>
+                        <select class="js-select2 form-control" id="type" name="type" data-placeholder="Pilih Tipe Dokumen" data-allow-clear="true" disabled>
+                            <option value="internal" {{ $file_public->type == 'internal' ? 'selected' : '' }}>Internal</option>
+                            <option value="external" {{ $file_public->type == 'external' ? 'selected' : '' }}>External (Untuk Tamu)</option>
+                        </select>
+                        <input type="hidden" name="type" value="{{ $file_public->type }}">
                     </div>
                 </div>
                 <div class="col-lg-12">

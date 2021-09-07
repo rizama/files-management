@@ -54,6 +54,15 @@
                         </select>
                     </div>
                 </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="type">Tipe</label>
+                        <select class="js-select2 form-control" id="select2-categories" name="type" data-placeholder="Pilih Tipe Dokumen" data-allow-clear="true">
+                            <option value="internal">Internal</option>
+                            <option value="external">External (Untuk Tamu)</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="col-lg-12">
                     <div class="form-group">
                         <label for="description">Deskripsi</label></label>
