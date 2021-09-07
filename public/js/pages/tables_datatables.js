@@ -42,7 +42,7 @@ class pageTablesDatatables {
             lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
             autoWidth: false,
             info: true,
-            order: [ [ $('th.defaultSort').length > 0 ? $('th.defaultSort').index() : 0,  'desc' ] ],
+            order: [],
             "columnDefs": [{ targets: 'disable-sorting', orderable: false }]
         });
 
