@@ -35,7 +35,10 @@ class FilePublicController extends Controller
     public function index()
     {
         $file_publics = FilePublic::with('user')->get();
-        $ret['file_publics'] = $file_publics;
+        $file_internal = File::with('user')->where('task_id', 0)->get();
+        $merged = $file_publics->merge($file_internal);
+
+        $ret['file_publics'] = $merged;
         return view('file_publics.index', $ret);
     }
 
@@ -64,6 +67,7 @@ class FilePublicController extends Controller
                 'description' => 'nullable|string',
                 'custom_name' => 'nullable|string',
                 'category_id' => 'nullable',
+                'type' => 'string|in:internal,external',
                 'file' => 'required|mimes:'.config('app.accept_file_be')
             ]);
 
@@ -74,11 +78,24 @@ class FilePublicController extends Controller
             $custom_name = $request->custom_name;
             $description = $request->description;
             $category_id = $request->category_id;
+            $type = $request->type;
             $file = $request->file;
 
-            $file_upload = $this->upload_file_to_s3($file, $custom_name, $description, $category_id);
+            $config = [
+                "task_id" => 0,
+                "file" => $file,
+                "custom_name" => $custom_name,
+                "category_id" => $category_id,
+                "status_approval" => 0,
+                "is_default_file" => 1,
+                "description" => $description,
+                "type" => $type,
+            ];
+            
+            $file_id = $this->upload_file_to_s3($config);
     
             return redirect()->route('file_publics.index');
+
         } catch (\Exception $e) {
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
@@ -107,14 +124,23 @@ class FilePublicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         try {
             $decrypted_id = decrypt($id);
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
-        $file_public = FilePublic::where('id', $decrypted_id)->firstOrFail();
+        if (!$request->type) {
+            abort(404);
+        }
+
+        if ($request->type == 'internal') {
+            $file_public = File::where('id', $decrypted_id)->firstOrFail();
+        } else {
+            $file_public = FilePublic::where('id', $decrypted_id)->firstOrFail();
+        }
+
         $categories = Category::all();
 
         $ret['file_public'] = $file_public;
@@ -136,12 +162,12 @@ class FilePublicController extends Controller
                 'description' => 'nullable|string',
                 'custom_name' => 'nullable|string',
                 'category_id' => 'nullable',
+                'type' => 'string|in:internal,external',
                 'file' => 'nullable|mimes:'.config('app.accept_file_be')
             ]);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 400);
-                // return redirect()->back()->withErrors($validator->errors());
+                return redirect()->back()->withErrors($validator->errors());
             }
 
             try {
@@ -153,8 +179,14 @@ class FilePublicController extends Controller
             $custom_name = $request->custom_name;
             $description = $request->description;
             $category_id = $request->category_id;
+            $type = $request->type;
             $file = $request->file;
-            $old_file = FilePublic::findOrFail($decrypted_id);
+
+            if ($type == 'internal') {
+                $old_file = File::findOrFail($decrypted_id);
+            } else {
+                $old_file = FilePublic::findOrFail($decrypted_id);
+            }
             
             if ($request->hasFile('file')) {
                 // TODO: Delete Old File
@@ -168,11 +200,24 @@ class FilePublicController extends Controller
                 }
                 // Insert new
                 if ($request->hasFile('file')) {
-                    $this->upload_file_to_s3($file, $custom_name, $description, $category_id);
+                    $config = [
+                        "task_id" => 0,
+                        "file" => $file,
+                        "custom_name" => $custom_name,
+                        "category_id" => $category_id,
+                        "status_approval" => 0,
+                        "is_default_file" => 1,
+                        "description" => $description,
+                        "type" => $type,
+                    ];
+                    
+                    $this->upload_file_to_s3($config);
                 }
             } else {
                 $old_file->category_id = $category_id;
-                $old_file->original_name = $custom_name;
+                if ($custom_name) {
+                    $old_file->original_name = $custom_name;
+                }
                 $old_file->description = $description;
                 $old_file->save();
             }
@@ -196,7 +241,7 @@ class FilePublicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             try {
@@ -205,7 +250,24 @@ class FilePublicController extends Controller
                 throw new \Exception($e->getMessage());
             }
 
-            $old_file = FilePublic::findOrFail($decrypted_id);
+            if (!$request->type) {
+                abort(404);
+            }
+    
+            if ($request->type == 'internal') {
+                $old_file = File::where('id', $decrypted_id)->firstOrFail();
+            } else {
+                $old_file = FilePublic::where('id', $decrypted_id)->firstOrFail();
+            }
+
+            if ($old_file) {
+                $old_name_file = $old_file->new_name;
+                $exists = Storage::disk('s3')->exists('files/'.$old_name_file);
+                if ($exists) {
+                    Storage::disk('s3')->delete('files/'.$old_name_file);
+                }
+            }
+
             $old_file->delete();
     
             return redirect()->route('file_publics.index');
@@ -240,8 +302,17 @@ class FilePublicController extends Controller
         return view('searches.public', $ret);
     }
 
-    public function upload_file_to_s3($file, $custom_name, $description, $category_id)
+    public function upload_file_to_s3($config)
     {
+        $task_id = $config['task_id'];
+        $file = $config['file'];
+        $custom_name = $config['custom_name'];
+        $category_id = $config['category_id'];
+        $STATUS_APPROVAL = $config['status_approval'];
+        $DEFAULT_FILE = $config['is_default_file'];
+        $TYPE_FILE = $config['type'];
+        $description = $config['description'];
+
         $filename = $file->getClientOriginalName();
         if ($custom_name) {
             $original_name = $custom_name;
@@ -255,18 +326,32 @@ class FilePublicController extends Controller
         $path = Storage::disk('s3')->put($this->bucket_folder, $file);
         $new_name = basename($path);
 
-        $TYPE_FILE = 'external';
-
-        $file_upload = new FilePublic;
-        $file_upload->created_by = Auth::id();
-        $file_upload->category_id = $category_id;
-        $file_upload->original_name = $original_name;
-        $file_upload->description = $description;
-        $file_upload->mime_type = $mime_type;
-        $file_upload->new_name = $new_name;
-        $file_upload->path = $path;
-        $file_upload->type = $TYPE_FILE;
-        $file_upload->save();
+        if ($TYPE_FILE == 'internal') {
+            $file_upload = new File;
+            $file_upload->created_by = Auth::id();
+            $file_upload->category_id = $category_id;
+            $file_upload->task_id = $task_id;
+            $file_upload->status_approve = $STATUS_APPROVAL;
+            $file_upload->original_name = $original_name;
+            $file_upload->description = $description;
+            $file_upload->mime_type = $mime_type;
+            $file_upload->new_name = $new_name;
+            $file_upload->path = $path;
+            $file_upload->type = $TYPE_FILE;
+            $file_upload->is_default = $DEFAULT_FILE;
+            $file_upload->save();
+        } else {
+            $file_upload = new FilePublic;
+            $file_upload->created_by = Auth::id();
+            $file_upload->category_id = $category_id;
+            $file_upload->original_name = $original_name;
+            $file_upload->description = $description;
+            $file_upload->mime_type = $mime_type;
+            $file_upload->new_name = $new_name;
+            $file_upload->path = $path;
+            $file_upload->type = $TYPE_FILE;
+            $file_upload->save();
+        }
 
         return $file_upload->id;
     }
@@ -302,7 +387,6 @@ class FilePublicController extends Controller
                 return abort(404);
             }
             return abort(500);
-            dd($e);
         }
     }
 }
