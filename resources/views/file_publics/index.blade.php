@@ -58,7 +58,7 @@
             <a class="btn btn-primary pull-right btn-sm" href="{{ url('/file_publics/create') }}">Tambah Dokumen Umum</a>
         </div>
         <div class="block-content block-content-full">
-            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+            <table class="table table-bordered table-striped table-vcenter js-dataTable-no-defaultSort">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 80px;">No</th>
