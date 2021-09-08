@@ -46,6 +46,16 @@ class pageTablesDatatables {
             "columnDefs": [{ targets: 'disable-sorting', orderable: false }]
         });
 
+        // Init full DataTable
+        jQuery('.js-dataTable-no-defaultSort').dataTable({
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, 100], [10, 20, 50, 100]],
+            autoWidth: false,
+            info: true,
+            order: [],
+            "columnDefs": [{ targets: 'disable-sorting', orderable: false }]
+        });
+
         // Init full extra DataTable
         jQuery('.js-dataTable-full-pagination').dataTable({
             pagingType: "full_numbers",

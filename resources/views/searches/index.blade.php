@@ -143,7 +143,7 @@
                                         </p>
                                     </td>
                                     <td class="d-none d-lg-table-cell text-center">
-                                        {{ $file->task->name }}
+                                        {{ $file->task ? $file->task->name : '' }}
                                     </td>
                                     <td class="d-none d-lg-table-cell text-center" data-order="{{strtotime($file->created_at)}}">
                                         {{ \Carbon\Carbon::parse($file->created_at)->isoFormat('D MMMM YYYY') }}

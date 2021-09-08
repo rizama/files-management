@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\File;
+use App\Models\FilePublic;
 
 class FileController extends Controller
 {
@@ -31,7 +32,7 @@ class FileController extends Controller
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
-            dd($e);
+            return abort(500);
         }
     }
 
@@ -57,7 +58,7 @@ class FileController extends Controller
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
-            dd($e);
+            return abort(500);
         }
     }
 
@@ -72,9 +73,15 @@ class FileController extends Controller
             }
 
             $type = $request->type;
-            
+            $type_file = $request->type_file;
             $id = $decrypted_id;
-            $file = File::findOrFail($id);
+
+            if ($type_file == 'internal') {
+                $file = File::findOrFail($id);
+            } else {
+                $file = FilePublic::findOrFail($id);
+            }
+            
             $extension = pathinfo($file->new_name, PATHINFO_EXTENSION);
             $filename = $file->original_name.".".$extension;
 
@@ -91,7 +98,7 @@ class FileController extends Controller
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ) {
                 return abort(404);
             }
-            dd($e);
+            return abort(500);
         }
     }
 
@@ -111,7 +118,7 @@ class FileController extends Controller
             $request->session()->flash('file.deleted', 'Dokumen telah dihapus!');
             return redirect()->route('tasks.show', $task_id);
         } catch (\Exception $e) {
-            dd($e);
+            return abort(500);
         }
     }
 }

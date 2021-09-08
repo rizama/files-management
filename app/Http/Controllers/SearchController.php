@@ -50,7 +50,7 @@ class SearchController extends Controller
 
         $files = File::with('task', 'user')->where('status_approve', 3)->orWhere('is_default', 1)->orderBy('updated_at', 'desc')->limit(10)->get();
         $tasks = Task::with(['responsible_person', 'user'])->orderBy('updated_at', 'desc')->limit(10)->get();
-
+        // dd($files);
         $ret['files'] = $files;
         $ret['tasks'] = $tasks;
         return view('searches.index', $ret);

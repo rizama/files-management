@@ -58,7 +58,7 @@
             <a class="btn btn-primary pull-right btn-sm" href="{{ url('/file_publics/create') }}">Tambah Dokumen Umum</a>
         </div>
         <div class="block-content block-content-full">
-            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+            <table class="table table-bordered table-striped table-vcenter js-dataTable-no-defaultSort">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 80px;">No</th>
@@ -70,9 +70,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($file_publics as $file_public)
+                    @foreach ($file_publics as $index => $file_public)
                         <tr>
-                            <td class="text-center font-size-sm">{{ $loop->index + 1 }}</td>
+                            <td class="text-center font-size-sm">{{ $index + 1 }}</td>
                             <td class="font-w600 font-size-sm">
                                 {{ $file_public->original_name }}
                             </td>
@@ -86,7 +86,7 @@
                             <td>
                                 <div class="btn-group">
                                     <a class="btn btn-sm btn-primary"
-                                        href="{{ route('download') }}?file={{ encrypt($file_public->id) }}&type=download"
+                                        href="{{ route('download') }}?file={{ encrypt($file_public->id) }}&type=download&type_file={{ $file_public->type }}"
                                         data-animation="true" data-toggle="tooltip"
                                         title="Unduh Dokumen" data-original-title="Unduh File"
                                         style="margin-right: 3px"
@@ -94,7 +94,7 @@
                                         <i class="fa fa-fw fa-file-download"></i>
                                     </a>
                                     <a class="btn btn-sm btn-warning"
-                                        href="{{ url('/file_publics/edit/').'/'.encrypt($file_public->id) }}"
+                                        href="{{ url('/file_publics/edit/').'/'.encrypt($file_public->id) }}?type={{ $file_public->type }}"
                                         data-animation="true" data-toggle="tooltip"
                                         title="Ubah Dokumen" data-original-title="Ubah Dokumen"
                                         style="margin-right: 3px"
@@ -102,7 +102,7 @@
                                         <i class="fa fa-fw fa-pencil-alt"></i>
                                     </a>
                                     <a class="btn btn-sm btn-danger js-swal-confirm"
-                                        href="{{ route('file_publics.destroy', encrypt($file_public->id)) }}"
+                                        href="{{ route('file_publics.destroy', encrypt($file_public->id)) }}?type={{ $file_public->type }}"
                                         data-toggle="tooltip" title="" data-original-title="Hapus Dokumen">
                                         <i class="fa fa-fw fa-times"></i>
                                     </a>
