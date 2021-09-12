@@ -400,7 +400,7 @@ class TaskController extends Controller
             if ($request->responsible_person) {
                 if (is_array($request->responsible_person)) {
                     $responsible_ids = count($request->responsible_person) ? $request->responsible_person : [];
-            
+
                     if (count($responsible_person)) {
                         $existing_responsibles = [];
                         foreach ($responsible_person as $index => $person) {
@@ -408,7 +408,7 @@ class TaskController extends Controller
                         }
 
                         $responsible_diff = array_diff($responsible_ids, $existing_responsibles);
-                        if (count($responsible_diff)) {
+                        if (!($responsible_ids == $existing_responsibles)) {
                             # delete old
                             $responsible_person_will_delete = TaskUser::where('task_id', $task->id);
                             $responsible_person_will_delete->delete();
@@ -739,11 +739,10 @@ class TaskController extends Controller
             $STATUS_APPROVE = 3; // approved
 
             if (count($task->files)) {
-                $file_id = $task->files[0]['id'];               
-                $file = File::where('id', $file_id)->first();
-                if ($file) {
-                    $file->status_approve = $STATUS_APPROVE;
-                    $file->save();
+                foreach ($task->files as $key => $file_to_approve) {
+                    $file_to_approve->status_approve = $STATUS_APPROVE;
+                    $file_to_approve->verified_by = Auth::id();
+                    $file_to_approve->save();
                 }
             }
 
