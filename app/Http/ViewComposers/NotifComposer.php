@@ -50,7 +50,7 @@ class NotifComposer
                 }
 
                 $view->with('notif_count', $notif_count);
-                $view->with('notif_content', $contents);
+                $view->with('notif_content', collect($contents)->sortByDesc('created_at'));
             } else {
                 $id = Auth::id();
                 $individu_task = Task::with(['responsible_person'])
@@ -89,7 +89,7 @@ class NotifComposer
                 }
 
                 $view->with('notif_count', count($contents));
-                $view->with('notif_content', $contents);
+                $view->with('notif_content', collect($contents)->sortByDesc('created_at'));
             }
         }
     }
