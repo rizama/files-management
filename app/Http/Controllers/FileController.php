@@ -76,12 +76,12 @@ class FileController extends Controller
             $type_file = $request->type_file;
             $id = $decrypted_id;
 
-            if ($type_file == 'internal') {
+            if ($type_file == 'internal' || $type_file == 'attachment') {
                 $file = File::findOrFail($id);
             } else {
                 $file = FilePublic::findOrFail($id);
             }
-            
+
             $extension = pathinfo($file->new_name, PATHINFO_EXTENSION);
             $filename = $file->original_name.".".$extension;
 

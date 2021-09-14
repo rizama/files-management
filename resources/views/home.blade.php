@@ -109,7 +109,7 @@
                                             <td>
                                                 <h4 class="h5 mt-0 mb-0">
                                                     <i class="far fa-file"></i>
-                                                    <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download">{{ $file->original_name }}</a>
+                                                    <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download&type_file={{ $file->type }}">{{ $file->original_name }}</a>
                                                 </h4>
                                             </td>
                                             <td class="d-none d-lg-table-cell text-center" data-order="{{strtotime($file->created_at)}}">
