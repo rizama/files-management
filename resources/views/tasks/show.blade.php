@@ -289,7 +289,7 @@
                                     <small>Nama File</small>{{ $file['original_name'].".".App\Http\Controllers\TaskController::mime2ext($file->mime_type) ?? '-' }}
                                 </p>
                                 <div class="col-lg-12">
-                                    <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download" class="btn btn-outline-primary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}"><i class="fa fa-download"></i> Unduh</a>
+                                    <a href="{{ route('download') }}?file={{ encrypt($file->id) }}&type=download&type_file={{ $file->type }}" class="btn btn-outline-primary mb-2" title="{{$file->original_name}}.{{ App\Http\Controllers\TaskController::mime2ext($file->mime_type) }}"><i class="fa fa-download"></i> Unduh</a>
                                     @if(in_array(App\Http\Controllers\TaskController::mime2ext($file->mime_type), ['png', 'jpeg', 'jpg', 'pdf', 'bmp', 'txt']))
                                         <button type="button" class="btn btn-outline-info push mb-2" data-toggle="modal" data-target="#preview-modal" data-file="{{$file}}" data-ext="{{App\Http\Controllers\TaskController::mime2ext($file->mime_type)}}" id="preview-btn-modal"><i class="fa fa-eye"></i> Pratinjau</button>
                                     @endif
@@ -473,7 +473,7 @@
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <a href="{{ route('download') }}?file={{ encrypt($default_file->id) }}&type=download" target="_blank" class="btn btn-info btn-block">Unduh Contoh Dokumen</a>
+                            <a href="{{ route('download') }}?file={{ encrypt($default_file->id) }}&type=download&type_file={{ $default_file->type }}" target="_blank" class="btn btn-info btn-block">Unduh Contoh Dokumen</a>
                         </div>
                     </div>
                     @else
@@ -492,7 +492,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <a href="{{ route('download') }}?file={{ encrypt($attachement->id) }}&type=download" class="btn btn-info btn-block">Unduh Lampiran</a>
+                                <a href="{{ route('download') }}?file={{ encrypt($attachement->id) }}&type=download&type_file={{ $attachement->type }}" class="btn btn-info btn-block">Unduh Lampiran</a>
                             </div>
                         </div>
                         @endforeach

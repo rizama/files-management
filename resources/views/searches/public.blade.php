@@ -65,7 +65,7 @@
                                     <td>
                                         <h4 class="h5 mt-3 mb-2">
                                             <i class="far fa-file"></i>
-                                            <a href="{{ route('download.public') }}?file={{ encrypt($file->id) }}&type=download">{{ $file->original_name }}</a>
+                                            <a href="{{ route('download.public') }}?file={{ encrypt($file->id) }}&type=download&type_file={{ $file->type }}">{{ $file->original_name }}</a>
                                         </h4>
                                         <p class="d-none d-sm-block text-muted">
                                             {{ $file->description }}
@@ -76,7 +76,7 @@
                                     </td>
                                     <td class="font-size-xl text-center font-w600">
                                         <a class="btn btn-sm btn-primary"
-                                            href="{{ route('download.public') }}?file={{ encrypt($file->id) }}&type=download"
+                                            href="{{ route('download.public') }}?file={{ encrypt($file->id) }}&type=download&type_file={{ $file->type }}"
                                             data-animation="true" data-toggle="tooltip"
                                             title="Unduh File" data-original-title="Unduh File"
                                         >
